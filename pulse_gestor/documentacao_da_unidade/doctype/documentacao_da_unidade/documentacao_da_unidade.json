@@ -1,0 +1,221 @@
+{
+	"actions": [],
+	"allow_import": 1,
+	"autoname": "naming_series:",
+	"creation": "2026-08-17 12:00:00.000000",
+	"default_view": "List",
+	"doctype": "DocType",
+	"engine": "InnoDB",
+	"field_order": [
+		"section_identificacao",
+		"naming_series",
+		"company",
+		"tipo_documento",
+		"column_break_id",
+		"status",
+		"titulo",
+		"section_arquivo",
+		"arquivo_pdf",
+		"section_validade",
+		"possui_validade",
+		"column_break_val",
+		"data_inicio",
+		"data_fim",
+		"dias_para_vencimento",
+		"section_obs",
+		"observacoes"
+	],
+	"fields": [
+		{
+			"fieldname": "section_identificacao",
+			"fieldtype": "Section Break",
+			"label": "Identificação"
+		},
+		{
+			"default": "DU-.YYYY.-.#####",
+			"fieldname": "naming_series",
+			"fieldtype": "Select",
+			"hidden": 1,
+			"label": "Série",
+			"options": "DU-.YYYY.-.#####",
+			"reqd": 1
+		},
+		{
+			"fieldname": "company",
+			"fieldtype": "Link",
+			"in_list_view": 1,
+			"in_standard_filter": 1,
+			"label": "Unidade (Company)",
+			"options": "Company",
+			"reqd": 1,
+			"search_index": 1
+		},
+		{
+			"fieldname": "tipo_documento",
+			"fieldtype": "Link",
+			"in_list_view": 1,
+			"in_preview": 1,
+			"in_standard_filter": 1,
+			"label": "Tipo do PDF",
+			"options": "Tipo de Documento da Unidade",
+			"reqd": 1,
+			"search_index": 1
+		},
+		{
+			"fieldname": "column_break_id",
+			"fieldtype": "Column Break"
+		},
+		{
+			"bold": 1,
+			"fieldname": "status",
+			"fieldtype": "Select",
+			"in_list_view": 1,
+			"in_standard_filter": 1,
+			"label": "Status",
+			"no_copy": 1,
+			"options": "Válido\nVencido\nSem validade",
+			"read_only": 1,
+			"search_index": 1
+		},
+		{
+			"fieldname": "titulo",
+			"fieldtype": "Data",
+			"in_global_search": 1,
+			"label": "Título"
+		},
+		{
+			"fieldname": "section_arquivo",
+			"fieldtype": "Section Break",
+			"label": "Arquivo"
+		},
+		{
+			"description": "Anexe o arquivo PDF do documento.",
+			"fieldname": "arquivo_pdf",
+			"fieldtype": "Attach",
+			"in_preview": 1,
+			"label": "Arquivo PDF",
+			"reqd": 1
+		},
+		{
+			"fieldname": "section_validade",
+			"fieldtype": "Section Break",
+			"label": "Validade"
+		},
+		{
+			"default": "0",
+			"fieldname": "possui_validade",
+			"fieldtype": "Check",
+			"in_list_view": 1,
+			"in_standard_filter": 1,
+			"label": "Possui validade"
+		},
+		{
+			"fieldname": "column_break_val",
+			"fieldtype": "Column Break"
+		},
+		{
+			"depends_on": "eval:doc.possui_validade",
+			"fieldname": "data_inicio",
+			"fieldtype": "Date",
+			"label": "Início da vigência",
+			"mandatory_depends_on": "eval:doc.possui_validade"
+		},
+		{
+			"depends_on": "eval:doc.possui_validade",
+			"fieldname": "data_fim",
+			"fieldtype": "Date",
+			"in_list_view": 1,
+			"in_standard_filter": 1,
+			"label": "Fim da vigência",
+			"mandatory_depends_on": "eval:doc.possui_validade",
+			"search_index": 1
+		},
+		{
+			"depends_on": "eval:doc.possui_validade",
+			"fieldname": "dias_para_vencimento",
+			"fieldtype": "Int",
+			"in_standard_filter": 1,
+			"label": "Dias para vencimento",
+			"no_copy": 1,
+			"read_only": 1
+		},
+		{
+			"fieldname": "section_obs",
+			"fieldtype": "Section Break",
+			"label": "Observações"
+		},
+		{
+			"fieldname": "observacoes",
+			"fieldtype": "Small Text",
+			"label": "Observações"
+		}
+	],
+	"index_web_pages_for_search": 0,
+	"links": [],
+	"max_attachments": 5,
+	"modified": "2026-08-17 12:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Documentacao da Unidade",
+	"name": "Documentacao da Unidade",
+	"naming_rule": "By \"Naming Series\" field",
+	"owner": "Administrator",
+	"permissions": [
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "System Manager",
+			"share": 1,
+			"write": 1
+		},
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "Pulse Gestor Manager",
+			"share": 1,
+			"write": 1
+		},
+		{
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "Pulse Gestor Viewer",
+			"share": 0,
+			"write": 0
+		}
+	],
+	"quick_entry": 0,
+	"search_fields": "company,tipo_documento,status,titulo",
+	"show_name_in_global_search": 1,
+	"show_preview_popup": 1,
+	"show_title_field_in_link": 1,
+	"sort_field": "modified",
+	"sort_order": "DESC",
+	"states": [
+		{
+			"color": "Green",
+			"title": "Válido"
+		},
+		{
+			"color": "Red",
+			"title": "Vencido"
+		},
+		{
+			"color": "Blue",
+			"title": "Sem validade"
+		}
+	],
+	"title_field": "tipo_documento",
+	"track_changes": 1
+}

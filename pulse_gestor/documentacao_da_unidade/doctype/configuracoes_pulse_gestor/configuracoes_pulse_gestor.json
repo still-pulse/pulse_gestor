@@ -1,0 +1,74 @@
+{
+	"actions": [],
+	"allow_rename": 0,
+	"creation": "2026-08-17 12:00:00.000000",
+	"doctype": "DocType",
+	"engine": "InnoDB",
+	"field_order": [
+		"sec_alerta",
+		"dias_alerta_vencimento"
+	],
+	"fields": [
+		{
+			"fieldname": "sec_alerta",
+			"fieldtype": "Section Break",
+			"label": "Alerta de vencimento"
+		},
+		{
+			"default": "30",
+			"description": "Dias de antecedência para notificar o vencimento do documento.",
+			"fieldname": "dias_alerta_vencimento",
+			"fieldtype": "Int",
+			"label": "Dias de alerta antes do vencimento",
+			"non_negative": 1,
+			"reqd": 1
+		}
+	],
+	"issingle": 1,
+	"links": [],
+	"modified": "2026-08-17 12:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Documentacao da Unidade",
+	"name": "Configuracoes Pulse Gestor",
+	"owner": "Administrator",
+	"permissions": [
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "System Manager",
+			"share": 1,
+			"write": 1
+		},
+		{
+			"create": 1,
+			"delete": 0,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "Pulse Gestor Manager",
+			"share": 1,
+			"write": 1
+		},
+		{
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "Pulse Gestor Viewer",
+			"share": 0,
+			"write": 0
+		}
+	],
+	"sort_field": "modified",
+	"sort_order": "DESC",
+	"states": [],
+	"track_changes": 1
+}

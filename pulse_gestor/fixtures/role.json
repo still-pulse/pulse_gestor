@@ -1,0 +1,20 @@
+[
+  {
+    "desk_access": 1,
+    "disabled": 0,
+    "doctype": "Role",
+    "is_custom": 1,
+    "name": "Pulse Gestor Manager",
+    "role_name": "Pulse Gestor Manager",
+    "two_factor_auth": 0
+  },
+  {
+    "desk_access": 1,
+    "disabled": 0,
+    "doctype": "Role",
+    "is_custom": 1,
+    "name": "Pulse Gestor Viewer",
+    "role_name": "Pulse Gestor Viewer",
+    "two_factor_auth": 0
+  }
+]

@@ -1,0 +1,112 @@
+{
+	"charts": [],
+	"content": "[{\"id\":\"header_pg\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Documentação da Unidade</span>\",\"col\":12}},{\"id\":\"nc_total\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"PG Total Documentos\",\"col\":4}},{\"id\":\"nc_validos\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"PG Documentos Validos\",\"col\":4}},{\"id\":\"nc_vencidos\",\"type\":\"number_card\",\"data\":{\"number_card_name\":\"PG Documentos Vencidos\",\"col\":4}},{\"id\":\"header_atalhos\",\"type\":\"header\",\"data\":{\"text\":\"Atalhos\",\"col\":12}},{\"id\":\"sc_docs\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Documentos da Unidade\",\"col\":4}},{\"id\":\"sc_tipos\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Tipos de Documento\",\"col\":4}},{\"id\":\"sc_cfg\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Configurações\",\"col\":4}}]",
+	"creation": "2026-08-17 12:00:00.000000",
+	"custom_blocks": [],
+	"docstatus": 0,
+	"doctype": "Workspace",
+	"for_user": "",
+	"hide_custom": 0,
+	"icon": "file",
+	"idx": 0,
+	"is_hidden": 0,
+	"label": "Documentacao da Unidade",
+	"links": [
+		{
+			"hidden": 0,
+			"is_query_report": 0,
+			"label": "Cadastros",
+			"link_count": 2,
+			"link_type": "DocType",
+			"onboard": 0,
+			"type": "Card Break"
+		},
+		{
+			"hidden": 0,
+			"is_query_report": 0,
+			"label": "Documentacao da Unidade",
+			"link_count": 0,
+			"link_to": "Documentacao da Unidade",
+			"link_type": "DocType",
+			"onboard": 1,
+			"type": "Link"
+		},
+		{
+			"hidden": 0,
+			"is_query_report": 0,
+			"label": "Tipo de Documento da Unidade",
+			"link_count": 0,
+			"link_to": "Tipo de Documento da Unidade",
+			"link_type": "DocType",
+			"onboard": 1,
+			"type": "Link"
+		},
+		{
+			"hidden": 0,
+			"is_query_report": 0,
+			"label": "Configuração",
+			"link_count": 1,
+			"link_type": "DocType",
+			"onboard": 0,
+			"type": "Card Break"
+		},
+		{
+			"hidden": 0,
+			"is_query_report": 0,
+			"label": "Configuracoes Pulse Gestor",
+			"link_count": 0,
+			"link_to": "Configuracoes Pulse Gestor",
+			"link_type": "DocType",
+			"onboard": 0,
+			"type": "Link"
+		}
+	],
+	"modified": "2026-08-17 12:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Documentacao da Unidade",
+	"name": "Documentacao da Unidade",
+	"number_cards": [
+		{
+			"label": "Total",
+			"number_card_name": "PG Total Documentos"
+		},
+		{
+			"label": "Válidos",
+			"number_card_name": "PG Documentos Validos"
+		},
+		{
+			"label": "Vencidos",
+			"number_card_name": "PG Documentos Vencidos"
+		}
+	],
+	"owner": "Administrator",
+	"parent_page": "",
+	"public": 1,
+	"quick_lists": [],
+	"roles": [],
+	"sequence_id": 30.0,
+	"shortcuts": [
+		{
+			"color": "Blue",
+			"doc_view": "List",
+			"label": "Documentos da Unidade",
+			"link_to": "Documentacao da Unidade",
+			"type": "DocType"
+		},
+		{
+			"color": "Green",
+			"doc_view": "List",
+			"label": "Tipos de Documento",
+			"link_to": "Tipo de Documento da Unidade",
+			"type": "DocType"
+		},
+		{
+			"color": "Grey",
+			"doc_view": "",
+			"label": "Configurações",
+			"link_to": "Configuracoes Pulse Gestor",
+			"type": "DocType"
+		}
+	],
+	"title": "Documentação da Unidade"
+}
