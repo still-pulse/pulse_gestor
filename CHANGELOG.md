@@ -1,5 +1,10 @@
 # Changelog
 
+## [2026-08-17] — v0.1.3
+
+### Alterado
+- Card **Documentação da Unidade** na seção Módulos do Workspace Gestor
+
 ## [2026-08-17] — v0.1.2
 
 ### Alterado

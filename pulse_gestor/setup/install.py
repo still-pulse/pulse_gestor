@@ -64,7 +64,7 @@ GESTOR_LINKS = (
 	},
 	{
 		"type": "Link",
-		"label": "Documentacao da Unidade",
+		"label": "Documentos da Unidade",
 		"link_type": "DocType",
 		"link_to": "Documentacao da Unidade",
 		"is_query_report": 0,
@@ -72,7 +72,7 @@ GESTOR_LINKS = (
 	},
 	{
 		"type": "Link",
-		"label": "Tipo de Documento da Unidade",
+		"label": "Tipos de Documento",
 		"link_type": "DocType",
 		"link_to": "Tipo de Documento da Unidade",
 		"is_query_report": 0,
@@ -80,7 +80,7 @@ GESTOR_LINKS = (
 	},
 	{
 		"type": "Link",
-		"label": "Configuracoes Pulse Gestor",
+		"label": "Configurações",
 		"link_type": "DocType",
 		"link_to": "Configuracoes Pulse Gestor",
 		"is_query_report": 0,
@@ -88,16 +88,11 @@ GESTOR_LINKS = (
 	},
 )
 
-GESTOR_CONTENT_SHORTCUTS = (
-	{
-		"id": "pg_hdr_doc",
-		"type": "header",
-		"data": {"text": '<span class="h4"><b>Documentação da Unidade</b></span>', "col": 12},
-	},
-	{"id": "pg_sc_docs", "type": "shortcut", "data": {"shortcut_name": "Documentos da Unidade", "col": 4}},
-	{"id": "pg_sc_tipos", "type": "shortcut", "data": {"shortcut_name": "Tipos de Documento", "col": 4}},
-	{"id": "pg_sc_cfg", "type": "shortcut", "data": {"shortcut_name": "Configurações Documentação", "col": 4}},
-)
+GESTOR_MODULE_CARD = {
+	"id": "pg_card_doc",
+	"type": "card",
+	"data": {"card_name": "Documentação da Unidade", "col": 4},
+}
 
 
 def ensure_gestor_workspace():
@@ -144,19 +139,32 @@ def ensure_gestor_workspace():
 		content = []
 
 	existing_ids = {b.get("id") for b in content if isinstance(b, dict)}
-	if "pg_hdr_doc" not in existing_ids:
+	already_card = "pg_card_doc" in existing_ids or any(
+		b.get("type") == "card"
+		and (b.get("data") or {}).get("card_name") == "Documentação da Unidade"
+		for b in content
+		if isinstance(b, dict)
+	)
+	if not already_card:
 		insert_at = None
+		last_card = None
+		modulos_header = None
 		for i, block in enumerate(content):
-			if block.get("type") == "spacer" or (
-				block.get("type") == "header"
-				and "Módulo" in (block.get("data") or {}).get("text", "")
-			):
-				insert_at = i
-				break
+			if not isinstance(block, dict):
+				continue
+			if block.get("type") == "card":
+				last_card = i
+			text = (block.get("data") or {}).get("text", "")
+			if block.get("type") == "header" and "Módulo" in text:
+				modulos_header = i
+		if last_card is not None:
+			insert_at = last_card + 1
+		elif modulos_header is not None:
+			insert_at = modulos_header + 1
 		if insert_at is None:
-			content.extend(GESTOR_CONTENT_SHORTCUTS)
+			content.append(GESTOR_MODULE_CARD)
 		else:
-			content = content[:insert_at] + list(GESTOR_CONTENT_SHORTCUTS) + content[insert_at:]
+			content.insert(insert_at, GESTOR_MODULE_CARD)
 		doc.content = json.dumps(content, ensure_ascii=False)
 		changed = True
 
