@@ -1,5 +1,10 @@
 # Changelog
 
+## [2026-08-17] — v0.1.4
+
+### Corrigido
+- Links da documentação saem do card Patrimônio e vão para o card **Documentação da Unidade**
+
 ## [2026-08-17] — v0.1.3
 
 ### Alterado
