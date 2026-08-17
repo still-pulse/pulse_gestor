@@ -26,7 +26,20 @@ def after_migrate():
 	ensure_roles()
 	ensure_settings()
 	sincronizar_dias_alerta()
+	esconder_workspace_conflitante()
 	frappe.db.commit()
+
+
+def esconder_workspace_conflitante():
+	"""O workspace antigo tinha o mesmo nome do DocType e o + Novo criava Workspace."""
+	if not frappe.db.exists("Workspace", "Documentacao da Unidade"):
+		return
+	frappe.db.set_value(
+		"Workspace",
+		"Documentacao da Unidade",
+		{"is_hidden": 1, "public": 0},
+		update_modified=False,
+	)
 
 
 def ensure_roles():

@@ -1,6 +1,11 @@
 # Changelog
 
-## [2026-08-17]
+## [2026-08-17] — v0.1.1
+
+### Corrigido
+- Workspace deixou de usar o mesmo nome do DocType (o botão Novo abria um Espaço de Trabalho)
+
+## [2026-08-17] — v0.1.0
 
 ### Adicionado
 
