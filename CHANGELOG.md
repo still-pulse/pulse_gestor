@@ -1,5 +1,11 @@
 # Changelog
 
+## [2026-08-17] — v0.1.2
+
+### Alterado
+- Atalhos da Documentação da Unidade passam a ficar no Workspace **Gestor**
+- Workspace Pulse Gestor oculto no menu lateral
+
 ## [2026-08-17] — v0.1.1
 
 ### Corrigido
