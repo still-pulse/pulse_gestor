@@ -1,18 +1,18 @@
 {
 	"actions": [],
-	"allow_import": 1,
 	"creation": "2026-09-18 12:00:00.000000",
 	"doctype": "DocType",
 	"engine": "InnoDB",
 	"field_order": [
 		"unidade",
+		"setor",
 		"data",
-		"protocolo",
-		"niveis_classificados",
-		"total_classificados",
+		"vigencia",
+		"especialidades",
+		"total_dia",
+		"status",
 		"lancado_por",
-		"criado_em",
-		"status"
+		"criado_em"
 	],
 	"fields": [
 		{
@@ -20,6 +20,15 @@
 			"fieldtype": "Link",
 			"label": "Unidade",
 			"options": "Company",
+			"reqd": 1,
+			"in_list_view": 1,
+			"in_standard_filter": 1
+		},
+		{
+			"fieldname": "setor",
+			"fieldtype": "Link",
+			"label": "Setor",
+			"options": "Department",
 			"reqd": 1,
 			"in_list_view": 1,
 			"in_standard_filter": 1
@@ -33,28 +42,37 @@
 			"in_standard_filter": 1
 		},
 		{
-			"fieldname": "protocolo",
+			"fieldname": "vigencia",
 			"fieldtype": "Link",
-			"label": "Protocolo",
-			"options": "Protocolo de Triagem",
-			"read_only": 1,
-			"in_list_view": 1
+			"label": "Vigência",
+			"options": "Unidade Especialidade Vigencia",
+			"read_only": 1
 		},
 		{
-			"fieldname": "niveis_classificados",
+			"fieldname": "especialidades",
 			"fieldtype": "Table",
-			"label": "Níveis classificados",
-			"options": "Classificacao Diaria Nivel",
+			"label": "Especialidades",
+			"options": "Atendimento Diario Especialidade",
 			"cannot_add_rows": 1,
 			"cannot_delete_rows": 1
 		},
 		{
-			"fieldname": "total_classificados",
+			"fieldname": "total_dia",
 			"fieldtype": "Int",
-			"label": "Total classificados",
+			"label": "Total do dia",
 			"read_only": 1,
 			"default": "0",
 			"in_list_view": 1
+		},
+		{
+			"fieldname": "status",
+			"fieldtype": "Select",
+			"label": "Status",
+			"options": "Rascunho\nEnviado",
+			"default": "Rascunho",
+			"read_only": 1,
+			"in_list_view": 1,
+			"in_standard_filter": 1
 		},
 		{
 			"fieldname": "lancado_por",
@@ -68,29 +86,21 @@
 			"fieldtype": "Datetime",
 			"label": "Criado em",
 			"read_only": 1
-		},
-		{
-			"fieldname": "status",
-			"fieldtype": "Select",
-			"label": "Status",
-			"options": "Rascunho\nEnviado",
-			"default": "Rascunho",
-			"read_only": 1,
-			"in_list_view": 1,
-			"in_standard_filter": 1
 		}
 	],
 	"links": [],
 	"modified": "2026-09-18 12:00:00.000000",
 	"modified_by": "Administrator",
 	"module": "Indicadores",
-	"name": "Classificacao de Risco Diaria",
+	"name": "Atendimento Diario",
 	"owner": "Administrator",
 	"sort_field": "data",
 	"sort_order": "DESC",
 	"states": [],
-	"autoname": "CRD-.YYYY.-.#####",
+	"autoname": "ATD-.YYYY.-.#####",
 	"naming_rule": "Expression",
+	"title_field": "setor",
+	"search_fields": "unidade,setor,data",
 	"is_submittable": 1,
 	"track_changes": 1,
 	"permissions": [
@@ -104,11 +114,10 @@
 			"report": 1,
 			"share": 1,
 			"write": 1,
+			"select": 1,
 			"submit": 1,
 			"cancel": 1,
-			"role": "System Manager",
-			"select": 1,
-			"import": 1
+			"role": "System Manager"
 		},
 		{
 			"create": 1,
@@ -120,17 +129,15 @@
 			"report": 1,
 			"share": 1,
 			"write": 1,
+			"select": 1,
 			"submit": 1,
 			"cancel": 1,
-			"role": "Administrator",
-			"select": 1,
-			"import": 1
+			"role": "Administrator"
 		},
 		{
 			"create": 1,
 			"email": 1,
 			"export": 1,
-			"import": 1,
 			"print": 1,
 			"read": 1,
 			"report": 1,
@@ -146,7 +153,5 @@
 			"report": 1,
 			"role": "Pulse Gestor Viewer"
 		}
-	],
-	"title_field": "unidade",
-	"search_fields": "unidade,data,protocolo"
+	]
 }

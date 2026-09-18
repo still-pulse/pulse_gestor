@@ -1,6 +1,6 @@
 {
 	"charts": [],
-	"content": "[{\"id\":\"header_indicadores\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Indicadores</span>\",\"col\":12}},{\"id\":\"card_triagem\",\"type\":\"card\",\"data\":{\"card_name\":\"Triagem\",\"col\":4}}]",
+	"content": "[{\"id\":\"header_indicadores\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Indicadores</span>\",\"col\":12}},{\"id\":\"card_triagem\",\"type\":\"card\",\"data\":{\"card_name\":\"Triagem\",\"col\":4}},{\"id\":\"card_atendimentos\",\"type\":\"card\",\"data\":{\"card_name\":\"Atendimentos\",\"col\":4}}]",
 	"creation": "2026-09-18 12:00:00.000000",
 	"custom_blocks": [],
 	"docstatus": 0,
@@ -55,6 +55,40 @@
 			"link_count": 0,
 			"hidden": 0,
 			"onboard": 0
+		},
+		{
+			"type": "Card Break",
+			"label": "Atendimentos",
+			"link_count": 3,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
+			"type": "Link",
+			"label": "Especialidades",
+			"link_type": "DocType",
+			"link_to": "Especialidade",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Vigências de Especialidades",
+			"link_type": "DocType",
+			"link_to": "Unidade Especialidade Vigencia",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Atendimentos Diários",
+			"link_type": "DocType",
+			"link_to": "Atendimento Diario",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
 		}
 	],
 	"modified": "2026-09-18 12:00:00.000000",
@@ -101,6 +135,27 @@
 			"doc_view": "List",
 			"label": "Classificações de Risco Diárias",
 			"link_to": "Classificacao de Risco Diaria",
+			"type": "DocType"
+		},
+		{
+			"color": "Blue",
+			"doc_view": "List",
+			"label": "Especialidades",
+			"link_to": "Especialidade",
+			"type": "DocType"
+		},
+		{
+			"color": "Green",
+			"doc_view": "List",
+			"label": "Vigências de Especialidades",
+			"link_to": "Unidade Especialidade Vigencia",
+			"type": "DocType"
+		},
+		{
+			"color": "Orange",
+			"doc_view": "List",
+			"label": "Atendimentos Diários",
+			"link_to": "Atendimento Diario",
 			"type": "DocType"
 		}
 	],

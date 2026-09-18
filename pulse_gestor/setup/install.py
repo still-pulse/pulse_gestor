@@ -9,6 +9,7 @@ import json
 
 import frappe
 from frappe.model.rename_doc import rename_doc
+from frappe.permissions import add_permission
 
 ROLES = (
 	{"role_name": "Pulse Gestor Manager", "desk_access": 1},
@@ -21,6 +22,7 @@ DIAS_ALERTA_PADRAO = 30
 
 def after_install():
 	ensure_roles()
+	ensure_classificacao_import_permissions()
 	ensure_settings()
 	ensure_gestor_workspace()
 	ensure_indicadores_workspace()
@@ -29,6 +31,7 @@ def after_install():
 
 def after_migrate():
 	ensure_roles()
+	ensure_classificacao_import_permissions()
 	ensure_settings()
 	sincronizar_dias_alerta()
 	ensure_gestor_workspace()
@@ -110,11 +113,55 @@ INDICADORES_CARD = {
 INDICADORES_LANCAMENTO = "Classificacao de Risco Diaria"
 INDICADORES_RELATORIO = "Apuracao de Classificacao de Risco"
 INDICADORES_RELATORIO_ANTIGO = "Apuração de Classificação de Risco"
+ATENDIMENTOS_CARD_LABEL = "Atendimentos"
+ATENDIMENTOS_CARD = {
+	"id": "card_atendimentos",
+	"type": "card",
+	"data": {"card_name": ATENDIMENTOS_CARD_LABEL, "col": 4},
+}
+ATENDIMENTOS_LINKS = (
+	("Especialidades", "Especialidade"),
+	("Vigências de Especialidades", "Unidade Especialidade Vigencia"),
+	("Atendimentos Diários", "Atendimento Diario"),
+)
 OUR_LINK_TOS = {
 	"Documentacao da Unidade",
 	"Tipo de Documento da Unidade",
 	"Configuracoes Pulse Gestor",
 }
+
+
+def ensure_classificacao_import_permissions():
+	"""Permite ao papel que lança classificações usar a ferramenta Data Import."""
+	role = "Pulse Gestor Manager"
+	permissao_importacao = {
+		"parent": "Data Import",
+		"role": role,
+		"permlevel": 0,
+		"if_owner": 0,
+	}
+	if not frappe.db.exists("Custom DocPerm", permissao_importacao):
+		add_permission("Data Import", role)
+
+	changed = False
+	name = frappe.db.get_value("Custom DocPerm", permissao_importacao, "name")
+	for campo in ("read", "create", "write"):
+		if not frappe.db.get_value("Custom DocPerm", name, campo):
+			frappe.db.set_value("Custom DocPerm", name, campo, 1, update_modified=False)
+			changed = True
+
+	permissao_classificacao = frappe.db.get_value(
+		"Custom DocPerm",
+		{"parent": INDICADORES_LANCAMENTO, "role": role, "permlevel": 0, "if_owner": 0},
+		["name", "import"],
+	)
+	if permissao_classificacao and not permissao_classificacao[1]:
+		frappe.db.set_value(
+			"Custom DocPerm", permissao_classificacao[0], "import", 1, update_modified=False
+		)
+		changed = True
+	if changed:
+		frappe.clear_cache()
 
 
 def backfill_cores_classificacao_diaria():
@@ -223,7 +270,7 @@ def ensure_ascii_indicadores_report():
 
 
 def ensure_indicadores_workspace():
-	"""Inclui o quadro, o lançamento e o relatório em Workspaces já instalados."""
+	"""Inclui os quadros de triagem e atendimentos em Workspaces já instalados."""
 	if not frappe.db.exists("Workspace", "Indicadores"):
 		return
 
@@ -258,6 +305,15 @@ def ensure_indicadores_workspace():
 			len(content),
 		)
 		content.insert(insert_at, INDICADORES_CARD)
+		doc.content = json.dumps(content, ensure_ascii=False)
+		changed = True
+	if not any(
+		isinstance(block, dict)
+		and block.get("type") == "card"
+		and (block.get("data") or {}).get("card_name") == ATENDIMENTOS_CARD_LABEL
+		for block in content
+	):
+		content.append(ATENDIMENTOS_CARD)
 		doc.content = json.dumps(content, ensure_ascii=False)
 		changed = True
 
@@ -309,6 +365,22 @@ def ensure_indicadores_workspace():
 			doc.links.insert(card_index + 1, row)
 			_fix_link_counts(doc)
 			changed = True
+	card_index = next(
+		(i for i, link in enumerate(doc.links) if link.type == "Card Break" and link.label == ATENDIMENTOS_CARD_LABEL),
+		None,
+	)
+	if card_index is None:
+		doc.append("links", {"type": "Card Break", "label": ATENDIMENTOS_CARD_LABEL})
+		changed = True
+	for label, link_to in ATENDIMENTOS_LINKS:
+		if not any(link.type == "Link" and link.link_to == link_to for link in doc.links):
+			doc.append(
+				"links",
+				{"type": "Link", "label": label, "link_type": "DocType", "link_to": link_to, "onboard": 1},
+			)
+			changed = True
+	if changed:
+		_fix_link_counts(doc)
 	if changed:
 		doc.flags.ignore_permissions = True
 		doc.save(ignore_permissions=True)

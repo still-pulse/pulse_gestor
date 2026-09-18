@@ -13,6 +13,42 @@ from pulse_gestor.setup.install import (
 
 
 class TestClassificacaoDeRiscoDiaria(FrappeTestCase):
+	def test_manager_pode_importar_e_viewer_nao(self):
+		usuarios = {}
+		for role in ("Pulse Gestor Manager", "Pulse Gestor Viewer"):
+			usuario = frappe.get_doc(
+				{
+					"doctype": "User",
+					"email": f"teste-importacao-{uuid4().hex[:12]}@example.com",
+					"first_name": "Teste Importação",
+					"user_type": "System User",
+					"send_welcome_email": 0,
+					"roles": [{"role": role}],
+				}
+			).insert(ignore_permissions=True)
+			usuarios[role] = usuario.name
+
+		anterior = frappe.session.user
+		try:
+			frappe.set_user(usuarios["Pulse Gestor Manager"])
+			self.assertTrue(frappe.get_meta("Classificacao de Risco Diaria").allow_import)
+			self.assertTrue(frappe.has_permission("Classificacao de Risco Diaria", "import"))
+			self.assertTrue(frappe.has_permission("Data Import", "create"))
+			importacao = frappe.get_doc(
+				{
+					"doctype": "Data Import",
+					"reference_doctype": "Classificacao de Risco Diaria",
+					"import_type": "Insert New Records",
+				}
+			).insert()
+			self.assertTrue(importacao.name)
+
+			frappe.set_user(usuarios["Pulse Gestor Viewer"])
+			self.assertFalse(frappe.has_permission("Classificacao de Risco Diaria", "import"))
+			self.assertFalse(frappe.has_permission("Data Import", "create"))
+		finally:
+			frappe.set_user(anterior)
+
 	def test_resolucao_linhas_total_e_envio(self):
 		unidade = frappe.get_all("Company", fields=["name"], order_by="name asc", limit=1)[0].name
 		protocolo = frappe.get_doc(
