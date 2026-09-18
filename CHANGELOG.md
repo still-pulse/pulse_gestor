@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026-09-18] — v0.2.3
+
+### Adicionado
+- Quadro de links para os cadastros de triagem no Workspace **Indicadores**
+- Sincronização idempotente do quadro em Workspaces já instalados
+- Memória das convenções do app em `AGENTS.md`
+
 ## [2026-09-18] — v0.2.2
 
 ### Corrigido

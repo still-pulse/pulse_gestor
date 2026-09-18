@@ -22,6 +22,7 @@ def after_install():
 	ensure_roles()
 	ensure_settings()
 	ensure_gestor_workspace()
+	ensure_indicadores_workspace()
 	frappe.db.commit()
 
 
@@ -30,6 +31,7 @@ def after_migrate():
 	ensure_settings()
 	sincronizar_dias_alerta()
 	ensure_gestor_workspace()
+	ensure_indicadores_workspace()
 	frappe.db.commit()
 
 
@@ -95,11 +97,47 @@ GESTOR_MODULE_CARD = {
 }
 
 OUR_CARD_LABEL = "Documentação da Unidade"
+INDICADORES_CARD_LABEL = "Triagem"
+INDICADORES_CARD = {
+	"id": "card_triagem",
+	"type": "card",
+	"data": {"card_name": INDICADORES_CARD_LABEL, "col": 4},
+}
 OUR_LINK_TOS = {
 	"Documentacao da Unidade",
 	"Tipo de Documento da Unidade",
 	"Configuracoes Pulse Gestor",
 }
+
+
+def ensure_indicadores_workspace():
+	"""Inclui o quadro no conteúdo de Workspaces já instalados."""
+	if not frappe.db.exists("Workspace", "Indicadores"):
+		return
+
+	doc = frappe.get_doc("Workspace", "Indicadores")
+	try:
+		content = json.loads(doc.content or "[]")
+	except json.JSONDecodeError:
+		content = []
+
+	if any(
+		isinstance(block, dict)
+		and block.get("type") == "card"
+		and (block.get("data") or {}).get("card_name") == INDICADORES_CARD_LABEL
+		for block in content
+	):
+		return
+
+	insert_at = next(
+		(i + 1 for i, block in enumerate(content) if isinstance(block, dict) and block.get("type") == "header"),
+		len(content),
+	)
+	content.insert(insert_at, INDICADORES_CARD)
+	doc.content = json.dumps(content, ensure_ascii=False)
+	doc.flags.ignore_permissions = True
+	doc.save(ignore_permissions=True)
+	frappe.clear_cache()
 
 
 def ensure_gestor_workspace():
