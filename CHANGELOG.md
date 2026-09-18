@@ -1,5 +1,10 @@
 # Changelog
 
+## [2026-09-18] — v0.2.2
+
+### Corrigido
+- Listagem de **Unidade Protocolo Vigência** com ordenação compatível com o validador SQL do Frappe 15
+
 ## [2026-09-18] — v0.2.1
 
 ### Corrigido
