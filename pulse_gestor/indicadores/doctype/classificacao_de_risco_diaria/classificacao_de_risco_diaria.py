@@ -30,14 +30,21 @@ def obter_protocolo_e_niveis(unidade, data):
 	niveis = frappe.get_all(
 		"Protocolo Nivel",
 		filters={"parent": protocolo, "parenttype": "Protocolo de Triagem"},
-		fields=["nome_nivel", "cor", "ordem"],
+		fields=["nome_nivel", "cor", "ordem", "tempo_maximo_espera_min"],
 		order_by="ordem asc",
 	)
 	if not niveis:
 		frappe.throw(_("O protocolo vigente não possui níveis de triagem."))
 	return {
 		"protocolo": protocolo,
-		"niveis": [{"nivel": nivel.nome_nivel, "cor": nivel.cor} for nivel in niveis],
+		"niveis": [
+			{
+				"nivel": nivel.nome_nivel,
+				"cor": nivel.cor,
+				"tempo_maximo_espera_min": nivel.tempo_maximo_espera_min,
+			}
+			for nivel in niveis
+		],
 	}
 
 
@@ -86,6 +93,12 @@ class ClassificacaodeRiscoDiaria(Document):
 		)
 		for indice, linha in enumerate(linhas):
 			linha.cor = anterior.niveis_classificados[indice].cor if mesmo_contexto else niveis[indice]["cor"]
+			linha.tempo_maximo_espera_min = (
+				anterior.niveis_classificados[indice].tempo_maximo_espera_min
+				if mesmo_contexto and anterior.niveis_classificados[indice].tempo_snapshot_preenchido
+				else niveis[indice]["tempo_maximo_espera_min"]
+			)
+			linha.tempo_snapshot_preenchido = 1
 
 		total = 0
 		for linha in linhas:

@@ -8,6 +8,7 @@ from __future__ import annotations
 import json
 
 import frappe
+from frappe.model.rename_doc import rename_doc
 
 ROLES = (
 	{"role_name": "Pulse Gestor Manager", "desk_access": 1},
@@ -31,8 +32,10 @@ def after_migrate():
 	ensure_settings()
 	sincronizar_dias_alerta()
 	ensure_gestor_workspace()
+	ensure_ascii_indicadores_report()
 	ensure_indicadores_workspace()
 	backfill_cores_classificacao_diaria()
+	backfill_tempos_classificacao_diaria()
 	frappe.db.commit()
 
 
@@ -105,6 +108,8 @@ INDICADORES_CARD = {
 	"data": {"card_name": INDICADORES_CARD_LABEL, "col": 4},
 }
 INDICADORES_LANCAMENTO = "Classificacao de Risco Diaria"
+INDICADORES_RELATORIO = "Apuracao de Classificacao de Risco"
+INDICADORES_RELATORIO_ANTIGO = "Apuração de Classificação de Risco"
 OUR_LINK_TOS = {
 	"Documentacao da Unidade",
 	"Tipo de Documento da Unidade",
@@ -146,8 +151,79 @@ def backfill_cores_classificacao_diaria():
 			)
 
 
+def backfill_tempos_classificacao_diaria():
+	"""Preenche o alvo das linhas antigas com o valor disponível no protocolo."""
+	if not frappe.db.exists("DocType", "Classificacao Diaria Nivel"):
+		return
+	if not frappe.db.has_column("Classificacao Diaria Nivel", "tempo_snapshot_preenchido"):
+		return
+
+	linhas = frappe.db.sql(
+		"""
+		SELECT linha.name, linha.idx, linha.nivel, diario.protocolo
+		FROM `tabClassificacao Diaria Nivel` linha
+		JOIN `tabClassificacao de Risco Diaria` diario ON diario.name = linha.parent
+		WHERE linha.tempo_snapshot_preenchido = 0
+		""",
+		as_dict=True,
+	)
+	niveis_por_protocolo = {}
+	for linha in linhas:
+		if linha.protocolo not in niveis_por_protocolo:
+			niveis_por_protocolo[linha.protocolo] = frappe.get_all(
+				"Protocolo Nivel",
+				filters={"parent": linha.protocolo, "parenttype": "Protocolo de Triagem"},
+				fields=["nome_nivel", "tempo_maximo_espera_min"],
+				order_by="ordem asc",
+			)
+		niveis = niveis_por_protocolo[linha.protocolo]
+		indice = linha.idx - 1
+		nivel = niveis[indice] if 0 <= indice < len(niveis) else None
+		if not nivel or nivel.nome_nivel != linha.nivel:
+			correspondentes = [item for item in niveis if item.nome_nivel == linha.nivel]
+			nivel = correspondentes[0] if len(correspondentes) == 1 else None
+		if nivel:
+			frappe.db.set_value(
+				"Classificacao Diaria Nivel",
+				linha.name,
+				{
+					"tempo_maximo_espera_min": nivel.tempo_maximo_espera_min,
+					"tempo_snapshot_preenchido": 1,
+				},
+				update_modified=False,
+			)
+
+
+def ensure_ascii_indicadores_report():
+	"""Renomeia o registro legado; a collation do banco ignora acentos em comparações comuns."""
+	old_name = frappe.db.sql(
+		"SELECT name FROM `tabReport` WHERE BINARY name = %s",
+		INDICADORES_RELATORIO_ANTIGO,
+	)
+	if not old_name:
+		return
+	if frappe.db.get_value(
+		"Report",
+		INDICADORES_RELATORIO_ANTIGO,
+		["module", "ref_doctype", "is_standard"],
+	) != ("Indicadores", "Classificacao de Risco Diaria", "Yes"):
+		return
+
+	# A troca direta parece um nome já existente nessa collation; usar um nome intermediário.
+	temporario = "Pulse Gestor Report Rename Temporario"
+	rename_doc(
+		"Report", INDICADORES_RELATORIO_ANTIGO, temporario,
+		force=True, ignore_permissions=True, show_alert=False, rebuild_search=False,
+	)
+	rename_doc(
+		"Report", temporario, INDICADORES_RELATORIO,
+		force=True, ignore_permissions=True, show_alert=False, rebuild_search=False,
+	)
+	frappe.db.set_value("Report", INDICADORES_RELATORIO, "report_name", INDICADORES_RELATORIO)
+
+
 def ensure_indicadores_workspace():
-	"""Inclui o quadro e o lançamento em Workspaces já instalados."""
+	"""Inclui o quadro, o lançamento e o relatório em Workspaces já instalados."""
 	if not frappe.db.exists("Workspace", "Indicadores"):
 		return
 
@@ -161,6 +237,7 @@ def ensure_indicadores_workspace():
 	old_links = {
 		"Unidade Protocolo Vigência": "Unidade Protocolo Vigencia",
 		"Classificação de Risco Diária": "Classificacao de Risco Diaria",
+		INDICADORES_RELATORIO_ANTIGO: INDICADORES_RELATORIO,
 	}
 	for link in doc.links:
 		if link.link_to in old_links:
@@ -202,6 +279,30 @@ def ensure_indicadores_workspace():
 					"link_type": "DocType",
 					"link_to": INDICADORES_LANCAMENTO,
 					"onboard": 1,
+				},
+			)
+			doc.links.remove(row)
+			doc.links.insert(card_index + 1, row)
+			_fix_link_counts(doc)
+			changed = True
+	if not any(link.type == "Link" and link.link_to == INDICADORES_RELATORIO for link in doc.links):
+		card_index = next(
+			(
+				i
+				for i, link in enumerate(doc.links)
+				if link.type == "Card Break" and link.label == INDICADORES_CARD_LABEL
+			),
+			None,
+		)
+		if card_index is not None:
+			row = doc.append(
+				"links",
+				{
+					"type": "Link",
+					"label": INDICADORES_RELATORIO,
+					"link_type": "Report",
+					"link_to": INDICADORES_RELATORIO,
+					"is_query_report": 1,
 				},
 			)
 			doc.links.remove(row)

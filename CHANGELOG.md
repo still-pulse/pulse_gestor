@@ -1,5 +1,17 @@
 # Changelog
 
+## [2026-09-18] — v0.2.7
+
+### Adicionado
+- Relatório de apuração da classificação de risco por unidade e período, com escalas separadas por protocolo e tempo-alvo
+- Card com o total de pacientes classificados no período
+
+### Alterado
+- Tempo máximo de espera preservado nas linhas diárias; migração preenche os lançamentos anteriores com o valor disponível no protocolo
+
+### Corrigido
+- Identificador e rota do relatório em ASCII, com atualização do link no Workspace e migração do nome legado
+
 ## [2026-09-18] — v0.2.6
 
 ### Alterado

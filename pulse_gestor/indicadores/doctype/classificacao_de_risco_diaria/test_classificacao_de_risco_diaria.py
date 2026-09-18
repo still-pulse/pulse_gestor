@@ -6,7 +6,10 @@ from frappe.tests.utils import FrappeTestCase
 from pulse_gestor.indicadores.doctype.classificacao_de_risco_diaria.classificacao_de_risco_diaria import (
 	obter_protocolo_e_niveis,
 )
-from pulse_gestor.setup.install import backfill_cores_classificacao_diaria
+from pulse_gestor.setup.install import (
+	backfill_cores_classificacao_diaria,
+	backfill_tempos_classificacao_diaria,
+)
 
 
 class TestClassificacaoDeRiscoDiaria(FrappeTestCase):
@@ -46,7 +49,10 @@ class TestClassificacaoDeRiscoDiaria(FrappeTestCase):
 		self.assertEqual(resolvido["protocolo"], protocolo.name)
 		self.assertEqual(
 			resolvido["niveis"],
-			[{"nivel": "Vermelho", "cor": "#CB2929"}, {"nivel": "Amarelo", "cor": "#ECAD4B"}],
+			[
+				{"nivel": "Vermelho", "cor": "#CB2929", "tempo_maximo_espera_min": 0},
+				{"nivel": "Amarelo", "cor": "#ECAD4B", "tempo_maximo_espera_min": 60},
+			],
 		)
 		with self.assertRaises(frappe.ValidationError):
 			obter_protocolo_e_niveis(unidade, "2099-02-01")
@@ -57,6 +63,9 @@ class TestClassificacaoDeRiscoDiaria(FrappeTestCase):
 		self.assertEqual(lancamento.protocolo, protocolo.name)
 		self.assertEqual([linha.nivel for linha in lancamento.niveis_classificados], ["Vermelho", "Amarelo"])
 		self.assertEqual([linha.cor for linha in lancamento.niveis_classificados], ["#CB2929", "#ECAD4B"])
+		self.assertEqual(
+			[linha.tempo_maximo_espera_min for linha in lancamento.niveis_classificados], [0, 60]
+		)
 		self.assertEqual(lancamento.total_classificados, 0)
 		self.assertEqual(lancamento.status, "Rascunho")
 		self.assertTrue(lancamento.lancado_por)
@@ -87,6 +96,15 @@ class TestClassificacaoDeRiscoDiaria(FrappeTestCase):
 		backfill_cores_classificacao_diaria()
 		lancamento.reload()
 		self.assertEqual(lancamento.niveis_classificados[0].cor, "#CB2929")
+		frappe.db.set_value(
+			"Classificacao Diaria Nivel",
+			lancamento.niveis_classificados[1].name,
+			{"tempo_maximo_espera_min": 0, "tempo_snapshot_preenchido": 0},
+			update_modified=False,
+		)
+		backfill_tempos_classificacao_diaria()
+		lancamento.reload()
+		self.assertEqual(lancamento.niveis_classificados[1].tempo_maximo_espera_min, 60)
 
 		protocolo.niveis[0].cor = "#4463F0"
 		protocolo.save()

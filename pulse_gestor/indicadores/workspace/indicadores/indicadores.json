@@ -15,7 +15,7 @@
 		{
 			"type": "Card Break",
 			"label": "Triagem",
-			"link_count": 3,
+			"link_count": 4,
 			"hidden": 0,
 			"onboard": 0
 		},
@@ -45,6 +45,16 @@
 			"link_count": 0,
 			"hidden": 0,
 			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Apuração de Classificação de Risco",
+			"link_type": "Report",
+			"link_to": "Apuracao de Classificacao de Risco",
+			"is_query_report": 1,
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 0
 		}
 	],
 	"modified": "2026-09-18 12:00:00.000000",

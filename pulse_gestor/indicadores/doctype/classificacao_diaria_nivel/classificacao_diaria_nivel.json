@@ -7,6 +7,8 @@
 	"field_order": [
 		"nivel",
 		"cor",
+		"tempo_maximo_espera_min",
+		"tempo_snapshot_preenchido",
 		"qtd_pacientes_classificados"
 	],
 	"fields": [
@@ -23,6 +25,21 @@
 			"fieldname": "cor",
 			"fieldtype": "Color",
 			"label": "Cor do nível",
+			"hidden": 1,
+			"read_only": 1
+		},
+		{
+			"fieldname": "tempo_maximo_espera_min",
+			"fieldtype": "Int",
+			"label": "Tempo máximo de espera (min)",
+			"hidden": 1,
+			"read_only": 1
+		},
+		{
+			"fieldname": "tempo_snapshot_preenchido",
+			"fieldtype": "Check",
+			"label": "Tempo registrado",
+			"default": "0",
 			"hidden": 1,
 			"read_only": 1
 		},
