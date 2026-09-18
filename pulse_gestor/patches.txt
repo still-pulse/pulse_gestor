@@ -1,5 +1,7 @@
 [pre_model_sync]
 # Patches added in this section will be executed before doctypes are migrated
+pulse_gestor.patches.v0_2_6_rename_indicadores_doctypes
 
 [post_model_sync]
 # Patches added in this section will be executed after doctypes are migrated
+pulse_gestor.patches.v0_2_6_remove_triagem_fields

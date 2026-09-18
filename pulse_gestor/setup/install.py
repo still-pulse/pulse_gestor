@@ -32,6 +32,7 @@ def after_migrate():
 	sincronizar_dias_alerta()
 	ensure_gestor_workspace()
 	ensure_indicadores_workspace()
+	backfill_cores_classificacao_diaria()
 	frappe.db.commit()
 
 
@@ -103,6 +104,7 @@ INDICADORES_CARD = {
 	"type": "card",
 	"data": {"card_name": INDICADORES_CARD_LABEL, "col": 4},
 }
+INDICADORES_LANCAMENTO = "Classificacao de Risco Diaria"
 OUR_LINK_TOS = {
 	"Documentacao da Unidade",
 	"Tipo de Documento da Unidade",
@@ -110,8 +112,42 @@ OUR_LINK_TOS = {
 }
 
 
+def backfill_cores_classificacao_diaria():
+	"""Registra a cor atual do protocolo em linhas antigas que ainda não têm cor."""
+	if not frappe.db.exists("DocType", "Classificacao Diaria Nivel"):
+		return
+	if not frappe.db.has_column("Classificacao Diaria Nivel", "cor"):
+		return
+
+	linhas = frappe.db.sql(
+		"""
+		SELECT linha.name, linha.nivel, diario.protocolo
+		FROM `tabClassificacao Diaria Nivel` linha
+		JOIN `tabClassificacao de Risco Diaria` diario ON diario.name = linha.parent
+		WHERE linha.cor IS NULL OR linha.cor = ''
+		""",
+		as_dict=True,
+	)
+	cores = {}
+	for linha in linhas:
+		chave = (linha.protocolo, linha.nivel)
+		if chave not in cores:
+			nivel = frappe.get_all(
+				"Protocolo Nivel",
+				filters={"parent": linha.protocolo, "nome_nivel": linha.nivel},
+				fields=["cor"],
+				order_by="ordem asc",
+				limit_page_length=1,
+			)
+			cores[chave] = nivel[0].cor if nivel else None
+		if cores[chave]:
+			frappe.db.set_value(
+				"Classificacao Diaria Nivel", linha.name, "cor", cores[chave], update_modified=False
+			)
+
+
 def ensure_indicadores_workspace():
-	"""Inclui o quadro no conteúdo de Workspaces já instalados."""
+	"""Inclui o quadro e o lançamento em Workspaces já instalados."""
 	if not frappe.db.exists("Workspace", "Indicadores"):
 		return
 
@@ -121,23 +157,61 @@ def ensure_indicadores_workspace():
 	except json.JSONDecodeError:
 		content = []
 
-	if any(
+	changed = False
+	old_links = {
+		"Unidade Protocolo Vigência": "Unidade Protocolo Vigencia",
+		"Classificação de Risco Diária": "Classificacao de Risco Diaria",
+	}
+	for link in doc.links:
+		if link.link_to in old_links:
+			link.link_to = old_links[link.link_to]
+			changed = True
+	for shortcut in doc.shortcuts:
+		if shortcut.link_to in old_links:
+			shortcut.link_to = old_links[shortcut.link_to]
+			changed = True
+	if not any(
 		isinstance(block, dict)
 		and block.get("type") == "card"
 		and (block.get("data") or {}).get("card_name") == INDICADORES_CARD_LABEL
 		for block in content
 	):
-		return
+		insert_at = next(
+			(i + 1 for i, block in enumerate(content) if isinstance(block, dict) and block.get("type") == "header"),
+			len(content),
+		)
+		content.insert(insert_at, INDICADORES_CARD)
+		doc.content = json.dumps(content, ensure_ascii=False)
+		changed = True
 
-	insert_at = next(
-		(i + 1 for i, block in enumerate(content) if isinstance(block, dict) and block.get("type") == "header"),
-		len(content),
-	)
-	content.insert(insert_at, INDICADORES_CARD)
-	doc.content = json.dumps(content, ensure_ascii=False)
-	doc.flags.ignore_permissions = True
-	doc.save(ignore_permissions=True)
-	frappe.clear_cache()
+	if not any(link.type == "Link" and link.link_to == INDICADORES_LANCAMENTO for link in doc.links):
+		card_index = next(
+			(
+				i
+				for i, link in enumerate(doc.links)
+				if link.type == "Card Break" and link.label == INDICADORES_CARD_LABEL
+			),
+			None,
+		)
+		if card_index is not None:
+			row = doc.append(
+				"links",
+				{
+					"type": "Link",
+					"label": "Classificações de Risco Diárias",
+					"link_type": "DocType",
+					"link_to": INDICADORES_LANCAMENTO,
+					"onboard": 1,
+				},
+			)
+			doc.links.remove(row)
+			doc.links.insert(card_index + 1, row)
+			_fix_link_counts(doc)
+			changed = True
+	if changed:
+		doc.flags.ignore_permissions = True
+		doc.save(ignore_permissions=True)
+		frappe.clear_cache()
 
 
 def ensure_gestor_workspace():

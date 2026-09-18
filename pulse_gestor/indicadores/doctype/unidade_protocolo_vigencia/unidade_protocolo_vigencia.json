@@ -4,59 +4,62 @@
 	"doctype": "DocType",
 	"engine": "InnoDB",
 	"field_order": [
-		"nome_protocolo",
-		"ativo",
-		"descricao",
-		"niveis"
+		"unidade",
+		"protocolo",
+		"data_inicio_vigencia",
+		"data_fim_vigencia"
 	],
 	"fields": [
 		{
-			"fieldname": "nome_protocolo",
-			"fieldtype": "Data",
-			"label": "Nome do protocolo",
+			"fieldname": "unidade",
+			"fieldtype": "Link",
+			"label": "Unidade",
+			"options": "Company",
 			"reqd": 1,
-			"unique": 1,
 			"in_list_view": 1,
-			"in_standard_filter": 1
+			"in_standard_filter": 1,
+			"search_index": 1
 		},
 		{
-			"fieldname": "ativo",
-			"fieldtype": "Check",
-			"label": "Ativo",
-			"default": "1",
+			"fieldname": "protocolo",
+			"fieldtype": "Link",
+			"label": "Protocolo",
+			"options": "Protocolo de Triagem",
+			"reqd": 1,
 			"in_list_view": 1,
-			"in_standard_filter": 1
+			"in_standard_filter": 1,
+			"search_index": 1
 		},
 		{
-			"fieldname": "descricao",
-			"fieldtype": "Small Text",
-			"label": "Descrição / referência normativa"
+			"fieldname": "data_inicio_vigencia",
+			"fieldtype": "Date",
+			"label": "Início da vigência",
+			"reqd": 1,
+			"in_list_view": 1,
+			"in_standard_filter": 1,
+			"search_index": 1
 		},
 		{
-			"fieldname": "niveis",
-			"fieldtype": "Table",
-			"label": "Níveis",
-			"options": "Protocolo Nivel",
-			"reqd": 1
+			"fieldname": "data_fim_vigencia",
+			"fieldtype": "Date",
+			"label": "Fim da vigência",
+			"in_list_view": 1,
+			"in_standard_filter": 1,
+			"search_index": 1,
+			"description": "Deixe em branco para vigência sem data final."
 		}
 	],
-	"links": [
-		{
-			"link_doctype": "Unidade Protocolo Vigencia",
-			"link_fieldname": "protocolo"
-		}
-	],
+	"links": [],
 	"modified": "2026-09-18 12:00:00.000000",
 	"modified_by": "Administrator",
 	"module": "Indicadores",
-	"name": "Protocolo de Triagem",
+	"name": "Unidade Protocolo Vigencia",
 	"owner": "Administrator",
 	"sort_field": "modified",
 	"sort_order": "DESC",
 	"states": [],
-	"autoname": "field:nome_protocolo",
-	"naming_rule": "By fieldname",
-	"allow_rename": 1,
+	"autoname": "UPV-.YYYY.-.#####",
+	"naming_rule": "Expression",
 	"allow_import": 1,
 	"permissions": [
 		{
@@ -108,7 +111,7 @@
 			"role": "Pulse Gestor Viewer"
 		}
 	],
-	"title_field": "nome_protocolo",
-	"search_fields": "nome_protocolo",
+	"title_field": "unidade",
+	"search_fields": "unidade,protocolo",
 	"track_changes": 1
 }

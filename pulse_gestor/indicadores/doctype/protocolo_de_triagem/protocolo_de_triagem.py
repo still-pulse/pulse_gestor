@@ -24,5 +24,3 @@ class ProtocolodeTriagem(Document):
 			ordens.add(nivel.ordem)
 			if nivel.tempo_maximo_espera_min is None or nivel.tempo_maximo_espera_min < 0:
 				frappe.throw(_("O tempo máximo de espera não pode ser negativo."))
-			if nivel.meta_conformidade_pct is None or not 0 <= nivel.meta_conformidade_pct <= 100:
-				frappe.throw(_("A meta de conformidade deve estar entre 0 e 100%."))

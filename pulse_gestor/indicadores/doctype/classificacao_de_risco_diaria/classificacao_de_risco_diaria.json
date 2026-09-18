@@ -5,9 +5,13 @@
 	"engine": "InnoDB",
 	"field_order": [
 		"unidade",
+		"data",
 		"protocolo",
-		"data_inicio_vigencia",
-		"data_fim_vigencia"
+		"niveis_classificados",
+		"total_classificados",
+		"lancado_por",
+		"criado_em",
+		"status"
 	],
 	"fields": [
 		{
@@ -17,50 +21,77 @@
 			"options": "Company",
 			"reqd": 1,
 			"in_list_view": 1,
-			"in_standard_filter": 1,
-			"search_index": 1
+			"in_standard_filter": 1
+		},
+		{
+			"fieldname": "data",
+			"fieldtype": "Date",
+			"label": "Data",
+			"reqd": 1,
+			"in_list_view": 1,
+			"in_standard_filter": 1
 		},
 		{
 			"fieldname": "protocolo",
 			"fieldtype": "Link",
 			"label": "Protocolo",
 			"options": "Protocolo de Triagem",
-			"reqd": 1,
-			"in_list_view": 1,
-			"in_standard_filter": 1,
-			"search_index": 1
+			"read_only": 1,
+			"in_list_view": 1
 		},
 		{
-			"fieldname": "data_inicio_vigencia",
-			"fieldtype": "Date",
-			"label": "Início da vigência",
-			"reqd": 1,
-			"in_list_view": 1,
-			"in_standard_filter": 1,
-			"search_index": 1
+			"fieldname": "niveis_classificados",
+			"fieldtype": "Table",
+			"label": "Níveis classificados",
+			"options": "Classificacao Diaria Nivel",
+			"cannot_add_rows": 1,
+			"cannot_delete_rows": 1
 		},
 		{
-			"fieldname": "data_fim_vigencia",
-			"fieldtype": "Date",
-			"label": "Fim da vigência",
+			"fieldname": "total_classificados",
+			"fieldtype": "Int",
+			"label": "Total classificados",
+			"read_only": 1,
+			"default": "0",
+			"in_list_view": 1
+		},
+		{
+			"fieldname": "lancado_por",
+			"fieldtype": "Link",
+			"label": "Lançado por",
+			"options": "User",
+			"read_only": 1
+		},
+		{
+			"fieldname": "criado_em",
+			"fieldtype": "Datetime",
+			"label": "Criado em",
+			"read_only": 1
+		},
+		{
+			"fieldname": "status",
+			"fieldtype": "Select",
+			"label": "Status",
+			"options": "Rascunho\nEnviado",
+			"default": "Rascunho",
+			"read_only": 1,
 			"in_list_view": 1,
-			"in_standard_filter": 1,
-			"search_index": 1,
-			"description": "Deixe em branco para vigência sem data final."
+			"in_standard_filter": 1
 		}
 	],
 	"links": [],
 	"modified": "2026-09-18 12:00:00.000000",
 	"modified_by": "Administrator",
 	"module": "Indicadores",
-	"name": "Unidade Protocolo Vigência",
+	"name": "Classificacao de Risco Diaria",
 	"owner": "Administrator",
-	"sort_field": "modified",
+	"sort_field": "data",
 	"sort_order": "DESC",
 	"states": [],
-	"autoname": "UPV-.YYYY.-.#####",
+	"autoname": "CRD-.YYYY.-.#####",
 	"naming_rule": "Expression",
-	"allow_import": 1,
+	"is_submittable": 1,
+	"track_changes": 1,
 	"permissions": [
 		{
 			"create": 1,
@@ -72,6 +103,8 @@
 			"report": 1,
 			"share": 1,
 			"write": 1,
+			"submit": 1,
+			"cancel": 1,
 			"role": "System Manager",
 			"select": 1,
 			"import": 1
@@ -86,20 +119,21 @@
 			"report": 1,
 			"share": 1,
 			"write": 1,
+			"submit": 1,
+			"cancel": 1,
 			"role": "Administrator",
 			"select": 1,
 			"import": 1
 		},
 		{
 			"create": 1,
-			"delete": 1,
 			"email": 1,
 			"export": 1,
 			"print": 1,
 			"read": 1,
 			"report": 1,
-			"share": 1,
 			"write": 1,
+			"submit": 1,
 			"role": "Pulse Gestor Manager"
 		},
 		{
@@ -112,6 +146,5 @@
 		}
 	],
 	"title_field": "unidade",
-	"search_fields": "unidade,protocolo",
-	"track_changes": 1
+	"search_fields": "unidade,data,protocolo"
 }

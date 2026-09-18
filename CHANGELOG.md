@@ -1,5 +1,31 @@
 # Changelog
 
+## [2026-09-18] — v0.2.6
+
+### Alterado
+- Nomes dos DocTypes de indicadores sem acentos
+- Classificação diária registra apenas a quantidade classificada por nível
+- Níveis do protocolo mantêm cor e tempo máximo de espera
+
+## [2026-09-18] — v0.2.5
+
+### Alterado
+- Edição direta dos níveis no protocolo e das quantidades na classificação diária, sem abrir a linha sobreposta
+- Destaque das linhas pela cor do protocolo, com fundo suave e faixa lateral
+- Cor dos níveis preservada nos lançamentos diários e preenchida nos registros anteriores durante a migração
+- Alinhamento das linhas com o cabeçalho do grid ao ocultar a ação de expansão
+
+## [2026-09-18] — v0.2.4
+
+### Adicionado
+- Lançamento diário da classificação de risco, com protocolo e níveis preenchidos pela vigência da unidade
+- Total calculado, validação das quantidades e envio que bloqueia a edição
+- Link para o lançamento no quadro **Triagem** do Workspace **Indicadores**
+
+### Corrigido
+- Compatibilidade de leitura e gravação dos DocTypes de indicadores no Query Builder deste bench
+- Ordenação da consulta de sobreposição de vigências
+
 ## [2026-09-18] — v0.2.3
 
 ### Adicionado
@@ -10,7 +36,7 @@
 ## [2026-09-18] — v0.2.2
 
 ### Corrigido
-- Listagem de **Unidade Protocolo Vigência** com ordenação compatível com o validador SQL do Frappe 15
+- Listagem de vigências por unidade com ordenação compatível com o validador SQL do Frappe 15
 
 ## [2026-09-18] — v0.2.1
 
@@ -23,7 +49,7 @@
 
 ### Adicionado
 - Workspace **Indicadores** com protocolos de triagem e vigências por unidade
-- Níveis configuráveis com cor, tempo máximo de espera e meta de conformidade
+- Níveis configuráveis com cor e tempo máximo de espera
 - Validação de períodos sobrepostos para cada unidade (`Company`)
 
 ## [2026-08-17] — v0.1.4

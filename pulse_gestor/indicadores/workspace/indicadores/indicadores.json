@@ -15,7 +15,7 @@
 		{
 			"type": "Card Break",
 			"label": "Triagem",
-			"link_count": 2,
+			"link_count": 3,
 			"hidden": 0,
 			"onboard": 0
 		},
@@ -32,7 +32,16 @@
 			"type": "Link",
 			"label": "Vigências por Unidade",
 			"link_type": "DocType",
-			"link_to": "Unidade Protocolo Vigência",
+			"link_to": "Unidade Protocolo Vigencia",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Classificações de Risco Diárias",
+			"link_type": "DocType",
+			"link_to": "Classificacao de Risco Diaria",
 			"link_count": 0,
 			"hidden": 0,
 			"onboard": 1
@@ -74,7 +83,14 @@
 			"color": "Green",
 			"doc_view": "List",
 			"label": "Vigências por Unidade",
-			"link_to": "Unidade Protocolo Vigência",
+			"link_to": "Unidade Protocolo Vigencia",
+			"type": "DocType"
+		},
+		{
+			"color": "Orange",
+			"doc_view": "List",
+			"label": "Classificações de Risco Diárias",
+			"link_to": "Classificacao de Risco Diaria",
 			"type": "DocType"
 		}
 	],

@@ -1,6 +1,6 @@
-frappe.listview_settings["Unidade Protocolo Vigência"] = {
+frappe.listview_settings["Classificacao de Risco Diaria"] = {
 	onload(listview) {
-		// Frappe 15 rejects accented DocType names inside the ORDER BY clause.
+		// O validador SQL deste Frappe rejeita o nome acentuado da tabela em ORDER BY.
 		listview.sort_selector.get_sql_string = function () {
 			const fields = new Set([
 				"name",
@@ -8,11 +8,12 @@ frappe.listview_settings["Unidade Protocolo Vigência"] = {
 				"modified",
 				"idx",
 				"unidade",
+				"data",
 				"protocolo",
-				"data_inicio_vigencia",
-				"data_fim_vigencia",
+				"total_classificados",
+				"status",
 			]);
-			const field = fields.has(this.sort_by) ? this.sort_by : "modified";
+			const field = fields.has(this.sort_by) ? this.sort_by : "data";
 			const direction = this.sort_order === "asc" ? "asc" : "desc";
 			const order_by = `\`${field}\` ${direction}`;
 			return ["name", "creation", "modified"].includes(field)

@@ -1,0 +1,49 @@
+{
+	"actions": [],
+	"creation": "2026-09-18 12:00:00.000000",
+	"doctype": "DocType",
+	"editable_grid": 1,
+	"engine": "InnoDB",
+	"field_order": [
+		"nivel",
+		"cor",
+		"qtd_pacientes_classificados"
+	],
+	"fields": [
+		{
+			"fieldname": "nivel",
+			"fieldtype": "Data",
+			"label": "Nível",
+			"reqd": 1,
+			"read_only": 1,
+			"in_list_view": 1,
+			"columns": 3
+		},
+		{
+			"fieldname": "cor",
+			"fieldtype": "Color",
+			"label": "Cor do nível",
+			"hidden": 1,
+			"read_only": 1
+		},
+		{
+			"fieldname": "qtd_pacientes_classificados",
+			"fieldtype": "Int",
+			"label": "Pacientes classificados",
+			"default": "0",
+			"non_negative": 1,
+			"in_list_view": 1,
+			"columns": 2
+		}
+	],
+	"links": [],
+	"modified": "2026-09-18 12:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Indicadores",
+	"name": "Classificacao Diaria Nivel",
+	"owner": "Administrator",
+	"sort_field": "modified",
+	"sort_order": "DESC",
+	"states": [],
+	"istable": 1
+}

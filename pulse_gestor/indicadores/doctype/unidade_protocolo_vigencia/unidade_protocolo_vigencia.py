@@ -12,7 +12,7 @@ def periodos_se_sobrepoem(inicio_a, fim_a, inicio_b, fim_b):
 	return (fim_a is None or inicio_b <= fim_a) and (fim_b is None or inicio_a <= fim_b)
 
 
-class UnidadeProtocoloVigência(Document):
+class UnidadeProtocoloVigencia(Document):
 	def validate(self):
 		if not self.unidade or not self.protocolo or not self.data_inicio_vigencia:
 			frappe.throw(_("Informe unidade, protocolo e início da vigência."))
@@ -25,9 +25,10 @@ class UnidadeProtocoloVigência(Document):
 				frappe.throw(_("Selecione um protocolo de triagem ativo."))
 
 		for periodo in frappe.get_all(
-			"Unidade Protocolo Vigência",
+			"Unidade Protocolo Vigencia",
 			filters={"unidade": self.unidade, "name": ["!=", self.name or ""]},
 			fields=["name", "data_inicio_vigencia", "data_fim_vigencia"],
+			order_by="name asc",
 		):
 			if periodos_se_sobrepoem(
 				self.data_inicio_vigencia,
