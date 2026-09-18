@@ -47,7 +47,20 @@
 	"parent_page": "",
 	"public": 1,
 	"quick_lists": [],
-	"roles": [],
+	"roles": [
+		{
+			"role": "System Manager"
+		},
+		{
+			"role": "Administrator"
+		},
+		{
+			"role": "Pulse Gestor Manager"
+		},
+		{
+			"role": "Pulse Gestor Viewer"
+		}
+	],
 	"sequence_id": 31.0,
 	"shortcuts": [
 		{

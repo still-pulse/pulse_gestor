@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026-09-18] — v0.2.1
+
+### Corrigido
+- Visibilidade do Workspace **Indicadores** após instalação ou migração
+- Permissões completas de `System Manager` e `Administrator` nos cadastros de indicadores
+- Acesso explícito desses papéis ao Workspace **Indicadores**
+
 ## [2026-09-18] — v0.2.0
 
 ### Adicionado
