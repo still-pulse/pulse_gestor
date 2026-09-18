@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026-09-18] — v0.2.0
+
+### Adicionado
+- Workspace **Indicadores** com protocolos de triagem e vigências por unidade
+- Níveis configuráveis com cor, tempo máximo de espera e meta de conformidade
+- Validação de períodos sobrepostos para cada unidade (`Company`)
+
 ## [2026-08-17] — v0.1.4
 
 ### Corrigido

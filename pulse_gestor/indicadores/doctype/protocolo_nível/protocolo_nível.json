@@ -1,0 +1,65 @@
+{
+	"actions": [],
+	"creation": "2026-09-18 12:00:00.000000",
+	"doctype": "DocType",
+	"engine": "InnoDB",
+	"field_order": [
+		"ordem",
+		"nome_nivel",
+		"cor",
+		"tempo_maximo_espera_min",
+		"meta_conformidade_pct"
+	],
+	"fields": [
+		{
+			"fieldname": "ordem",
+			"fieldtype": "Int",
+			"label": "Ordem",
+			"reqd": 1,
+			"in_list_view": 1,
+			"columns": 1
+		},
+		{
+			"fieldname": "nome_nivel",
+			"fieldtype": "Data",
+			"label": "Nome do nível",
+			"reqd": 1,
+			"in_list_view": 1,
+			"columns": 2
+		},
+		{
+			"fieldname": "cor",
+			"fieldtype": "Color",
+			"label": "Cor",
+			"in_list_view": 1,
+			"columns": 1
+		},
+		{
+			"fieldname": "tempo_maximo_espera_min",
+			"fieldtype": "Int",
+			"label": "Tempo máximo de espera (min)",
+			"reqd": 1,
+			"non_negative": 1,
+			"in_list_view": 1,
+			"columns": 2
+		},
+		{
+			"fieldname": "meta_conformidade_pct",
+			"fieldtype": "Percent",
+			"label": "Meta de conformidade (%)",
+			"reqd": 1,
+			"in_list_view": 1,
+			"columns": 2
+		}
+	],
+	"links": [],
+	"modified": "2026-09-18 12:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Indicadores",
+	"name": "Protocolo Nível",
+	"owner": "Administrator",
+	"sort_field": "modified",
+	"sort_order": "DESC",
+	"states": [],
+	"istable": 1
+}

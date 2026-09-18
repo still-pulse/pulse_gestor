@@ -1,0 +1,69 @@
+{
+	"charts": [],
+	"content": "[{\"id\":\"header_indicadores\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Indicadores</span>\",\"col\":12}},{\"id\":\"shortcut_protocolos\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Protocolos de Triagem\",\"col\":4}},{\"id\":\"shortcut_vigencias\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Vigências por Unidade\",\"col\":4}}]",
+	"creation": "2026-09-18 12:00:00.000000",
+	"custom_blocks": [],
+	"docstatus": 0,
+	"doctype": "Workspace",
+	"for_user": "",
+	"hide_custom": 0,
+	"icon": "chart",
+	"idx": 0,
+	"is_hidden": 0,
+	"label": "Indicadores",
+	"links": [
+		{
+			"type": "Card Break",
+			"label": "Triagem",
+			"link_count": 2,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
+			"type": "Link",
+			"label": "Protocolos de Triagem",
+			"link_type": "DocType",
+			"link_to": "Protocolo de Triagem",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Vigências por Unidade",
+			"link_type": "DocType",
+			"link_to": "Unidade Protocolo Vigência",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		}
+	],
+	"modified": "2026-09-18 12:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Indicadores",
+	"name": "Indicadores",
+	"number_cards": [],
+	"owner": "Administrator",
+	"parent_page": "",
+	"public": 1,
+	"quick_lists": [],
+	"roles": [],
+	"sequence_id": 31.0,
+	"shortcuts": [
+		{
+			"color": "Blue",
+			"doc_view": "List",
+			"label": "Protocolos de Triagem",
+			"link_to": "Protocolo de Triagem",
+			"type": "DocType"
+		},
+		{
+			"color": "Green",
+			"doc_view": "List",
+			"label": "Vigências por Unidade",
+			"link_to": "Unidade Protocolo Vigência",
+			"type": "DocType"
+		}
+	],
+	"title": "Indicadores"
+}

@@ -1,12 +1,14 @@
 # Pulse Gestor
 
-App Frappe/ERPNext para **Documentação da Unidade**.
+App Frappe/ERPNext para **Documentação da Unidade** e **Indicadores**.
 
 Repositório: [still-pulse/pulse_gestor](https://github.com/still-pulse/pulse_gestor)
 
 ## O que faz
 
 Cadastro de documentos por unidade (`Company`), com tipo cadastrável, anexo PDF, vigência opcional e alerta de vencimento.
+
+O Workspace **Indicadores** permite cadastrar protocolos de triagem, seus níveis e metas, e associar cada unidade a um protocolo por período de vigência. A unidade corresponde ao cadastro `Company` já usado pelo app. Datas finais de vigência são inclusivas; uma data final vazia indica vigência por prazo indeterminado. Períodos da mesma unidade não podem se sobrepor.
 
 ## DocTypes
 
@@ -15,6 +17,9 @@ Cadastro de documentos por unidade (`Company`), com tipo cadastrável, anexo PDF
 | Tipo de Documento da Unidade | Cadastro dos tipos de PDF |
 | Documentacao da Unidade | Documento da unidade |
 | Configuracoes Pulse Gestor | Dias de alerta de vencimento |
+| Protocolo de Triagem | Escala e níveis de triagem |
+| Protocolo Nível | Níveis, cores, tempos e metas de cada escala (tabela filha) |
+| Unidade Protocolo Vigência | Protocolo aplicável a uma unidade em um período |
 
 ## Instalação
 

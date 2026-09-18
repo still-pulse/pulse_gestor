@@ -1,0 +1,98 @@
+{
+	"actions": [],
+	"creation": "2026-09-18 12:00:00.000000",
+	"doctype": "DocType",
+	"engine": "InnoDB",
+	"field_order": [
+		"nome_protocolo",
+		"ativo",
+		"descricao",
+		"niveis"
+	],
+	"fields": [
+		{
+			"fieldname": "nome_protocolo",
+			"fieldtype": "Data",
+			"label": "Nome do protocolo",
+			"reqd": 1,
+			"unique": 1,
+			"in_list_view": 1,
+			"in_standard_filter": 1
+		},
+		{
+			"fieldname": "ativo",
+			"fieldtype": "Check",
+			"label": "Ativo",
+			"default": "1",
+			"in_list_view": 1,
+			"in_standard_filter": 1
+		},
+		{
+			"fieldname": "descricao",
+			"fieldtype": "Small Text",
+			"label": "Descrição / referência normativa"
+		},
+		{
+			"fieldname": "niveis",
+			"fieldtype": "Table",
+			"label": "Níveis",
+			"options": "Protocolo Nível",
+			"reqd": 1
+		}
+	],
+	"links": [
+		{
+			"link_doctype": "Unidade Protocolo Vigência",
+			"link_fieldname": "protocolo"
+		}
+	],
+	"modified": "2026-09-18 12:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Indicadores",
+	"name": "Protocolo de Triagem",
+	"owner": "Administrator",
+	"sort_field": "modified",
+	"sort_order": "DESC",
+	"states": [],
+	"autoname": "field:nome_protocolo",
+	"naming_rule": "By fieldname",
+	"allow_rename": 1,
+	"allow_import": 1,
+	"permissions": [
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"share": 1,
+			"write": 1,
+			"role": "System Manager"
+		},
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"share": 1,
+			"write": 1,
+			"role": "Pulse Gestor Manager"
+		},
+		{
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "Pulse Gestor Viewer"
+		}
+	],
+	"title_field": "nome_protocolo",
+	"search_fields": "nome_protocolo",
+	"track_changes": 1
+}
