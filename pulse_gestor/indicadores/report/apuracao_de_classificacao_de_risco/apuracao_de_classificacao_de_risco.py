@@ -63,7 +63,46 @@ def execute(filters=None):
 			"indicator": "Blue",
 		}
 	]
-	return get_columns(), data, None, None, summary
+	return get_columns(), data, None, get_chart(data, params), summary
+
+
+def get_chart(data, params):
+	por_nivel = {}
+	for row in data:
+		por_nivel[row.nivel] = por_nivel.get(row.nivel, 0) + row.qtd_pacientes_classificados
+
+	if not any(por_nivel.values()):
+		return None
+
+	# A cor pode mudar entre protocolos ou lançamentos; vale a mais recente registrada no período.
+	cores = {}
+	for row in frappe.db.sql(
+		"""
+		SELECT linha.nivel, linha.cor
+		FROM `tabClassificacao de Risco Diaria` diario
+		JOIN `tabClassificacao Diaria Nivel` linha
+			ON linha.parent = diario.name AND linha.parenttype = 'Classificacao de Risco Diaria'
+		WHERE diario.unidade = %(unidade)s
+			AND diario.data BETWEEN %(data_inicio)s AND %(data_fim)s
+			AND diario.docstatus = 1
+			AND linha.cor IS NOT NULL AND linha.cor != ''
+		ORDER BY diario.data DESC, diario.name DESC
+		""",
+		params,
+		as_dict=True,
+	):
+		cores.setdefault(row.nivel, row.cor)
+
+	cores_padrao = ["#7cd6fd", "#5e64ff", "#ff5858", "#ffa00a", "#36b37e"]
+	return {
+		"data": {
+			"labels": list(por_nivel),
+			"datasets": [{"name": _("Classificados"), "values": list(por_nivel.values())}],
+		},
+		"type": "donut",
+		"colors": [cores.get(nivel) or cores_padrao[i % len(cores_padrao)] for i, nivel in enumerate(por_nivel)],
+		"height": 300,
+	}
 
 
 def get_columns():
