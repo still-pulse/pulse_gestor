@@ -16,7 +16,7 @@ O Workspace **Indicadores** permite cadastrar protocolos de triagem, seus nívei
 |---------|--------|
 | Tipo de Documento da Unidade | Cadastro dos tipos de PDF |
 | Documentacao da Unidade | Documento da unidade |
-| Configuracoes Pulse Gestor | Dias de alerta de vencimento |
+| Configuracoes Documentos da Unidade | Dias de alerta, modelo de e-mail e destinatários por empresa |
 | Protocolo de Triagem | Escala e níveis de triagem |
 | Protocolo Nivel | Níveis, cores e tempos de cada escala (tabela filha) |
 | Unidade Protocolo Vigencia | Protocolo aplicável a uma unidade em um período |

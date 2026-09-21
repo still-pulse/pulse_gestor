@@ -59,7 +59,7 @@ GESTOR_SHORTCUTS = (
 	},
 	{
 		"label": "Configurações Documentação",
-		"link_to": "Configuracoes Pulse Gestor",
+		"link_to": "Configuracoes Documentos da Unidade",
 		"type": "DocType",
 		"color": "Grey",
 	},
@@ -91,7 +91,7 @@ GESTOR_LINKS = (
 		"type": "Link",
 		"label": "Configurações",
 		"link_type": "DocType",
-		"link_to": "Configuracoes Pulse Gestor",
+		"link_to": "Configuracoes Documentos da Unidade",
 		"is_query_report": 0,
 		"onboard": 0,
 	},
@@ -127,8 +127,9 @@ ATENDIMENTOS_LINKS = (
 OUR_LINK_TOS = {
 	"Documentacao da Unidade",
 	"Tipo de Documento da Unidade",
-	"Configuracoes Pulse Gestor",
+	"Configuracoes Documentos da Unidade",
 }
+OLD_SETTINGS_DOCTYPE = "Configuracoes Pulse Gestor"
 
 
 def ensure_classificacao_import_permissions():
@@ -270,17 +271,20 @@ def ensure_ascii_indicadores_report():
 
 
 def ensure_indicadores_workspace():
-	"""Inclui os quadros de triagem e atendimentos em Workspaces já instalados."""
+	"""Atualiza a navegação de Indicadores em Workspaces já instalados."""
 	if not frappe.db.exists("Workspace", "Indicadores"):
 		return
 
 	doc = frappe.get_doc("Workspace", "Indicadores")
+	changed = False
+	if frappe.db.exists("Workspace", "Gestor") and doc.parent_page != "Gestor":
+		doc.parent_page = "Gestor"
+		changed = True
 	try:
 		content = json.loads(doc.content or "[]")
 	except json.JSONDecodeError:
 		content = []
 
-	changed = False
 	old_links = {
 		"Unidade Protocolo Vigência": "Unidade Protocolo Vigencia",
 		"Classificação de Risco Diária": "Classificacao de Risco Diaria",
@@ -435,7 +439,7 @@ def ensure_gestor_workspace():
 def _is_our_link(lk) -> bool:
 	if lk.type == "Card Break" and lk.label == OUR_CARD_LABEL:
 		return True
-	return lk.type == "Link" and (lk.link_to or "") in OUR_LINK_TOS
+	return lk.type == "Link" and (lk.link_to or "") in OUR_LINK_TOS | {OLD_SETTINGS_DOCTYPE}
 
 
 def _link_as_dict(lk) -> dict:
@@ -478,7 +482,9 @@ def _reorganizar_links_modulos(doc) -> bool:
 			if lk.type == "Card Break":
 				last_break = lk
 				break
-		if last_break and last_break.label == OUR_CARD_LABEL:
+		if last_break and last_break.label == OUR_CARD_LABEL and not any(
+			lk.link_to == OLD_SETTINGS_DOCTYPE for lk in links if lk.type == "Link"
+		):
 			ours = [lk for lk in links if _is_our_link(lk)]
 			if len(ours) == 1 + len(OUR_LINK_TOS):
 				ja_certo = True
@@ -547,13 +553,13 @@ def ensure_roles():
 
 
 def ensure_settings():
-	if not frappe.db.exists("DocType", "Configuracoes Pulse Gestor"):
+	if not frappe.db.exists("DocType", "Configuracoes Documentos da Unidade"):
 		return
-	atual = frappe.db.get_single_value("Configuracoes Pulse Gestor", "dias_alerta_vencimento")
+	atual = frappe.db.get_single_value("Configuracoes Documentos da Unidade", "dias_alerta_vencimento")
 	if atual is not None:
 		return
 	frappe.db.set_single_value(
-		"Configuracoes Pulse Gestor",
+		"Configuracoes Documentos da Unidade",
 		"dias_alerta_vencimento",
 		DIAS_ALERTA_PADRAO,
 	)
@@ -563,10 +569,10 @@ def sincronizar_dias_alerta():
 	"""Espelha o prazo das configurações na Notification nativa."""
 	if not frappe.db.exists("Notification", NOTIFICACAO_A_VENCER):
 		return
-	if not frappe.db.exists("DocType", "Configuracoes Pulse Gestor"):
+	if not frappe.db.exists("DocType", "Configuracoes Documentos da Unidade"):
 		return
 
-	dias = frappe.db.get_single_value("Configuracoes Pulse Gestor", "dias_alerta_vencimento")
+	dias = frappe.db.get_single_value("Configuracoes Documentos da Unidade", "dias_alerta_vencimento")
 	if dias is None:
 		dias = DIAS_ALERTA_PADRAO
 	dias = int(dias)
