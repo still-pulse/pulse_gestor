@@ -1,0 +1,37 @@
+{
+	"actions": [],
+	"creation": "2026-09-21 12:00:00.000000",
+	"doctype": "DocType",
+	"editable_grid": 1,
+	"engine": "InnoDB",
+	"field_order": ["company", "emails"],
+	"fields": [
+		{
+			"fieldname": "company",
+			"fieldtype": "Link",
+			"in_list_view": 1,
+			"label": "Empresa",
+			"options": "Company",
+			"reqd": 1
+		},
+		{
+			"description": "Separe múltiplos e-mails por vírgula ou quebra de linha.",
+			"fieldname": "emails",
+			"fieldtype": "Small Text",
+			"in_list_view": 1,
+			"label": "E-mails",
+			"reqd": 1
+		}
+	],
+	"istable": 1,
+	"links": [],
+	"modified": "2026-09-21 12:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Documentacao da Unidade",
+	"name": "Destinatarios Vencimento Documento",
+	"owner": "Administrator",
+	"permissions": [],
+	"sort_field": "modified",
+	"sort_order": "DESC",
+	"states": []
+}

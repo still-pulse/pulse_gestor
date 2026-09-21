@@ -22,6 +22,7 @@ add_to_apps_screen = [
 scheduler_events = {
 	"daily": [
 		"pulse_gestor.tasks.atualizar_status_documentos",
+		"pulse_gestor.tasks.enviar_avisos_vencimento_documentos",
 	]
 }
 

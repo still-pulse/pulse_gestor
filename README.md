@@ -14,7 +14,7 @@ Cadastro de documentos por unidade (`Company`), com tipo cadastrável, anexo PDF
 |---------|--------|
 | Tipo de Documento da Unidade | Cadastro dos tipos de PDF |
 | Documentacao da Unidade | Documento da unidade |
-| Configuracoes Pulse Gestor | Dias de alerta de vencimento |
+| Configuracoes Documentos da Unidade | Dias de alerta, modelo de e-mail e destinatários por empresa |
 
 ## Instalação
 
