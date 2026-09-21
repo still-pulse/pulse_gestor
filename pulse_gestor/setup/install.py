@@ -270,17 +270,20 @@ def ensure_ascii_indicadores_report():
 
 
 def ensure_indicadores_workspace():
-	"""Inclui os quadros de triagem e atendimentos em Workspaces já instalados."""
+	"""Atualiza a navegação de Indicadores em Workspaces já instalados."""
 	if not frappe.db.exists("Workspace", "Indicadores"):
 		return
 
 	doc = frappe.get_doc("Workspace", "Indicadores")
+	changed = False
+	if frappe.db.exists("Workspace", "Gestor") and doc.parent_page != "Gestor":
+		doc.parent_page = "Gestor"
+		changed = True
 	try:
 		content = json.loads(doc.content or "[]")
 	except json.JSONDecodeError:
 		content = []
 
-	changed = False
 	old_links = {
 		"Unidade Protocolo Vigência": "Unidade Protocolo Vigencia",
 		"Classificação de Risco Diária": "Classificacao de Risco Diaria",
