@@ -6,7 +6,9 @@
 	"engine": "InnoDB",
 	"field_order": [
 		"sec_alerta",
-		"dias_alerta_vencimento"
+		"dias_alerta_vencimento",
+		"modelo_email_vencimento",
+		"destinatarios_vencimento"
 	],
 	"fields": [
 		{
@@ -22,6 +24,20 @@
 			"label": "Dias de alerta antes do vencimento",
 			"non_negative": 1,
 			"reqd": 1
+		},
+		{
+			"description": "O modelo pode usar campos do documento, como {{ doc.name }}, {{ doc.company }} e {{ doc.data_fim }}.",
+			"fieldname": "modelo_email_vencimento",
+			"fieldtype": "Link",
+			"label": "Modelo de e-mail para aviso de vencimento",
+			"options": "Email Template"
+		},
+		{
+			"description": "Selecione uma empresa e informe os e-mails que receberão o aviso de vencimento dos seus documentos.",
+			"fieldname": "destinatarios_vencimento",
+			"fieldtype": "Table",
+			"label": "Destinatários por empresa",
+			"options": "Destinatarios Vencimento Documento"
 		}
 	],
 	"issingle": 1,
@@ -29,7 +45,7 @@
 	"modified": "2026-08-17 12:00:00.000000",
 	"modified_by": "Administrator",
 	"module": "Documentacao da Unidade",
-	"name": "Configuracoes Pulse Gestor",
+	"name": "Configuracoes Documentos da Unidade",
 	"owner": "Administrator",
 	"permissions": [
 		{
