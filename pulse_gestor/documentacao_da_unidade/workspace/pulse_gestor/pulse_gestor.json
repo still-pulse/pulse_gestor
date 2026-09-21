@@ -53,9 +53,9 @@
 		{
 			"hidden": 0,
 			"is_query_report": 0,
-			"label": "Configuracoes Pulse Gestor",
+			"label": "Configurações Documentos da Unidade",
 			"link_count": 0,
-			"link_to": "Configuracoes Pulse Gestor",
+			"link_to": "Configuracoes Documentos da Unidade",
 			"link_type": "DocType",
 			"onboard": 0,
 			"type": "Link"
@@ -104,7 +104,7 @@
 			"color": "Grey",
 			"doc_view": "",
 			"label": "Configurações",
-			"link_to": "Configuracoes Pulse Gestor",
+			"link_to": "Configuracoes Documentos da Unidade",
 			"type": "DocType"
 		}
 	],
