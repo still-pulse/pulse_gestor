@@ -59,7 +59,7 @@
 		{
 			"type": "Card Break",
 			"label": "Atendimentos",
-			"link_count": 3,
+			"link_count": 4,
 			"hidden": 0,
 			"onboard": 0
 		},
@@ -83,15 +83,25 @@
 		},
 		{
 			"type": "Link",
-			"label": "Atendimentos Diários",
+			"label": "Atendimentos Médicos Diários",
 			"link_type": "DocType",
-			"link_to": "Atendimento Diario",
+			"link_to": "Atendimento Medico Diario",
 			"link_count": 0,
 			"hidden": 0,
 			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Atendimentos Médicos por Período",
+			"link_type": "Report",
+			"link_to": "Atendimentos Medicos por Periodo",
+			"is_query_report": 1,
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 0
 		}
 	],
-	"modified": "2026-09-18 12:00:00.000000",
+	"modified": "2026-09-28 12:00:00.000000",
 	"modified_by": "Administrator",
 	"module": "Indicadores",
 	"name": "Indicadores",
@@ -154,8 +164,8 @@
 		{
 			"color": "Orange",
 			"doc_view": "List",
-			"label": "Atendimentos Diários",
-			"link_to": "Atendimento Diario",
+			"label": "Atendimentos Médicos Diários",
+			"link_to": "Atendimento Medico Diario",
 			"type": "DocType"
 		}
 	],

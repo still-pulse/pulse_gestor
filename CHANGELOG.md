@@ -1,5 +1,17 @@
 # Changelog
 
+## [2026-09-28] — v0.9.0
+
+### Adicionado
+- Relatório "Atendimentos Medicos por Periodo": atendimentos enviados por especialidade em um período, com percentual, dias com atendimento, média por dia lançado, resumo e gráfico; link no card Atendimentos do workspace Indicadores
+
+### Alterado
+- "Atendimento Diario" (e sua tabela filha) renomeado para "Atendimento Medico Diario" por patch pré-sincronização
+- A vigência de especialidades passa a mapear as especialidades atendidas pela unidade em um período, como a vigência do protocolo de triagem: o campo Setor saiu da vigência e do atendimento, e a busca e a unicidade do lançamento usam apenas unidade e data
+
+### Removido
+- Definição de metas por especialidade (quantidade e periodicidade) na vigência e no atendimento; as colunas antigas, inclusive Setor, são removidas do banco no migrate
+
 ## [2026-09-28] — v0.8.1
 
 ### Removido

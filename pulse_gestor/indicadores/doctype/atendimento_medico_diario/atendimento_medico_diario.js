@@ -1,9 +1,6 @@
-frappe.ui.form.on("Atendimento Diario", {
-	setup(frm) {
-		frm.set_query("setor", () => ({ filters: { company: frm.doc.unidade || "" } }));
-	},
+frappe.ui.form.on("Atendimento Medico Diario", {
 	onload(frm) {
-		if (frm.is_new() && frm.doc.unidade && frm.doc.setor && frm.doc.data) {
+		if (frm.is_new() && frm.doc.unidade && frm.doc.data) {
 			carregar_especialidades(frm);
 		}
 	},
@@ -15,10 +12,6 @@ frappe.ui.form.on("Atendimento Diario", {
 		grade.refresh();
 	},
 	unidade(frm) {
-		frm.set_value("setor", null);
-		carregar_especialidades(frm);
-	},
-	setor(frm) {
 		carregar_especialidades(frm);
 	},
 	data(frm) {
@@ -26,7 +19,7 @@ frappe.ui.form.on("Atendimento Diario", {
 	},
 });
 
-frappe.ui.form.on("Atendimento Diario Especialidade", {
+frappe.ui.form.on("Atendimento Medico Diario Especialidade", {
 	quantidade(frm) {
 		atualizar_total(frm);
 	},
@@ -42,18 +35,18 @@ function atualizar_total(frm) {
 
 async function carregar_especialidades(frm) {
 	if (!frm.is_new() && frm.doc.docstatus !== 0) return;
-	const { unidade, setor, data } = frm.doc;
+	const { unidade, data } = frm.doc;
 	const requisicao = (frm._atendimento_requisicao || 0) + 1;
 	frm._atendimento_requisicao = requisicao;
 	frm.set_value("vigencia", null);
 	frm.clear_table("especialidades");
 	frm.refresh_field("especialidades");
 	atualizar_total(frm);
-	if (!unidade || !setor || !data) return;
+	if (!unidade || !data) return;
 	try {
 		const resposta = await frappe.call({
-			method: "pulse_gestor.indicadores.doctype.atendimento_diario.atendimento_diario.buscar_vigencia_e_especialidades",
-			args: { unidade, setor, data },
+			method: "pulse_gestor.indicadores.doctype.atendimento_medico_diario.atendimento_medico_diario.buscar_vigencia_e_especialidades",
+			args: { unidade, data },
 		});
 		if (requisicao !== frm._atendimento_requisicao) return;
 		frm.set_value("vigencia", resposta.message.vigencia);

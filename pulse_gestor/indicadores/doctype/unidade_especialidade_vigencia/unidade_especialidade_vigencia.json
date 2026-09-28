@@ -5,7 +5,6 @@
 	"engine": "InnoDB",
 	"field_order": [
 		"unidade",
-		"setor",
 		"data_inicio_vigencia",
 		"data_fim_vigencia",
 		"especialidades"
@@ -16,16 +15,6 @@
 			"fieldtype": "Link",
 			"label": "Unidade",
 			"options": "Company",
-			"reqd": 1,
-			"in_list_view": 1,
-			"in_standard_filter": 1,
-			"search_index": 1
-		},
-		{
-			"fieldname": "setor",
-			"fieldtype": "Link",
-			"label": "Setor",
-			"options": "Department",
 			"reqd": 1,
 			"in_list_view": 1,
 			"in_standard_filter": 1,
@@ -58,7 +47,7 @@
 		}
 	],
 	"links": [],
-	"modified": "2026-09-18 12:00:00.000000",
+	"modified": "2026-09-28 12:00:00.000000",
 	"modified_by": "Administrator",
 	"module": "Indicadores",
 	"name": "Unidade Especialidade Vigencia",
@@ -68,8 +57,8 @@
 	"states": [],
 	"autoname": "UEV-.YYYY.-.#####",
 	"naming_rule": "Expression",
-	"title_field": "setor",
-	"search_fields": "unidade,setor",
+	"title_field": "unidade",
+	"search_fields": "unidade",
 	"track_changes": 1,
 	"permissions": [
 		{

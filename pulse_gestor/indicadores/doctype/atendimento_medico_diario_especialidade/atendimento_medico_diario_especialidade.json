@@ -5,8 +5,6 @@
 	"engine": "InnoDB",
 	"field_order": [
 		"especialidade",
-		"meta_quantidade",
-		"periodicidade_meta",
 		"quantidade"
 	],
 	"fields": [
@@ -18,24 +16,7 @@
 			"reqd": 1,
 			"read_only": 1,
 			"in_list_view": 1,
-			"columns": 3
-		},
-		{
-			"fieldname": "meta_quantidade",
-			"fieldtype": "Int",
-			"label": "Meta quantidade",
-			"read_only": 1,
-			"in_list_view": 1,
-			"columns": 2
-		},
-		{
-			"fieldname": "periodicidade_meta",
-			"fieldtype": "Select",
-			"label": "Periodicidade da meta",
-			"options": "Mensal\nAnual",
-			"read_only": 1,
-			"in_list_view": 1,
-			"columns": 2
+			"columns": 4
 		},
 		{
 			"fieldname": "quantidade",
@@ -44,14 +25,14 @@
 			"default": "0",
 			"non_negative": 1,
 			"in_list_view": 1,
-			"columns": 2
+			"columns": 4
 		}
 	],
 	"links": [],
-	"modified": "2026-09-18 12:00:00.000000",
+	"modified": "2026-09-28 12:00:00.000000",
 	"modified_by": "Administrator",
 	"module": "Indicadores",
-	"name": "Atendimento Diario Especialidade",
+	"name": "Atendimento Medico Diario Especialidade",
 	"owner": "Administrator",
 	"sort_field": "modified",
 	"sort_order": "DESC",

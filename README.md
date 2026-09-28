@@ -23,16 +23,22 @@ O Workspace **Indicadores** permite cadastrar protocolos de triagem, seus nívei
 | Classificacao de Risco Diaria | Quantidades classificadas por nível na unidade e data |
 | Classificacao Diaria Nivel | Quantidades por nível (tabela filha) |
 | Especialidade | Cadastro reutilizável de especialidades |
-| Unidade Especialidade Vigencia | Especialidades e metas de um setor (`Department`) em uma unidade (`Company`) por período |
-| Vigencia Especialidade | Especialidade, meta e periodicidade (tabela filha) |
-| Atendimento Diario | Quantidades atendidas por especialidade, setor e data |
-| Atendimento Diario Especialidade | Meta registrada e quantidade do dia (tabela filha) |
+| Unidade Especialidade Vigencia | Especialidades atendidas por uma unidade (`Company`) em um período |
+| Vigencia Especialidade | Especialidade da vigência (tabela filha) |
+| Atendimento Medico Diario | Quantidades atendidas por especialidade na unidade e data |
+| Atendimento Medico Diario Especialidade | Especialidade e quantidade do dia (tabela filha) |
 
-## Atendimentos diários
+## Atendimentos médicos diários
 
-Cadastre cada especialidade uma vez. Em **Unidade Especialidade Vigencia**, escolha a unidade, um setor pertencente a essa unidade e as especialidades com meta mensal ou anual. A data final é inclusiva; deixe-a vazia para vigência sem prazo final. Não é permitido sobrepor vigências do mesmo par unidade e setor.
+O fluxo segue a classificação de risco: cadastre as especialidades, defina quais a unidade atende e lance os atendimentos do dia.
 
-Ao criar um **Atendimento Diario**, informe unidade, setor e data. O app carrega as especialidades da vigência correspondente e suas metas; preencha apenas **Quantidade** em cada linha. O total é calculado automaticamente. Cada unidade, setor e data admite um lançamento não cancelado. Use **Enviar** para concluir o lançamento; os dados da meta ficam registrados no lançamento, mesmo se a vigência for editada depois.
+1. **Especialidade**: cadastre cada especialidade uma vez.
+2. **Unidade Especialidade Vigencia**: escolha a unidade, o período e as especialidades atendidas nele. A data final é inclusiva; deixe-a vazia para vigência sem prazo final. Períodos da mesma unidade não podem se sobrepor.
+3. **Atendimento Medico Diario**: informe unidade e data. O app carrega as especialidades da vigência da unidade nessa data; preencha apenas **Quantidade** em cada linha. O total é calculado automaticamente. Cada unidade e data admite um lançamento não cancelado. Use **Enviar** para concluir o lançamento.
+
+O relatório **Atendimentos Medicos por Periodo** (Script Report) totaliza, por especialidade, os atendimentos enviados da unidade entre duas datas, com percentual do total, dias com atendimento, média por dia lançado e gráfico. Rascunhos não entram. O filtro opcional de especialidade restringe a apuração.
+
+Não há definição de metas por especialidade por enquanto.
 
 ## Importação em massa da classificação de risco
 

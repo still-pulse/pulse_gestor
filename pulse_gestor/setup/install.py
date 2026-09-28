@@ -125,8 +125,9 @@ ATENDIMENTOS_CARD = {
 ATENDIMENTOS_LINKS = (
 	("Especialidades", "Especialidade"),
 	("Vigências de Especialidades", "Unidade Especialidade Vigencia"),
-	("Atendimentos Diários", "Atendimento Diario"),
+	("Atendimentos Médicos Diários", "Atendimento Medico Diario"),
 )
+ATENDIMENTOS_RELATORIO = ("Atendimentos Médicos por Período", "Atendimentos Medicos por Periodo")
 COMISSOES_CARD_LABEL = "Comissões"
 COMISSOES_CARD = {
 	"id": "card_comissoes",
@@ -413,15 +414,20 @@ def ensure_indicadores_workspace():
 		"Unidade Protocolo Vigência": "Unidade Protocolo Vigencia",
 		"Classificação de Risco Diária": "Classificacao de Risco Diaria",
 		INDICADORES_RELATORIO_ANTIGO: INDICADORES_RELATORIO,
+		"Atendimento Diario": "Atendimento Medico Diario",
 	}
 	for link in doc.links:
 		if link.link_to in old_links:
 			link.link_to = old_links[link.link_to]
 			changed = True
+			if link.link_to == "Atendimento Medico Diario":
+				link.label = "Atendimentos Médicos Diários"
 	for shortcut in doc.shortcuts:
 		if shortcut.link_to in old_links:
 			shortcut.link_to = old_links[shortcut.link_to]
 			changed = True
+			if shortcut.link_to == "Atendimento Medico Diario":
+				shortcut.label = "Atendimentos Médicos Diários"
 	if not any(
 		isinstance(block, dict)
 		and block.get("type") == "card"
@@ -507,9 +513,20 @@ def ensure_indicadores_workspace():
 				{"type": "Link", "label": label, "link_type": "DocType", "link_to": link_to, "onboard": 1},
 			)
 			changed = True
+	if not any(link.type == "Link" and link.link_to == ATENDIMENTOS_RELATORIO[1] for link in doc.links):
+		doc.append(
+			"links",
+			{
+				"type": "Link",
+				"label": ATENDIMENTOS_RELATORIO[0],
+				"link_type": "Report",
+				"link_to": ATENDIMENTOS_RELATORIO[1],
+				"is_query_report": 1,
+			},
+		)
+		changed = True
 	if changed:
 		_fix_link_counts(doc)
-	if changed:
 		doc.flags.ignore_permissions = True
 		doc.save(ignore_permissions=True)
 		frappe.clear_cache()

@@ -5,7 +5,6 @@
 	"engine": "InnoDB",
 	"field_order": [
 		"unidade",
-		"setor",
 		"data",
 		"vigencia",
 		"especialidades",
@@ -20,15 +19,6 @@
 			"fieldtype": "Link",
 			"label": "Unidade",
 			"options": "Company",
-			"reqd": 1,
-			"in_list_view": 1,
-			"in_standard_filter": 1
-		},
-		{
-			"fieldname": "setor",
-			"fieldtype": "Link",
-			"label": "Setor",
-			"options": "Department",
 			"reqd": 1,
 			"in_list_view": 1,
 			"in_standard_filter": 1
@@ -52,7 +42,7 @@
 			"fieldname": "especialidades",
 			"fieldtype": "Table",
 			"label": "Especialidades",
-			"options": "Atendimento Diario Especialidade",
+			"options": "Atendimento Medico Diario Especialidade",
 			"cannot_add_rows": 1,
 			"cannot_delete_rows": 1
 		},
@@ -89,18 +79,18 @@
 		}
 	],
 	"links": [],
-	"modified": "2026-09-18 12:00:00.000000",
+	"modified": "2026-09-28 12:00:00.000000",
 	"modified_by": "Administrator",
 	"module": "Indicadores",
-	"name": "Atendimento Diario",
+	"name": "Atendimento Medico Diario",
 	"owner": "Administrator",
 	"sort_field": "data",
 	"sort_order": "DESC",
 	"states": [],
 	"autoname": "ATD-.YYYY.-.#####",
 	"naming_rule": "Expression",
-	"title_field": "setor",
-	"search_fields": "unidade,setor,data",
+	"title_field": "unidade",
+	"search_fields": "unidade,data",
 	"is_submittable": 1,
 	"track_changes": 1,
 	"permissions": [

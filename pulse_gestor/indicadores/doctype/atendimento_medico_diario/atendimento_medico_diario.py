@@ -3,34 +3,30 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import cint, flt, getdate, now_datetime
 
-from pulse_gestor.indicadores.doctype.unidade_especialidade_vigencia.unidade_especialidade_vigencia import (
-	validar_setor_unidade,
-)
 
-
-def obter_vigencia_e_especialidades(unidade, setor, data):
-	if not unidade or not setor or not data:
+def obter_vigencia_e_especialidades(unidade, data):
+	"""Resolve a vigência da unidade na data, inclusive no primeiro e no último dia."""
+	if not unidade or not data:
 		return None
-	validar_setor_unidade(unidade, setor)
 	vigencias = frappe.db.sql(
 		"""
 		SELECT name FROM `tabUnidade Especialidade Vigencia`
-		WHERE unidade = %s AND setor = %s AND data_inicio_vigencia <= %s
+		WHERE unidade = %s AND data_inicio_vigencia <= %s
 			AND (data_fim_vigencia IS NULL OR data_fim_vigencia >= %s)
 		LIMIT 2
 		""",
-		(unidade, setor, data, data),
+		(unidade, data, data),
 		as_dict=True,
 	)
 	if not vigencias:
-		frappe.throw(_("Não há especialidades vigentes para esta unidade e setor na data informada."))
+		frappe.throw(_("Não há especialidades vigentes para esta unidade na data informada."))
 	if len(vigencias) > 1:
-		frappe.throw(_("Há mais de uma vigência para esta unidade e setor na data informada."))
+		frappe.throw(_("Há mais de uma vigência para esta unidade na data informada."))
 	vigencia = vigencias[0].name
 	linhas = frappe.get_all(
 		"Vigencia Especialidade",
 		filters={"parent": vigencia, "parenttype": "Unidade Especialidade Vigencia"},
-		fields=["especialidade", "meta_quantidade", "periodicidade_meta"],
+		fields=["especialidade"],
 		order_by="idx asc",
 	)
 	if not linhas:
@@ -39,27 +35,26 @@ def obter_vigencia_e_especialidades(unidade, setor, data):
 
 
 @frappe.whitelist()
-def buscar_vigencia_e_especialidades(unidade, setor, data):
-	if not frappe.has_permission("Atendimento Diario", "create"):
-		frappe.throw(_("Sem permissão para criar atendimentos diários."), frappe.PermissionError)
-	return obter_vigencia_e_especialidades(unidade, setor, data)
+def buscar_vigencia_e_especialidades(unidade, data):
+	if not frappe.has_permission("Atendimento Medico Diario", "create"):
+		frappe.throw(_("Sem permissão para criar atendimentos médicos diários."), frappe.PermissionError)
+	return obter_vigencia_e_especialidades(unidade, data)
 
 
-class AtendimentoDiario(Document):
+class AtendimentoMedicoDiario(Document):
 	def before_insert(self):
 		self.lancado_por = frappe.session.user
 		self.criado_em = now_datetime()
 
 	def validate(self):
-		validar_setor_unidade(self.unidade, self.setor)
-		if not self.data:
-			frappe.throw(_("Informe a data do atendimento."))
+		if not self.unidade or not self.data:
+			frappe.throw(_("Informe a unidade e a data do atendimento."))
 		anterior = self.get_doc_before_save() if not self.is_new() else None
 		if anterior:
 			self.lancado_por = anterior.lancado_por
 			self.criado_em = anterior.criado_em
 		self._validar_lancamento_unico()
-		resolvido = obter_vigencia_e_especialidades(self.unidade, self.setor, self.data)
+		resolvido = obter_vigencia_e_especialidades(self.unidade, self.data)
 		self.vigencia = resolvido["vigencia"]
 		especialidades = resolvido["especialidades"]
 		if not self.especialidades and self.is_new():
@@ -67,19 +62,9 @@ class AtendimentoDiario(Document):
 				self.append("especialidades", item)
 		linhas = self.especialidades or []
 		if [linha.especialidade for linha in linhas] != [item["especialidade"] for item in especialidades]:
-			frappe.throw(_("As especialidades devem corresponder, na mesma ordem, à vigência da unidade, setor e data."))
-		mesmo_contexto = (
-			anterior
-			and anterior.unidade == self.unidade
-			and anterior.setor == self.setor
-			and getdate(anterior.data) == getdate(self.data)
-			and anterior.vigencia == self.vigencia
-		)
+			frappe.throw(_("As especialidades devem corresponder, na mesma ordem, à vigência da unidade na data."))
 		total = 0
-		for indice, linha in enumerate(linhas):
-			origem = anterior.especialidades[indice] if mesmo_contexto else None
-			linha.meta_quantidade = origem.meta_quantidade if origem else especialidades[indice]["meta_quantidade"]
-			linha.periodicidade_meta = origem.periodicidade_meta if origem else especialidades[indice]["periodicidade_meta"]
+		for linha in linhas:
 			quantidade = linha.quantidade or 0
 			if flt(quantidade) != cint(quantidade) or cint(quantidade) < 0:
 				frappe.throw(_("A quantidade da especialidade {0} deve ser um inteiro não negativo.").format(linha.especialidade))
@@ -92,14 +77,13 @@ class AtendimentoDiario(Document):
 
 	def _validar_lancamento_unico(self):
 		outro = frappe.db.exists(
-			"Atendimento Diario",
+			"Atendimento Medico Diario",
 			{
 				"unidade": self.unidade,
-				"setor": self.setor,
 				"data": getdate(self.data),
 				"docstatus": ["<", 2],
 				"name": ["!=", self.name or ""],
 			},
 		)
 		if outro:
-			frappe.throw(_("Já existe um atendimento para esta unidade, setor e data ({0}).").format(outro))
+			frappe.throw(_("Já existe um atendimento médico para esta unidade e data ({0}).").format(outro))
