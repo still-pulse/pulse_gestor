@@ -1,5 +1,15 @@
 # Changelog
 
+## [2026-09-28] — v0.7.0
+
+### Adicionado
+- Campo "Local da reunião" na Reuniao de Comissao
+
+### Alterado
+- "Data da reunião" passa a "Data e hora da reunião" (Datetime); reuniões já cadastradas ficam com 00:00
+- Convocação e ata imprimem horário e local (o horário é omitido quando 00:00)
+- Relatório "Atividades de Comissão" mostra data e hora e o local, e o filtro de período considera o dia inteiro da data final
+
 ## [2026-09-28] — v0.6.0
 
 ### Adicionado

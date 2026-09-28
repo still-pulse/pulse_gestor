@@ -11,6 +11,7 @@
 		"column_break_datas",
 		"data_convocacao",
 		"data_reuniao",
+		"local_reuniao",
 		"section_break_pauta",
 		"pauta",
 		"section_break_participantes",
@@ -66,11 +67,16 @@
 		},
 		{
 			"fieldname": "data_reuniao",
-			"fieldtype": "Date",
-			"label": "Data da reunião",
+			"fieldtype": "Datetime",
+			"label": "Data e hora da reunião",
 			"reqd": 1,
 			"in_list_view": 1,
 			"in_standard_filter": 1
+		},
+		{
+			"fieldname": "local_reuniao",
+			"fieldtype": "Data",
+			"label": "Local da reunião"
 		},
 		{
 			"fieldname": "section_break_pauta",
@@ -111,7 +117,7 @@
 		}
 	],
 	"links": [],
-	"modified": "2026-09-28 00:00:00.000000",
+	"modified": "2026-09-28 22:00:00.000000",
 	"modified_by": "Administrator",
 	"module": "Comissoes",
 	"name": "Reuniao de Comissao",

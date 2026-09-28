@@ -5,6 +5,7 @@ from frappe.utils import cint, formatdate, getdate
 CAMPOS_DA_REUNIAO = (
 	"reuniao",
 	"data_reuniao",
+	"local_reuniao",
 	"data_convocacao",
 	"empresa",
 	"categoria",
@@ -24,7 +25,7 @@ def execute(filters=None):
 
 	incluir_pauta = cint(filters.incluir_pauta)
 	params = {"data_inicio": filters.data_inicio, "data_fim": filters.data_fim}
-	condicoes = ["reuniao.data_reuniao BETWEEN %(data_inicio)s AND %(data_fim)s"]
+	condicoes = ["DATE(reuniao.data_reuniao) BETWEEN %(data_inicio)s AND %(data_fim)s"]
 	for campo in ("empresa", "tipo_comissao"):
 		if filters.get(campo):
 			condicoes.append(f"reuniao.{campo} = %({campo})s")
@@ -43,7 +44,7 @@ def execute(filters=None):
 
 	data = frappe.db.sql(
 		f"""
-		SELECT reuniao.name AS reuniao, reuniao.data_reuniao, reuniao.data_convocacao,
+		SELECT reuniao.name AS reuniao, reuniao.data_reuniao, reuniao.local_reuniao, reuniao.data_convocacao,
 			reuniao.empresa, categoria.nome_categoria AS categoria,
 			tipo.nome_tipo AS comissao, mandato.data_inicio_mandato,
 			mandato.status_mandato,
@@ -90,7 +91,8 @@ def execute(filters=None):
 def get_columns(incluir_pauta):
 	columns = [
 		{"label": _("Reunião"), "fieldname": "reuniao", "fieldtype": "Link", "options": "Reuniao de Comissao", "width": 130},
-		{"label": _("Data da reunião"), "fieldname": "data_reuniao", "fieldtype": "Date", "width": 110},
+		{"label": _("Data e hora da reunião"), "fieldname": "data_reuniao", "fieldtype": "Datetime", "width": 150},
+		{"label": _("Local"), "fieldname": "local_reuniao", "fieldtype": "Data", "width": 160},
 		{"label": _("Data da convocação"), "fieldname": "data_convocacao", "fieldtype": "Date", "width": 120},
 		{"label": _("Empresa"), "fieldname": "empresa", "fieldtype": "Link", "options": "Company", "width": 260},
 		{"label": _("Categoria"), "fieldname": "categoria", "fieldtype": "Data", "width": 150},
