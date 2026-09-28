@@ -5,11 +5,7 @@ frappe.ui.form.on("Atendimento Medico Diario", {
 		}
 	},
 	refresh(frm) {
-		const grade = frm.fields_dict.especialidades.grid;
-		grade.df.in_place_edit = 1;
-		grade.df.cannot_add_rows = 1;
-		grade.df.cannot_delete_rows = 1;
-		grade.refresh();
+		configurar_grade(frm);
 	},
 	unidade(frm) {
 		carregar_especialidades(frm);
@@ -57,4 +53,30 @@ async function carregar_especialidades(frm) {
 	} catch (erro) {
 		// A chamada mostra a mensagem do servidor e o formulário permanece sem especialidades.
 	}
+}
+
+function configurar_grade(frm) {
+	const grade = frm.fields_dict.especialidades.grid;
+	grade.df.in_place_edit = 1;
+	grade.df.cannot_add_rows = 1;
+	grade.df.cannot_delete_rows = 1;
+	$(frm.wrapper)
+		.off("grid-row-render.pulse-atendimento")
+		.on("grid-row-render.pulse-atendimento", (_evento, linha) => {
+			if (linha.grid !== grade) return;
+			manter_espaco_acao(linha);
+			linha.open_form_button = null;
+			linha.row.off("click");
+			linha.row_index?.off("click");
+		});
+	grade.refresh();
+}
+
+// O cabeçalho reserva uma célula final para a ação da linha; mantê-la vazia preserva o alinhamento.
+function manter_espaco_acao(linha) {
+	let celula = linha.row.children(".pulse-grid-action-spacer");
+	if (!celula.length) {
+		celula = linha.open_form_button?.parent() || $('<div class="col"></div>').appendTo(linha.row);
+	}
+	celula.addClass("pulse-grid-action-spacer").off("click keydown").empty().attr("aria-hidden", "true");
 }

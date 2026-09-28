@@ -1,5 +1,10 @@
 # Changelog
 
+## [2026-09-28] — v0.9.1
+
+### Corrigido
+- Grade de especialidades do Atendimento Medico Diario desalinhada em relação ao cabeçalho: a célula final de ação da linha agora é mantida vazia, como nas demais grades de Indicadores
+
 ## [2026-09-28] — v0.9.0
 
 ### Adicionado
