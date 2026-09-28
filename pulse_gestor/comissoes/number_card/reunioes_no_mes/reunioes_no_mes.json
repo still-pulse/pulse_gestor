@@ -1,0 +1,20 @@
+{
+	"color": "#1565c0",
+	"creation": "2026-09-28 00:00:00.000000",
+	"docstatus": 0,
+	"doctype": "Number Card",
+	"document_type": "Reuniao de Comissao",
+	"filters_json": "[[\"Reuniao de Comissao\", \"data_reuniao\", \"Timespan\", \"this month\"]]",
+	"function": "Count",
+	"idx": 0,
+	"is_public": 1,
+	"is_standard": 1,
+	"label": "Reunioes no Mes",
+	"modified": "2026-09-28 21:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Comissoes",
+	"name": "Reunioes no Mes",
+	"owner": "Administrator",
+	"show_percentage_stats": 0,
+	"type": "Document Type"
+}

@@ -1,0 +1,81 @@
+{
+	"actions": [],
+	"creation": "2026-09-18 12:00:00.000000",
+	"doctype": "DocType",
+	"engine": "InnoDB",
+	"field_order": [
+		"nome_especialidade"
+	],
+	"fields": [
+		{
+			"fieldname": "nome_especialidade",
+			"fieldtype": "Data",
+			"label": "Nome da especialidade",
+			"reqd": 1,
+			"unique": 1,
+			"in_list_view": 1,
+			"in_standard_filter": 1,
+			"search_index": 1
+		}
+	],
+	"links": [],
+	"modified": "2026-09-18 12:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Indicadores",
+	"name": "Especialidade",
+	"owner": "Administrator",
+	"sort_field": "modified",
+	"sort_order": "DESC",
+	"states": [],
+	"autoname": "field:nome_especialidade",
+	"naming_rule": "By fieldname",
+	"title_field": "nome_especialidade",
+	"search_fields": "nome_especialidade",
+	"track_changes": 1,
+	"permissions": [
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"share": 1,
+			"write": 1,
+			"select": 1,
+			"role": "System Manager"
+		},
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"share": 1,
+			"write": 1,
+			"select": 1,
+			"role": "Administrator"
+		},
+		{
+			"create": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"write": 1,
+			"role": "Pulse Gestor Manager"
+		},
+		{
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "Pulse Gestor Viewer"
+		}
+	]
+}

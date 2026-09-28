@@ -1,0 +1,180 @@
+{
+	"charts": [],
+	"content": "[{\"id\":\"header_indicadores\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Indicadores</span>\",\"col\":12}},{\"id\":\"card_triagem\",\"type\":\"card\",\"data\":{\"card_name\":\"Triagem\",\"col\":4}},{\"id\":\"card_atendimentos\",\"type\":\"card\",\"data\":{\"card_name\":\"Atendimentos\",\"col\":4}},{\"id\":\"card_relatorios_indicadores\",\"type\":\"card\",\"data\":{\"card_name\":\"Relatórios\",\"col\":4}}]",
+	"creation": "2026-09-18 12:00:00.000000",
+	"custom_blocks": [],
+	"docstatus": 0,
+	"doctype": "Workspace",
+	"for_user": "",
+	"hide_custom": 0,
+	"icon": "chart",
+	"idx": 0,
+	"is_hidden": 0,
+	"label": "Indicadores",
+	"links": [
+		{
+			"type": "Card Break",
+			"label": "Triagem",
+			"link_count": 3,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
+			"type": "Link",
+			"label": "Protocolos de Triagem",
+			"link_type": "DocType",
+			"link_to": "Protocolo de Triagem",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Vigências por Unidade",
+			"link_type": "DocType",
+			"link_to": "Unidade Protocolo Vigencia",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Classificações de Risco Diárias",
+			"link_type": "DocType",
+			"link_to": "Classificacao de Risco Diaria",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Card Break",
+			"label": "Atendimentos",
+			"link_count": 3,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
+			"type": "Link",
+			"label": "Especialidades",
+			"link_type": "DocType",
+			"link_to": "Especialidade",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Vigências de Especialidades",
+			"link_type": "DocType",
+			"link_to": "Unidade Especialidade Vigencia",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Atendimentos Médicos Diários",
+			"link_type": "DocType",
+			"link_to": "Atendimento Medico Diario",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Card Break",
+			"label": "Relatórios",
+			"link_count": 2,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
+			"type": "Link",
+			"label": "Apuração de Classificação de Risco",
+			"link_type": "Report",
+			"link_to": "Apuracao de Classificacao de Risco",
+			"is_query_report": 1,
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
+			"type": "Link",
+			"label": "Relatório de Atendimentos por Período",
+			"link_type": "Report",
+			"link_to": "Relatorio de Atendimentos por Periodo",
+			"is_query_report": 1,
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 0
+		}
+	],
+	"modified": "2026-09-28 18:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Indicadores",
+	"name": "Indicadores",
+	"number_cards": [],
+	"owner": "Administrator",
+	"parent_page": "Gestor",
+	"public": 1,
+	"quick_lists": [],
+	"roles": [
+		{
+			"role": "System Manager"
+		},
+		{
+			"role": "Administrator"
+		},
+		{
+			"role": "Pulse Gestor Manager"
+		},
+		{
+			"role": "Pulse Gestor Viewer"
+		}
+	],
+	"sequence_id": 31.0,
+	"shortcuts": [
+		{
+			"color": "Blue",
+			"doc_view": "List",
+			"label": "Protocolos de Triagem",
+			"link_to": "Protocolo de Triagem",
+			"type": "DocType"
+		},
+		{
+			"color": "Green",
+			"doc_view": "List",
+			"label": "Vigências por Unidade",
+			"link_to": "Unidade Protocolo Vigencia",
+			"type": "DocType"
+		},
+		{
+			"color": "Orange",
+			"doc_view": "List",
+			"label": "Classificações de Risco Diárias",
+			"link_to": "Classificacao de Risco Diaria",
+			"type": "DocType"
+		},
+		{
+			"color": "Blue",
+			"doc_view": "List",
+			"label": "Especialidades",
+			"link_to": "Especialidade",
+			"type": "DocType"
+		},
+		{
+			"color": "Green",
+			"doc_view": "List",
+			"label": "Vigências de Especialidades",
+			"link_to": "Unidade Especialidade Vigencia",
+			"type": "DocType"
+		},
+		{
+			"color": "Orange",
+			"doc_view": "List",
+			"label": "Atendimentos Médicos Diários",
+			"link_to": "Atendimento Medico Diario",
+			"type": "DocType"
+		}
+	],
+	"title": "Indicadores"
+}

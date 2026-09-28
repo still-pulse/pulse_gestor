@@ -1,0 +1,147 @@
+{
+	"actions": [],
+	"creation": "2026-09-18 12:00:00.000000",
+	"doctype": "DocType",
+	"engine": "InnoDB",
+	"field_order": [
+		"unidade",
+		"data",
+		"vigencia",
+		"especialidades",
+		"total_dia",
+		"status",
+		"lancado_por",
+		"criado_em"
+	],
+	"fields": [
+		{
+			"fieldname": "unidade",
+			"fieldtype": "Link",
+			"label": "Unidade",
+			"options": "Company",
+			"reqd": 1,
+			"in_list_view": 1,
+			"in_standard_filter": 1
+		},
+		{
+			"fieldname": "data",
+			"fieldtype": "Date",
+			"label": "Data",
+			"reqd": 1,
+			"in_list_view": 1,
+			"in_standard_filter": 1
+		},
+		{
+			"fieldname": "vigencia",
+			"fieldtype": "Link",
+			"label": "Vigência",
+			"options": "Unidade Especialidade Vigencia",
+			"read_only": 1
+		},
+		{
+			"fieldname": "especialidades",
+			"fieldtype": "Table",
+			"label": "Especialidades",
+			"options": "Atendimento Medico Diario Especialidade",
+			"cannot_add_rows": 1,
+			"cannot_delete_rows": 1
+		},
+		{
+			"fieldname": "total_dia",
+			"fieldtype": "Int",
+			"label": "Total do dia",
+			"read_only": 1,
+			"default": "0",
+			"in_list_view": 1
+		},
+		{
+			"fieldname": "status",
+			"fieldtype": "Select",
+			"label": "Status",
+			"options": "Rascunho\nEnviado",
+			"default": "Rascunho",
+			"read_only": 1,
+			"in_list_view": 1,
+			"in_standard_filter": 1
+		},
+		{
+			"fieldname": "lancado_por",
+			"fieldtype": "Link",
+			"label": "Lançado por",
+			"options": "User",
+			"read_only": 1
+		},
+		{
+			"fieldname": "criado_em",
+			"fieldtype": "Datetime",
+			"label": "Criado em",
+			"read_only": 1
+		}
+	],
+	"links": [],
+	"modified": "2026-09-28 12:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Indicadores",
+	"name": "Atendimento Medico Diario",
+	"owner": "Administrator",
+	"sort_field": "data",
+	"sort_order": "DESC",
+	"states": [],
+	"autoname": "ATD-.YYYY.-.#####",
+	"naming_rule": "Expression",
+	"title_field": "unidade",
+	"search_fields": "unidade,data",
+	"is_submittable": 1,
+	"track_changes": 1,
+	"permissions": [
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"share": 1,
+			"write": 1,
+			"select": 1,
+			"submit": 1,
+			"cancel": 1,
+			"role": "System Manager"
+		},
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"share": 1,
+			"write": 1,
+			"select": 1,
+			"submit": 1,
+			"cancel": 1,
+			"role": "Administrator"
+		},
+		{
+			"create": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"write": 1,
+			"submit": 1,
+			"role": "Pulse Gestor Manager"
+		},
+		{
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "Pulse Gestor Viewer"
+		}
+	]
+}

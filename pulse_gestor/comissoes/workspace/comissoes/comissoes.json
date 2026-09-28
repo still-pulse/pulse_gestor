@@ -1,0 +1,154 @@
+{
+	"charts": [],
+	"content": "[{\"id\":\"header_comissoes\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Comissões</span>\",\"col\":12}},{\"id\":\"card_comissoes\",\"type\":\"card\",\"data\":{\"card_name\":\"Comissões\",\"col\":4}},{\"id\":\"card_configuracoes_comissoes\",\"type\":\"card\",\"data\":{\"card_name\":\"Configurações\",\"col\":4}},{\"id\":\"card_relatorios_comissoes\",\"type\":\"card\",\"data\":{\"card_name\":\"Relatórios\",\"col\":4}}]",
+	"creation": "2026-09-28 00:00:00.000000",
+	"custom_blocks": [],
+	"docstatus": 0,
+	"doctype": "Workspace",
+	"for_user": "",
+	"hide_custom": 0,
+	"icon": "users",
+	"idx": 0,
+	"is_hidden": 0,
+	"label": "Comissoes",
+	"links": [
+		{
+			"type": "Card Break",
+			"label": "Comissões",
+			"link_count": 3,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
+			"type": "Link",
+			"label": "Mandatos de Comissão",
+			"link_type": "DocType",
+			"link_to": "Mandato de Comissao",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Membros de Comissão",
+			"link_type": "DocType",
+			"link_to": "Membros de Comissao",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Reuniões de Comissão",
+			"link_type": "DocType",
+			"link_to": "Reuniao de Comissao",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Card Break",
+			"label": "Configurações",
+			"link_count": 2,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
+			"type": "Link",
+			"label": "Categorias de Comissão",
+			"link_type": "DocType",
+			"link_to": "Categoria de Comissao",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Tipos de Comissão",
+			"link_type": "DocType",
+			"link_to": "Tipo de Comissao",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Card Break",
+			"label": "Relatórios",
+			"link_count": 1,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
+			"type": "Link",
+			"label": "Atividades de Comissão",
+			"link_type": "Report",
+			"link_to": "Atividades de Comissao",
+			"is_query_report": 1,
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		}
+	],
+	"modified": "2026-09-28 20:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Comissoes",
+	"name": "Comissoes",
+	"number_cards": [],
+	"owner": "Administrator",
+	"parent_page": "Gestor",
+	"public": 1,
+	"quick_lists": [],
+	"roles": [
+		{
+			"role": "System Manager"
+		},
+		{
+			"role": "Administrator"
+		},
+		{
+			"role": "Pulse Gestor Manager"
+		},
+		{
+			"role": "Pulse Gestor Viewer"
+		}
+	],
+	"sequence_id": 32.0,
+	"shortcuts": [
+		{
+			"color": "Blue",
+			"doc_view": "List",
+			"label": "Mandatos de Comissão",
+			"link_to": "Mandato de Comissao",
+			"type": "DocType"
+		},
+		{
+			"color": "Green",
+			"doc_view": "List",
+			"label": "Membros de Comissão",
+			"link_to": "Membros de Comissao",
+			"type": "DocType"
+		},
+		{
+			"color": "Orange",
+			"doc_view": "List",
+			"label": "Reuniões de Comissão",
+			"link_to": "Reuniao de Comissao",
+			"type": "DocType"
+		},
+		{
+			"color": "Grey",
+			"doc_view": "List",
+			"label": "Categorias de Comissão",
+			"link_to": "Categoria de Comissao",
+			"type": "DocType"
+		},
+		{
+			"color": "Grey",
+			"doc_view": "List",
+			"label": "Tipos de Comissão",
+			"link_to": "Tipo de Comissao",
+			"type": "DocType"
+		}
+	],
+	"title": "Comissoes"
+}

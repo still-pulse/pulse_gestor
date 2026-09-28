@@ -1,0 +1,183 @@
+{
+	"actions": [],
+	"creation": "2026-09-28 00:00:00.000000",
+	"doctype": "DocType",
+	"engine": "InnoDB",
+	"field_order": [
+		"membros_comissao",
+		"empresa",
+		"tipo_comissao",
+		"mandato_comissao",
+		"column_break_datas",
+		"data_convocacao",
+		"data_reuniao",
+		"local_reuniao",
+		"section_break_pauta",
+		"pauta",
+		"section_break_participantes",
+		"participantes",
+		"tab_break_deliberacoes",
+		"deliberacoes",
+		"encaminhamentos_conclusoes"
+	],
+	"fields": [
+		{
+			"fieldname": "membros_comissao",
+			"fieldtype": "Link",
+			"label": "Comissão (Membros)",
+			"options": "Membros de Comissao",
+			"reqd": 1,
+			"in_list_view": 1,
+			"in_standard_filter": 1
+		},
+		{
+			"fieldname": "empresa",
+			"fieldtype": "Link",
+			"label": "Empresa",
+			"options": "Company",
+			"fetch_from": "membros_comissao.empresa",
+			"read_only": 1,
+			"in_list_view": 1
+		},
+		{
+			"fieldname": "tipo_comissao",
+			"fieldtype": "Link",
+			"label": "Tipo de comissão",
+			"options": "Tipo de Comissao",
+			"fetch_from": "membros_comissao.tipo_comissao",
+			"read_only": 1
+		},
+		{
+			"fieldname": "mandato_comissao",
+			"fieldtype": "Link",
+			"label": "Mandato de comissão",
+			"options": "Mandato de Comissao",
+			"fetch_from": "membros_comissao.mandato_comissao",
+			"read_only": 1
+		},
+		{
+			"fieldname": "column_break_datas",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "data_convocacao",
+			"fieldtype": "Date",
+			"label": "Data da convocação",
+			"reqd": 1
+		},
+		{
+			"fieldname": "data_reuniao",
+			"fieldtype": "Datetime",
+			"label": "Data e hora da reunião",
+			"reqd": 1,
+			"in_list_view": 1,
+			"in_standard_filter": 1
+		},
+		{
+			"fieldname": "local_reuniao",
+			"fieldtype": "Data",
+			"label": "Local da reunião"
+		},
+		{
+			"fieldname": "section_break_pauta",
+			"fieldtype": "Section Break",
+			"label": "Pauta"
+		},
+		{
+			"fieldname": "pauta",
+			"fieldtype": "Table",
+			"label": "Pauta",
+			"options": "Comissao Pauta Item"
+		},
+		{
+			"fieldname": "section_break_participantes",
+			"fieldtype": "Section Break",
+			"label": "Participantes"
+		},
+		{
+			"fieldname": "participantes",
+			"fieldtype": "Table",
+			"label": "Participantes",
+			"options": "Comissao Reuniao Participante"
+		},
+		{
+			"fieldname": "tab_break_deliberacoes",
+			"fieldtype": "Tab Break",
+			"label": "Deliberações"
+		},
+		{
+			"fieldname": "deliberacoes",
+			"fieldtype": "Text Editor",
+			"label": "Deliberações"
+		},
+		{
+			"fieldname": "encaminhamentos_conclusoes",
+			"fieldtype": "Text Editor",
+			"label": "Encaminhamentos e conclusões"
+		}
+	],
+	"links": [],
+	"modified": "2026-09-28 22:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Comissoes",
+	"name": "Reuniao de Comissao",
+	"owner": "Administrator",
+	"sort_field": "data_reuniao",
+	"sort_order": "DESC",
+	"states": [],
+	"autoname": "RC-.YYYY.-.#####",
+	"naming_rule": "Expression",
+	"title_field": "membros_comissao",
+	"search_fields": "membros_comissao,mandato_comissao,data_reuniao",
+	"track_changes": 1,
+	"permissions": [
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"share": 1,
+			"write": 1,
+			"select": 1,
+			"import": 1,
+			"role": "System Manager"
+		},
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"share": 1,
+			"write": 1,
+			"select": 1,
+			"import": 1,
+			"role": "Administrator"
+		},
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"share": 1,
+			"write": 1,
+			"role": "Pulse Gestor Manager"
+		},
+		{
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "Pulse Gestor Viewer"
+		}
+	]
+}

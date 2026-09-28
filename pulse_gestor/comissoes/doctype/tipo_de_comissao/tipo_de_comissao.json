@@ -1,0 +1,158 @@
+{
+	"actions": [],
+	"creation": "2026-09-28 00:00:00.000000",
+	"doctype": "DocType",
+	"engine": "InnoDB",
+	"field_order": [
+		"categoria_comissao",
+		"nome_tipo",
+		"column_break_empresa",
+		"empresa",
+		"descricao",
+		"section_break_regimento",
+		"regimento",
+		"motivo_alteracao_regimento",
+		"section_break_historico",
+		"historico_regimento"
+	],
+	"fields": [
+		{
+			"fieldname": "categoria_comissao",
+			"fieldtype": "Link",
+			"label": "Categoria",
+			"options": "Categoria de Comissao",
+			"reqd": 1,
+			"in_list_view": 1,
+			"in_standard_filter": 1
+		},
+		{
+			"fieldname": "nome_tipo",
+			"fieldtype": "Data",
+			"label": "Nome do tipo",
+			"reqd": 1,
+			"in_list_view": 1,
+			"in_standard_filter": 1,
+			"search_index": 1
+		},
+		{
+			"fieldname": "column_break_empresa",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "empresa",
+			"fieldtype": "Link",
+			"label": "Empresa",
+			"options": "Company",
+			"reqd": 1,
+			"in_list_view": 1,
+			"in_standard_filter": 1
+		},
+		{
+			"fieldname": "descricao",
+			"fieldtype": "Small Text",
+			"label": "Descrição"
+		},
+		{
+			"fieldname": "section_break_regimento",
+			"fieldtype": "Section Break",
+			"label": "Regimento"
+		},
+		{
+			"fieldname": "regimento",
+			"fieldtype": "Text Editor",
+			"label": "Texto do regimento"
+		},
+		{
+			"fieldname": "motivo_alteracao_regimento",
+			"fieldtype": "Small Text",
+			"label": "Motivo da alteração do regimento",
+			"description": "Obrigatório ao alterar um regimento já salvo. Fica registrado no histórico e é limpo após salvar.",
+			"depends_on": "eval:doc.regimento",
+			"no_copy": 1
+		},
+		{
+			"fieldname": "section_break_historico",
+			"fieldtype": "Section Break",
+			"label": "Rastreabilidade do regimento",
+			"collapsible": 1
+		},
+		{
+			"fieldname": "historico_regimento",
+			"fieldtype": "Table",
+			"label": "Histórico de alterações",
+			"options": "Comissao Regimento Alteracao",
+			"read_only": 1,
+			"no_copy": 1
+		}
+	],
+	"links": [
+		{
+			"link_doctype": "Mandato de Comissao",
+			"link_fieldname": "tipo_comissao"
+		}
+	],
+	"modified": "2026-09-28 18:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Comissoes",
+	"name": "Tipo de Comissao",
+	"owner": "Administrator",
+	"sort_field": "modified",
+	"sort_order": "DESC",
+	"states": [],
+	"autoname": "TPCOM-.#####",
+	"naming_rule": "Expression",
+	"title_field": "nome_tipo",
+	"show_title_field_in_link": 1,
+	"search_fields": "nome_tipo,empresa,categoria_comissao",
+	"track_changes": 1,
+	"permissions": [
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"share": 1,
+			"write": 1,
+			"select": 1,
+			"import": 1,
+			"role": "System Manager"
+		},
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"share": 1,
+			"write": 1,
+			"select": 1,
+			"import": 1,
+			"role": "Administrator"
+		},
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"share": 1,
+			"write": 1,
+			"role": "Pulse Gestor Manager"
+		},
+		{
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "Pulse Gestor Viewer"
+		}
+	]
+}
