@@ -1,0 +1,59 @@
+{
+	"actions": [],
+	"creation": "2026-09-28 00:00:00.000000",
+	"doctype": "DocType",
+	"editable_grid": 1,
+	"engine": "InnoDB",
+	"field_order": [
+		"nome",
+		"funcao",
+		"status_membro",
+		"email"
+	],
+	"fields": [
+		{
+			"fieldname": "nome",
+			"fieldtype": "Data",
+			"label": "Nome",
+			"reqd": 1,
+			"in_list_view": 1,
+			"columns": 3
+		},
+		{
+			"fieldname": "funcao",
+			"fieldtype": "Select",
+			"label": "Função",
+			"options": "Presidente\nVice-Presidente\nSecretário\nMembro",
+			"default": "Membro",
+			"in_list_view": 1,
+			"columns": 3
+		},
+		{
+			"fieldname": "status_membro",
+			"fieldtype": "Select",
+			"label": "Status do membro",
+			"options": "Ativo\nInativo\nAfastado",
+			"default": "Ativo",
+			"in_list_view": 1,
+			"columns": 2
+		},
+		{
+			"fieldname": "email",
+			"fieldtype": "Data",
+			"label": "E-mail",
+			"options": "Email",
+			"in_list_view": 1,
+			"columns": 3
+		}
+	],
+	"links": [],
+	"modified": "2026-09-28 00:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Comissoes",
+	"name": "Comissao Membro",
+	"owner": "Administrator",
+	"sort_field": "modified",
+	"sort_order": "DESC",
+	"states": [],
+	"istable": 1
+}

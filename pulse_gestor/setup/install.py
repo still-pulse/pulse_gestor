@@ -26,6 +26,7 @@ def after_install():
 	ensure_settings()
 	ensure_gestor_workspace()
 	ensure_indicadores_workspace()
+	ensure_comissoes_workspace()
 	frappe.db.commit()
 
 
@@ -37,6 +38,7 @@ def after_migrate():
 	ensure_gestor_workspace()
 	ensure_ascii_indicadores_report()
 	ensure_indicadores_workspace()
+	ensure_comissoes_workspace()
 	backfill_cores_classificacao_diaria()
 	backfill_tempos_classificacao_diaria()
 	frappe.db.commit()
@@ -123,6 +125,26 @@ ATENDIMENTOS_LINKS = (
 	("Especialidades", "Especialidade"),
 	("Vigências de Especialidades", "Unidade Especialidade Vigencia"),
 	("Atendimentos Diários", "Atendimento Diario"),
+)
+COMISSOES_CARD_LABEL = "Comissões"
+COMISSOES_CARD = {
+	"id": "card_comissoes",
+	"type": "card",
+	"data": {"card_name": COMISSOES_CARD_LABEL, "col": 4},
+}
+COMISSOES_LINKS = (
+	("Mandatos de Comissão", "Mandato de Comissao"),
+	("Membros de Comissão", "Membros de Comissao"),
+	("Reuniões de Comissão", "Reuniao de Comissao"),
+)
+COMISSOES_CONFIG_CARD_LABEL = "Configurações"
+COMISSOES_CONFIG_CARD = {
+	"id": "card_configuracoes_comissoes",
+	"type": "card",
+	"data": {"card_name": COMISSOES_CONFIG_CARD_LABEL, "col": 4},
+}
+COMISSOES_CONFIG_LINKS = (
+	("Tipos de Comissão", "Tipo de Comissao"),
 )
 OUR_LINK_TOS = {
 	"Documentacao da Unidade",
@@ -386,6 +408,66 @@ def ensure_indicadores_workspace():
 	if changed:
 		_fix_link_counts(doc)
 	if changed:
+		doc.flags.ignore_permissions = True
+		doc.save(ignore_permissions=True)
+		frappe.clear_cache()
+
+
+def ensure_comissoes_workspace():
+	"""Garante os cards e links de Comissões em Workspaces já instalados."""
+	if not frappe.db.exists("Workspace", "Comissoes"):
+		return
+
+	doc = frappe.get_doc("Workspace", "Comissoes")
+	changed = False
+	if frappe.db.exists("Workspace", "Gestor") and doc.parent_page != "Gestor":
+		doc.parent_page = "Gestor"
+		changed = True
+	try:
+		content = json.loads(doc.content or "[]")
+	except json.JSONDecodeError:
+		content = []
+
+	for card_label, card_block in (
+		(COMISSOES_CARD_LABEL, COMISSOES_CARD),
+		(COMISSOES_CONFIG_CARD_LABEL, COMISSOES_CONFIG_CARD),
+	):
+		if not any(
+			isinstance(block, dict)
+			and block.get("type") == "card"
+			and (block.get("data") or {}).get("card_name") == card_label
+			for block in content
+		):
+			content.append(card_block)
+			doc.content = json.dumps(content, ensure_ascii=False)
+			changed = True
+
+	for card_label, links in (
+		(COMISSOES_CARD_LABEL, COMISSOES_LINKS),
+		(COMISSOES_CONFIG_CARD_LABEL, COMISSOES_CONFIG_LINKS),
+	):
+		card_index = next(
+			(i for i, link in enumerate(doc.links) if link.type == "Card Break" and link.label == card_label),
+			None,
+		)
+		if card_index is None:
+			doc.append("links", {"type": "Card Break", "label": card_label})
+			changed = True
+			card_index = len(doc.links) - 1
+		insert_at = card_index + 1
+		for label, link_to in links:
+			if not any(link.type == "Link" and link.link_to == link_to for link in doc.links):
+				row = doc.append(
+					"links",
+					{"type": "Link", "label": label, "link_type": "DocType", "link_to": link_to, "onboard": 1},
+				)
+				doc.links.remove(row)
+				doc.links.insert(insert_at, row)
+				insert_at += 1
+				changed = True
+
+	if changed:
+		_fix_link_counts(doc)
 		doc.flags.ignore_permissions = True
 		doc.save(ignore_permissions=True)
 		frappe.clear_cache()

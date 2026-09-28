@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026-09-28] — v0.3.0
+
+### Adicionado
+- Módulo Comissões como subworkspace de Gestor: Tipo de Comissao, Mandato de Comissao, Membros de Comissao e Reuniao de Comissao (pauta, participantes com presença, deliberações e encaminhamentos)
+- Cópia dos membros da comissão para a lista de participantes da reunião
+- Tradução pt-BR do título do workspace, mantendo a rota em ASCII
+
 ## [2026-09-18] — v0.2.7
 
 ### Adicionado
