@@ -144,6 +144,7 @@ COMISSOES_CONFIG_CARD = {
 	"data": {"card_name": COMISSOES_CONFIG_CARD_LABEL, "col": 4},
 }
 COMISSOES_CONFIG_LINKS = (
+	("Categorias de Comissão", "Categoria de Comissao"),
 	("Tipos de Comissão", "Tipo de Comissao"),
 )
 OUR_LINK_TOS = {

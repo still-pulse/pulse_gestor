@@ -4,8 +4,8 @@
 	"doctype": "DocType",
 	"engine": "InnoDB",
 	"field_order": [
-		"empresa",
 		"tipo_comissao",
+		"empresa",
 		"column_break_datas",
 		"data_inicio_mandato",
 		"data_encerramento_mandato",
@@ -13,20 +13,21 @@
 	],
 	"fields": [
 		{
-			"fieldname": "empresa",
-			"fieldtype": "Link",
-			"label": "Empresa",
-			"options": "Company",
-			"reqd": 1,
-			"in_list_view": 1,
-			"in_standard_filter": 1
-		},
-		{
 			"fieldname": "tipo_comissao",
 			"fieldtype": "Link",
 			"label": "Tipo de comissão",
 			"options": "Tipo de Comissao",
 			"reqd": 1,
+			"in_list_view": 1,
+			"in_standard_filter": 1
+		},
+		{
+			"fieldname": "empresa",
+			"fieldtype": "Link",
+			"label": "Empresa",
+			"options": "Company",
+			"fetch_from": "tipo_comissao.empresa",
+			"read_only": 1,
 			"in_list_view": 1,
 			"in_standard_filter": 1
 		},
@@ -66,7 +67,7 @@
 			"link_fieldname": "mandato_comissao"
 		}
 	],
-	"modified": "2026-09-28 00:00:00.000000",
+	"modified": "2026-09-28 18:00:00.000000",
 	"modified_by": "Administrator",
 	"module": "Comissoes",
 	"name": "Mandato de Comissao",

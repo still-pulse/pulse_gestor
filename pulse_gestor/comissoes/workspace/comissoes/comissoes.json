@@ -49,9 +49,18 @@
 		{
 			"type": "Card Break",
 			"label": "Configurações",
-			"link_count": 1,
+			"link_count": 2,
 			"hidden": 0,
 			"onboard": 0
+		},
+		{
+			"type": "Link",
+			"label": "Categorias de Comissão",
+			"link_type": "DocType",
+			"link_to": "Categoria de Comissao",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
 		},
 		{
 			"type": "Link",
@@ -63,7 +72,7 @@
 			"onboard": 1
 		}
 	],
-	"modified": "2026-09-28 12:00:00.000000",
+	"modified": "2026-09-28 18:00:00.000000",
 	"modified_by": "Administrator",
 	"module": "Comissoes",
 	"name": "Comissoes",
@@ -107,6 +116,13 @@
 			"doc_view": "List",
 			"label": "Reuniões de Comissão",
 			"link_to": "Reuniao de Comissao",
+			"type": "DocType"
+		},
+		{
+			"color": "Grey",
+			"doc_view": "List",
+			"label": "Categorias de Comissão",
+			"link_to": "Categoria de Comissao",
 			"type": "DocType"
 		},
 		{

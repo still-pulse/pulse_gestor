@@ -1,5 +1,16 @@
 # Changelog
 
+## [2026-09-28] — v0.4.0
+
+### Adicionado
+- Categoria de Comissao (Conselho, Comitê, Núcleo, Grupo de Trabalho etc.), vinculada ao Tipo de Comissao
+- Texto do regimento no Tipo de Comissao, com histórico de alterações (versão, data, responsável, motivo e texto anterior); o motivo é obrigatório ao alterar um regimento já salvo
+
+### Alterado
+- A empresa passa a ser cadastrada no Tipo de Comissao; o Mandato de Comissao a recebe do tipo, somente leitura
+- Categoria e Tipo de Comissao nomeados por ID (CATCOM-/TPCOM-), exibindo o nome amigável nos campos de vínculo; a unicidade do tipo passa a ser por nome e empresa
+- Migração copia a empresa dos mandatos para o tipo quando a origem é única
+
 ## [2026-09-28] — v0.3.0
 
 ### Adicionado

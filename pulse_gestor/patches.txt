@@ -6,3 +6,4 @@ pulse_gestor.patches.rename_configuracoes_documentos_da_unidade
 [post_model_sync]
 # Patches added in this section will be executed after doctypes are migrated
 pulse_gestor.patches.v0_2_6_remove_triagem_fields
+pulse_gestor.patches.v0_4_0_empresa_no_tipo_de_comissao
