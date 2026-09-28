@@ -147,6 +147,13 @@ COMISSOES_CONFIG_LINKS = (
 	("Categorias de Comissão", "Categoria de Comissao"),
 	("Tipos de Comissão", "Tipo de Comissao"),
 )
+COMISSOES_RELATORIOS_CARD_LABEL = "Relatórios"
+COMISSOES_RELATORIOS_CARD = {
+	"id": "card_relatorios_comissoes",
+	"type": "card",
+	"data": {"card_name": COMISSOES_RELATORIOS_CARD_LABEL, "col": 4},
+}
+COMISSOES_RELATORIOS = (("Atividades de Comissão", "Atividades de Comissao"),)
 OUR_LINK_TOS = {
 	"Documentacao da Unidade",
 	"Tipo de Documento da Unidade",
@@ -432,6 +439,7 @@ def ensure_comissoes_workspace():
 	for card_label, card_block in (
 		(COMISSOES_CARD_LABEL, COMISSOES_CARD),
 		(COMISSOES_CONFIG_CARD_LABEL, COMISSOES_CONFIG_CARD),
+		(COMISSOES_RELATORIOS_CARD_LABEL, COMISSOES_RELATORIOS_CARD),
 	):
 		if not any(
 			isinstance(block, dict)
@@ -446,7 +454,9 @@ def ensure_comissoes_workspace():
 	for card_label, links in (
 		(COMISSOES_CARD_LABEL, COMISSOES_LINKS),
 		(COMISSOES_CONFIG_CARD_LABEL, COMISSOES_CONFIG_LINKS),
+		(COMISSOES_RELATORIOS_CARD_LABEL, COMISSOES_RELATORIOS),
 	):
+		link_type = "Report" if card_label == COMISSOES_RELATORIOS_CARD_LABEL else "DocType"
 		card_index = next(
 			(i for i, link in enumerate(doc.links) if link.type == "Card Break" and link.label == card_label),
 			None,
@@ -460,7 +470,14 @@ def ensure_comissoes_workspace():
 			if not any(link.type == "Link" and link.link_to == link_to for link in doc.links):
 				row = doc.append(
 					"links",
-					{"type": "Link", "label": label, "link_type": "DocType", "link_to": link_to, "onboard": 1},
+					{
+						"type": "Link",
+						"label": label,
+						"link_type": link_type,
+						"link_to": link_to,
+						"is_query_report": 1 if link_type == "Report" else 0,
+						"onboard": 1,
+					},
 				)
 				doc.links.remove(row)
 				doc.links.insert(insert_at, row)

@@ -1,6 +1,6 @@
 {
 	"charts": [],
-	"content": "[{\"id\":\"header_comissoes\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Comissões</span>\",\"col\":12}},{\"id\":\"card_comissoes\",\"type\":\"card\",\"data\":{\"card_name\":\"Comissões\",\"col\":4}},{\"id\":\"card_configuracoes_comissoes\",\"type\":\"card\",\"data\":{\"card_name\":\"Configurações\",\"col\":4}}]",
+	"content": "[{\"id\":\"header_comissoes\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Comissões</span>\",\"col\":12}},{\"id\":\"card_comissoes\",\"type\":\"card\",\"data\":{\"card_name\":\"Comissões\",\"col\":4}},{\"id\":\"card_configuracoes_comissoes\",\"type\":\"card\",\"data\":{\"card_name\":\"Configurações\",\"col\":4}},{\"id\":\"card_relatorios_comissoes\",\"type\":\"card\",\"data\":{\"card_name\":\"Relatórios\",\"col\":4}}]",
 	"creation": "2026-09-28 00:00:00.000000",
 	"custom_blocks": [],
 	"docstatus": 0,
@@ -70,9 +70,26 @@
 			"link_count": 0,
 			"hidden": 0,
 			"onboard": 1
+		},
+		{
+			"type": "Card Break",
+			"label": "Relatórios",
+			"link_count": 1,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
+			"type": "Link",
+			"label": "Atividades de Comissão",
+			"link_type": "Report",
+			"link_to": "Atividades de Comissao",
+			"is_query_report": 1,
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
 		}
 	],
-	"modified": "2026-09-28 18:00:00.000000",
+	"modified": "2026-09-28 20:00:00.000000",
 	"modified_by": "Administrator",
 	"module": "Comissoes",
 	"name": "Comissoes",

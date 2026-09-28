@@ -1,5 +1,11 @@
 # Changelog
 
+## [2026-09-28] — v0.5.0
+
+### Adicionado
+- Relatório "Atividades de Comissão" (Comissoes): reuniões por período, com filtros de empresa e comissão, presentes/participantes por reunião e opção de incluir a pauta (uma linha por item)
+- Card "Relatórios" no workspace Comissoes
+
 ## [2026-09-28] — v0.4.0
 
 ### Adicionado
