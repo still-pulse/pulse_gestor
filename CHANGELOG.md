@@ -1,5 +1,11 @@
 # Changelog
 
+## [2026-09-28] — v0.5.1
+
+### Alterado
+- Relatório "Atividades de Comissão" mostra o nome da categoria, o nome da comissão e o mandato (início e status) no lugar dos IDs
+- Com a pauta incluída, os dados da reunião aparecem só na primeira linha; os demais itens mostram apenas o assunto
+
 ## [2026-09-28] — v0.5.0
 
 ### Adicionado

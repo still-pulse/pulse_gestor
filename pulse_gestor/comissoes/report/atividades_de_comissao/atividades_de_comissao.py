@@ -1,6 +1,18 @@
 import frappe
 from frappe import _
-from frappe.utils import cint, getdate
+from frappe.utils import cint, formatdate, getdate
+
+CAMPOS_DA_REUNIAO = (
+	"reuniao",
+	"data_reuniao",
+	"data_convocacao",
+	"empresa",
+	"categoria",
+	"comissao",
+	"mandato",
+	"presentes",
+	"convocados",
+)
 
 
 def execute(filters=None):
@@ -32,8 +44,9 @@ def execute(filters=None):
 	data = frappe.db.sql(
 		f"""
 		SELECT reuniao.name AS reuniao, reuniao.data_reuniao, reuniao.data_convocacao,
-			reuniao.empresa, tipo.categoria_comissao, reuniao.tipo_comissao,
-			reuniao.mandato_comissao,
+			reuniao.empresa, categoria.nome_categoria AS categoria,
+			tipo.nome_tipo AS comissao, mandato.data_inicio_mandato,
+			mandato.status_mandato,
 			{pauta_select}
 			(SELECT COUNT(*) FROM `tabComissao Reuniao Participante` p
 				WHERE p.parent = reuniao.name AND p.parenttype = 'Reuniao de Comissao'
@@ -42,6 +55,8 @@ def execute(filters=None):
 				WHERE p.parent = reuniao.name AND p.parenttype = 'Reuniao de Comissao') AS convocados
 		FROM `tabReuniao de Comissao` reuniao
 		LEFT JOIN `tabTipo de Comissao` tipo ON tipo.name = reuniao.tipo_comissao
+		LEFT JOIN `tabCategoria de Comissao` categoria ON categoria.name = tipo.categoria_comissao
+		LEFT JOIN `tabMandato de Comissao` mandato ON mandato.name = reuniao.mandato_comissao
 		{pauta_join}
 		WHERE {" AND ".join(condicoes)}
 		ORDER BY reuniao.data_reuniao, reuniao.empresa, reuniao.tipo_comissao, reuniao.name{pauta_order}
@@ -51,6 +66,16 @@ def execute(filters=None):
 	)
 
 	reunioes = {row.reuniao for row in data}
+	vistas = set()
+	for row in data:
+		row.mandato = (
+			f"{formatdate(row.data_inicio_mandato)} ({row.status_mandato})" if row.data_inicio_mandato else ""
+		)
+		# Com a pauta, os dados da reunião aparecem só na primeira linha.
+		if row.reuniao in vistas:
+			for campo in CAMPOS_DA_REUNIAO:
+				row[campo] = None
+		vistas.add(row.reuniao)
 	summary = [
 		{
 			"label": _("Reuniões no período"),
@@ -67,10 +92,10 @@ def get_columns(incluir_pauta):
 		{"label": _("Reunião"), "fieldname": "reuniao", "fieldtype": "Link", "options": "Reuniao de Comissao", "width": 130},
 		{"label": _("Data da reunião"), "fieldname": "data_reuniao", "fieldtype": "Date", "width": 110},
 		{"label": _("Data da convocação"), "fieldname": "data_convocacao", "fieldtype": "Date", "width": 120},
-		{"label": _("Empresa"), "fieldname": "empresa", "fieldtype": "Link", "options": "Company", "width": 170},
-		{"label": _("Categoria"), "fieldname": "categoria_comissao", "fieldtype": "Link", "options": "Categoria de Comissao", "width": 130},
-		{"label": _("Comissão"), "fieldname": "tipo_comissao", "fieldtype": "Link", "options": "Tipo de Comissao", "width": 200},
-		{"label": _("Mandato"), "fieldname": "mandato_comissao", "fieldtype": "Link", "options": "Mandato de Comissao", "width": 130},
+		{"label": _("Empresa"), "fieldname": "empresa", "fieldtype": "Link", "options": "Company", "width": 260},
+		{"label": _("Categoria"), "fieldname": "categoria", "fieldtype": "Data", "width": 150},
+		{"label": _("Comissão"), "fieldname": "comissao", "fieldtype": "Data", "width": 220},
+		{"label": _("Mandato"), "fieldname": "mandato", "fieldtype": "Data", "width": 170},
 		{"label": _("Presentes"), "fieldname": "presentes", "fieldtype": "Int", "width": 80},
 		{"label": _("Participantes"), "fieldname": "convocados", "fieldtype": "Int", "width": 100},
 	]
