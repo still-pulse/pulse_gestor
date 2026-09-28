@@ -1,0 +1,20 @@
+{
+	"color": "#ef6c00",
+	"creation": "2026-09-28 00:00:00.000000",
+	"docstatus": 0,
+	"doctype": "Number Card",
+	"document_type": "Reuniao de Comissao",
+	"filters_json": "[]",
+	"idx": 0,
+	"is_public": 1,
+	"is_standard": 1,
+	"label": "Reunioes nos Proximos 7 Dias",
+	"method": "pulse_gestor.comissoes.dashboard.cartao_reunioes_proximas",
+	"modified": "2026-09-28 21:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Comissoes",
+	"name": "Reunioes nos Proximos 7 Dias",
+	"owner": "Administrator",
+	"show_percentage_stats": 0,
+	"type": "Custom"
+}

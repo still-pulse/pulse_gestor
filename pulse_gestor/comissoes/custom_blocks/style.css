@@ -1,0 +1,16 @@
+.pg-bloco { padding: 12px 16px; }
+.pg-bloco h5 { margin: 0 0 10px; font-weight: 600; }
+.pg-lista { list-style: none; margin: 0; padding: 0; }
+.pg-item { display: flex; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color, #ebeef0); }
+.pg-item:last-child { border-bottom: 0; }
+.pg-data { min-width: 76px; text-align: center; line-height: 1.2; }
+.pg-data .pg-dia { font-size: 20px; font-weight: 600; }
+.pg-data .pg-mes { font-size: 11px; text-transform: uppercase; color: var(--text-muted, #6c7680); }
+.pg-corpo { flex: 1; min-width: 0; }
+.pg-corpo a { font-weight: 600; }
+.pg-sub { font-size: 12px; color: var(--text-muted, #6c7680); }
+.pg-tag { font-size: 11px; padding: 2px 8px; border-radius: 10px; white-space: nowrap; }
+.pg-tag.vermelho { background: #fde8e8; color: #c62828; }
+.pg-tag.amarelo { background: #fff4d6; color: #8a6100; }
+.pg-tag.azul { background: #e3f0fd; color: #1565c0; }
+.pg-vazio { color: var(--text-muted, #6c7680); padding: 12px 0; }

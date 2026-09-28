@@ -1,5 +1,12 @@
 # Changelog
 
+## [2026-09-28] — v0.8.0
+
+### Adicionado
+- Painel de gestão no topo do workspace Comissoes: cartões (reuniões nos próximos 7 dias, mandatos a vencer em 60 dias, comissões sem reunião há mais de 90 dias, mandatos vigentes, reuniões no mês e presença média dos últimos 90 dias), gráficos (reuniões por mês, mandatos por status, reuniões por unidade) e dois blocos: "Próximas reuniões" e "Comissões que exigem atenção"
+- Number Cards e Dashboard Charts standard em comissoes/number_card e comissoes/dashboard_chart; dados calculados em comissoes/dashboard.py
+- Custom HTML Blocks criados/atualizados de forma idempotente no after_migrate (fonte em comissoes/custom_blocks)
+
 ## [2026-09-28] — v0.7.0
 
 ### Adicionado

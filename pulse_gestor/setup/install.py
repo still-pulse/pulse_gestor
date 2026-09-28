@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import frappe
 from frappe.model.rename_doc import rename_doc
@@ -154,6 +155,101 @@ COMISSOES_RELATORIOS_CARD = {
 	"data": {"card_name": COMISSOES_RELATORIOS_CARD_LABEL, "col": 4},
 }
 COMISSOES_RELATORIOS = (("Atividades de Comissão", "Atividades de Comissao"),)
+COMISSOES_BLOCOS_DIR = Path(__file__).resolve().parent.parent / "comissoes" / "custom_blocks"
+# (nome do Custom HTML Block, arquivo-base, rótulo exibido)
+COMISSOES_CUSTOM_BLOCKS = (
+	("Comissoes Proximas Reunioes", "proximas_reunioes", "Próximas reuniões"),
+	("Comissoes em Atencao", "comissoes_em_atencao", "Comissões que exigem atenção"),
+)
+COMISSOES_NUMBER_CARDS = (
+	("Reunioes nos Proximos 7 Dias", "Reuniões nos próximos 7 dias"),
+	("Mandatos a Vencer", "Mandatos a vencer"),
+	("Comissoes sem Reuniao Recente", "Comissões sem reunião recente"),
+	("Mandatos Vigentes", "Mandatos vigentes"),
+	("Reunioes no Mes", "Reuniões no mês"),
+	("Presenca Media", "Presença média"),
+)
+COMISSOES_CHARTS = (
+	("Reunioes por Mes", "Reuniões por mês"),
+	("Mandatos por Status", "Mandatos por status"),
+	("Reunioes por Unidade", "Reuniões por unidade"),
+)
+COMISSOES_PAINEL_PREFIXO = "pg_painel_"
+
+
+def _comissoes_painel_content() -> list[dict]:
+	def bloco(tipo, chave, nome, col):
+		slug = "".join(c if c.isalnum() else "_" for c in nome.lower())
+		return {"id": f"{COMISSOES_PAINEL_PREFIXO}{slug}", "type": tipo, "data": {chave: nome, "col": col}}
+
+	return [
+		{
+			"id": f"{COMISSOES_PAINEL_PREFIXO}header",
+			"type": "header",
+			"data": {"text": '<span class="h4">Painel de gestão</span>', "col": 12},
+		},
+		*[bloco("number_card", "number_card_name", nome, 4) for nome, _label in COMISSOES_NUMBER_CARDS],
+		bloco("chart", "chart_name", "Reunioes por Mes", 8),
+		bloco("chart", "chart_name", "Mandatos por Status", 4),
+		bloco("custom_block", "custom_block_name", "Comissoes Proximas Reunioes", 6),
+		bloco("custom_block", "custom_block_name", "Comissoes em Atencao", 6),
+		bloco("chart", "chart_name", "Reunioes por Unidade", 12),
+	]
+
+
+def ensure_comissoes_custom_blocks():
+	"""Cria/atualiza os Custom HTML Blocks do painel (HTML/JS/CSS versionados no app)."""
+	for nome, arquivo, _label in COMISSOES_CUSTOM_BLOCKS:
+		valores = {
+			"html": (COMISSOES_BLOCOS_DIR / f"{arquivo}.html").read_text(encoding="utf-8"),
+			"script": (COMISSOES_BLOCOS_DIR / f"{arquivo}.js").read_text(encoding="utf-8"),
+			"style": (COMISSOES_BLOCOS_DIR / "style.css").read_text(encoding="utf-8"),
+			"private": 0,
+		}
+		if frappe.db.exists("Custom HTML Block", nome):
+			doc = frappe.get_doc("Custom HTML Block", nome)
+			if all((doc.get(k) or "") == v for k, v in valores.items()):
+				continue
+			doc.update(valores)
+		else:
+			doc = frappe.get_doc({"doctype": "Custom HTML Block", "__newname": nome, **valores})
+			doc.flags.name = nome
+		doc.flags.ignore_permissions = True
+		doc.save(ignore_permissions=True)
+
+
+def _garantir_painel_comissoes(doc) -> bool:
+	"""Garante o painel de cartões, gráficos e blocos no topo do workspace Comissoes."""
+	changed = False
+	for tabela, campo, doctype, itens in (
+		("number_cards", "number_card_name", "Number Card", COMISSOES_NUMBER_CARDS),
+		("charts", "chart_name", "Dashboard Chart", COMISSOES_CHARTS),
+		(
+			"custom_blocks",
+			"custom_block_name",
+			"Custom HTML Block",
+			[(nome, label) for nome, _arquivo, label in COMISSOES_CUSTOM_BLOCKS],
+		),
+	):
+		for nome, label in itens:
+			if frappe.db.exists(doctype, nome) and not any(row.get(campo) == nome for row in doc.get(tabela)):
+				doc.append(tabela, {campo: nome, "label": label})
+				changed = True
+
+	try:
+		content = json.loads(doc.content or "[]")
+	except json.JSONDecodeError:
+		content = []
+	restante = [
+		b for b in content if not str((b or {}).get("id", "")).startswith(COMISSOES_PAINEL_PREFIXO)
+	]
+	novo = _comissoes_painel_content() + restante
+	if novo != content:
+		doc.content = json.dumps(novo, ensure_ascii=False)
+		changed = True
+	return changed
+
+
 OUR_LINK_TOS = {
 	"Documentacao da Unidade",
 	"Tipo de Documento da Unidade",
@@ -426,8 +522,9 @@ def ensure_comissoes_workspace():
 	if not frappe.db.exists("Workspace", "Comissoes"):
 		return
 
+	ensure_comissoes_custom_blocks()
 	doc = frappe.get_doc("Workspace", "Comissoes")
-	changed = False
+	changed = _garantir_painel_comissoes(doc)
 	if frappe.db.exists("Workspace", "Gestor") and doc.parent_page != "Gestor":
 		doc.parent_page = "Gestor"
 		changed = True
