@@ -169,11 +169,7 @@ COMISSOES_NUMBER_CARDS = (
 	("Reunioes no Mes", "Reuniões no mês"),
 	("Presenca Media", "Presença média"),
 )
-COMISSOES_CHARTS = (
-	("Reunioes por Mes", "Reuniões por mês"),
-	("Mandatos por Status", "Mandatos por status"),
-	("Reunioes por Unidade", "Reuniões por unidade"),
-)
+COMISSOES_CHARTS_REMOVIDOS = ("Reunioes por Mes", "Mandatos por Status", "Reunioes por Unidade")
 COMISSOES_PAINEL_PREFIXO = "pg_painel_"
 
 
@@ -189,11 +185,8 @@ def _comissoes_painel_content() -> list[dict]:
 			"data": {"text": '<span class="h4">Painel de gestão</span>', "col": 12},
 		},
 		*[bloco("number_card", "number_card_name", nome, 4) for nome, _label in COMISSOES_NUMBER_CARDS],
-		bloco("chart", "chart_name", "Reunioes por Mes", 8),
-		bloco("chart", "chart_name", "Mandatos por Status", 4),
 		bloco("custom_block", "custom_block_name", "Comissoes Proximas Reunioes", 6),
 		bloco("custom_block", "custom_block_name", "Comissoes em Atencao", 6),
-		bloco("chart", "chart_name", "Reunioes por Unidade", 12),
 	]
 
 
@@ -219,11 +212,16 @@ def ensure_comissoes_custom_blocks():
 
 
 def _garantir_painel_comissoes(doc) -> bool:
-	"""Garante o painel de cartões, gráficos e blocos no topo do workspace Comissoes."""
+	"""Garante o painel de cartões e blocos no topo do workspace Comissoes."""
 	changed = False
+	for row in [r for r in doc.charts if r.chart_name in COMISSOES_CHARTS_REMOVIDOS]:
+		doc.charts.remove(row)
+		changed = True
+	for nome in COMISSOES_CHARTS_REMOVIDOS:
+		if frappe.db.exists("Dashboard Chart", nome):
+			frappe.delete_doc("Dashboard Chart", nome, force=1, ignore_permissions=True)
 	for tabela, campo, doctype, itens in (
 		("number_cards", "number_card_name", "Number Card", COMISSOES_NUMBER_CARDS),
-		("charts", "chart_name", "Dashboard Chart", COMISSOES_CHARTS),
 		(
 			"custom_blocks",
 			"custom_block_name",
