@@ -1,6 +1,6 @@
 # Changelog
 
-## [2026-09-28] — v0.9.2
+## [2026-09-28] — v0.9.3
 
 ### Alterado
 - Relatório "Atendimentos Medicos por Periodo" renomeado para "Relatorio de Atendimentos por Periodo" (título "Relatório de Atendimentos por Período" via pt-BR.csv); o registro antigo é removido por patch
