@@ -1,5 +1,10 @@
 # Changelog
 
+## [2026-09-28] — v0.6.0
+
+### Adicionado
+- Formatos de impressão da Reuniao de Comissao: "Convocacao para Reuniao de Comissao" (data, horário e local para preencher, pauta e convocados) e "Ata de Reuniao de Comissao" (participantes com presença, pauta, deliberações, encaminhamentos e assinaturas dos presentes)
+
 ## [2026-09-28] — v0.5.1
 
 ### Alterado
