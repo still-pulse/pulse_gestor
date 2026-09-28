@@ -23,7 +23,7 @@ frappe.ui.form.on("Classificacao Diaria Nivel", {
 
 function atualizar_total(frm) {
 	const total = (frm.doc.niveis_classificados || []).reduce(
-		(soma, linha) => soma + (Number(line.qtd_pacientes_classificados) || 0),
+		(soma, linha) => soma + (Number(linha.qtd_pacientes_classificados) || 0),
 		0,
 	);
 	frm.set_value("total_classificados", total);

@@ -36,7 +36,7 @@ O fluxo segue a classificação de risco: cadastre as especialidades, defina qua
 2. **Unidade Especialidade Vigencia**: escolha a unidade, o período e as especialidades atendidas nele. A data final é inclusiva; deixe-a vazia para vigência sem prazo final. Períodos da mesma unidade não podem se sobrepor.
 3. **Atendimento Medico Diario**: informe unidade e data. O app carrega as especialidades da vigência da unidade nessa data; preencha apenas **Quantidade** em cada linha. O total é calculado automaticamente. Cada unidade e data admite um lançamento não cancelado. Use **Enviar** para concluir o lançamento.
 
-O relatório **Atendimentos Medicos por Periodo** (Script Report) totaliza, por especialidade, os atendimentos enviados da unidade entre duas datas, com percentual do total, dias com atendimento, média por dia lançado e gráfico. Rascunhos não entram. O filtro opcional de especialidade restringe a apuração.
+O **Relatório de Atendimentos por Período** (`Relatorio de Atendimentos por Periodo`, Script Report, no card **Relatórios** do Workspace junto com a apuração de classificação de risco) totaliza, por especialidade, os atendimentos enviados da unidade entre duas datas, com percentual do total, dias com atendimento, média por dia lançado e gráfico. Rascunhos não entram. O filtro opcional de especialidade restringe a apuração.
 
 Não há definição de metas por especialidade por enquanto.
 

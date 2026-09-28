@@ -7,7 +7,7 @@ from pulse_gestor.indicadores.doctype.atendimento_medico_diario.atendimento_medi
 	buscar_vigencia_e_especialidades,
 	obter_vigencia_e_especialidades,
 )
-from pulse_gestor.indicadores.report.atendimentos_medicos_por_periodo.atendimentos_medicos_por_periodo import (
+from pulse_gestor.indicadores.report.relatorio_de_atendimentos_por_periodo.relatorio_de_atendimentos_por_periodo import (
 	execute as executar_relatorio,
 )
 

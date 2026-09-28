@@ -1,4 +1,4 @@
-frappe.query_reports["Atendimentos Medicos por Periodo"] = {
+frappe.query_reports["Relatorio de Atendimentos por Periodo"] = {
 	filters: [
 		{
 			fieldname: "unidade",

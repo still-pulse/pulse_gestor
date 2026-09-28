@@ -127,7 +127,17 @@ ATENDIMENTOS_LINKS = (
 	("Vigências de Especialidades", "Unidade Especialidade Vigencia"),
 	("Atendimentos Médicos Diários", "Atendimento Medico Diario"),
 )
-ATENDIMENTOS_RELATORIO = ("Atendimentos Médicos por Período", "Atendimentos Medicos por Periodo")
+INDICADORES_RELATORIOS_CARD_LABEL = "Relatórios"
+INDICADORES_RELATORIOS_CARD = {
+	"id": "card_relatorios_indicadores",
+	"type": "card",
+	"data": {"card_name": INDICADORES_RELATORIOS_CARD_LABEL, "col": 4},
+}
+INDICADORES_RELATORIOS = (
+	("Apuração de Classificação de Risco", INDICADORES_RELATORIO),
+	("Relatório de Atendimentos por Período", "Relatorio de Atendimentos por Periodo"),
+)
+INDICADORES_RELATORIOS_ANTIGOS = ("Atendimentos Medicos por Periodo",)
 COMISSOES_CARD_LABEL = "Comissões"
 COMISSOES_CARD = {
 	"id": "card_comissoes",
@@ -395,6 +405,47 @@ def ensure_ascii_indicadores_report():
 	frappe.db.set_value("Report", INDICADORES_RELATORIO, "report_name", INDICADORES_RELATORIO)
 
 
+def _garantir_card_relatorios_indicadores(doc, content) -> bool:
+	"""Agrupa os relatórios de Indicadores em um card próprio, no fim do Workspace."""
+	desejado = [("Card Break", INDICADORES_RELATORIOS_CARD_LABEL, None)] + [
+		("Link", label, report) for label, report in INDICADORES_RELATORIOS
+	]
+	atual = [(link.type, link.label, link.link_to) for link in doc.links]
+	tem_bloco = any(
+		isinstance(block, dict)
+		and block.get("type") == "card"
+		and (block.get("data") or {}).get("card_name") == INDICADORES_RELATORIOS_CARD_LABEL
+		for block in content
+	)
+	relatorios_soltos = [
+		link
+		for link in doc.links
+		if link.type == "Link" and link.link_type == "Report" and link.link_to != "" and (
+			link.link_to in {report for _label, report in INDICADORES_RELATORIOS}
+			or link.link_to in INDICADORES_RELATORIOS_ANTIGOS
+		)
+	]
+	if atual[-len(desejado):] == desejado and len(relatorios_soltos) == len(INDICADORES_RELATORIOS) and tem_bloco:
+		return False
+
+	for link in relatorios_soltos:
+		doc.remove(link)
+	doc.set(
+		"links",
+		[link for link in doc.links if not (link.type == "Card Break" and link.label == INDICADORES_RELATORIOS_CARD_LABEL)],
+	)
+	doc.append("links", {"type": "Card Break", "label": INDICADORES_RELATORIOS_CARD_LABEL})
+	for label, report in INDICADORES_RELATORIOS:
+		doc.append(
+			"links",
+			{"type": "Link", "label": label, "link_type": "Report", "link_to": report, "is_query_report": 1},
+		)
+	if not tem_bloco:
+		content.append(INDICADORES_RELATORIOS_CARD)
+		doc.content = json.dumps(content, ensure_ascii=False)
+	return True
+
+
 def ensure_indicadores_workspace():
 	"""Atualiza a navegação de Indicadores em Workspaces já instalados."""
 	if not frappe.db.exists("Workspace", "Indicadores"):
@@ -475,30 +526,6 @@ def ensure_indicadores_workspace():
 			doc.links.insert(card_index + 1, row)
 			_fix_link_counts(doc)
 			changed = True
-	if not any(link.type == "Link" and link.link_to == INDICADORES_RELATORIO for link in doc.links):
-		card_index = next(
-			(
-				i
-				for i, link in enumerate(doc.links)
-				if link.type == "Card Break" and link.label == INDICADORES_CARD_LABEL
-			),
-			None,
-		)
-		if card_index is not None:
-			row = doc.append(
-				"links",
-				{
-					"type": "Link",
-					"label": INDICADORES_RELATORIO,
-					"link_type": "Report",
-					"link_to": INDICADORES_RELATORIO,
-					"is_query_report": 1,
-				},
-			)
-			doc.links.remove(row)
-			doc.links.insert(card_index + 1, row)
-			_fix_link_counts(doc)
-			changed = True
 	card_index = next(
 		(i for i, link in enumerate(doc.links) if link.type == "Card Break" and link.label == ATENDIMENTOS_CARD_LABEL),
 		None,
@@ -513,18 +540,7 @@ def ensure_indicadores_workspace():
 				{"type": "Link", "label": label, "link_type": "DocType", "link_to": link_to, "onboard": 1},
 			)
 			changed = True
-	if not any(link.type == "Link" and link.link_to == ATENDIMENTOS_RELATORIO[1] for link in doc.links):
-		doc.append(
-			"links",
-			{
-				"type": "Link",
-				"label": ATENDIMENTOS_RELATORIO[0],
-				"link_type": "Report",
-				"link_to": ATENDIMENTOS_RELATORIO[1],
-				"is_query_report": 1,
-			},
-		)
-		changed = True
+	changed = _garantir_card_relatorios_indicadores(doc, content) or changed
 	if changed:
 		_fix_link_counts(doc)
 		doc.flags.ignore_permissions = True

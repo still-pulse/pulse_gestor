@@ -1,6 +1,6 @@
 {
 	"charts": [],
-	"content": "[{\"id\":\"header_indicadores\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Indicadores</span>\",\"col\":12}},{\"id\":\"card_triagem\",\"type\":\"card\",\"data\":{\"card_name\":\"Triagem\",\"col\":4}},{\"id\":\"card_atendimentos\",\"type\":\"card\",\"data\":{\"card_name\":\"Atendimentos\",\"col\":4}}]",
+	"content": "[{\"id\":\"header_indicadores\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Indicadores</span>\",\"col\":12}},{\"id\":\"card_triagem\",\"type\":\"card\",\"data\":{\"card_name\":\"Triagem\",\"col\":4}},{\"id\":\"card_atendimentos\",\"type\":\"card\",\"data\":{\"card_name\":\"Atendimentos\",\"col\":4}},{\"id\":\"card_relatorios_indicadores\",\"type\":\"card\",\"data\":{\"card_name\":\"Relatórios\",\"col\":4}}]",
 	"creation": "2026-09-18 12:00:00.000000",
 	"custom_blocks": [],
 	"docstatus": 0,
@@ -15,7 +15,7 @@
 		{
 			"type": "Card Break",
 			"label": "Triagem",
-			"link_count": 4,
+			"link_count": 3,
 			"hidden": 0,
 			"onboard": 0
 		},
@@ -47,19 +47,9 @@
 			"onboard": 1
 		},
 		{
-			"type": "Link",
-			"label": "Apuração de Classificação de Risco",
-			"link_type": "Report",
-			"link_to": "Apuracao de Classificacao de Risco",
-			"is_query_report": 1,
-			"link_count": 0,
-			"hidden": 0,
-			"onboard": 0
-		},
-		{
 			"type": "Card Break",
 			"label": "Atendimentos",
-			"link_count": 4,
+			"link_count": 3,
 			"hidden": 0,
 			"onboard": 0
 		},
@@ -91,17 +81,34 @@
 			"onboard": 1
 		},
 		{
+			"type": "Card Break",
+			"label": "Relatórios",
+			"link_count": 2,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
 			"type": "Link",
-			"label": "Atendimentos Médicos por Período",
+			"label": "Apuração de Classificação de Risco",
 			"link_type": "Report",
-			"link_to": "Atendimentos Medicos por Periodo",
+			"link_to": "Apuracao de Classificacao de Risco",
+			"is_query_report": 1,
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
+			"type": "Link",
+			"label": "Relatório de Atendimentos por Período",
+			"link_type": "Report",
+			"link_to": "Relatorio de Atendimentos por Periodo",
 			"is_query_report": 1,
 			"link_count": 0,
 			"hidden": 0,
 			"onboard": 0
 		}
 	],
-	"modified": "2026-09-28 12:00:00.000000",
+	"modified": "2026-09-28 18:00:00.000000",
 	"modified_by": "Administrator",
 	"module": "Indicadores",
 	"name": "Indicadores",

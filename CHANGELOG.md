@@ -1,5 +1,14 @@
 # Changelog
 
+## [2026-09-28] — v0.9.2
+
+### Alterado
+- Relatório "Atendimentos Medicos por Periodo" renomeado para "Relatorio de Atendimentos por Periodo" (título "Relatório de Atendimentos por Período" via pt-BR.csv); o registro antigo é removido por patch
+- Workspace Indicadores ganha o card "Relatórios", com a Apuração de Classificação de Risco e o Relatório de Atendimentos por Período, que saem dos cards Triagem e Atendimentos (ajuste idempotente no after_migrate)
+
+### Corrigido
+- Classificacao de Risco Diaria: `atualizar_total` usava a variável inexistente `line`, gerando ReferenceError ao editar uma quantidade
+
 ## [2026-09-28] — v0.9.1
 
 ### Corrigido
