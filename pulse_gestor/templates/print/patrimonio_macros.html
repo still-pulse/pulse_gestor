@@ -1,0 +1,64 @@
+{#- Macros de Patrimônio (Asset / Asset Movement) sobre o padrão institucional BHCL (apps/clm/docs/brand-manifesto.md).
+    Importe junto com os do CLM; os imports do pai não chegam aos blocos do filho:
+    {% from "pulse_gestor/templates/print/patrimonio_macros.html" import asset_status_tag, ... with context %} -#}
+{% from "clm/templates/print/clm_macros.html" import field, field_row, or_dash with context %}
+
+{#- Rótulos e tons (ok / warn / bad / muted) dos Selects do ERPNext e dos campos customizados do site. -#}
+{%- set ASSET_STATUSES = {
+	"Draft": ("Rascunho", "muted"), "Submitted": ("Registrado", "ok"), "Cancelled": ("Cancelado", "muted"),
+	"Partially Depreciated": ("Parcialmente depreciado", "ok"), "Fully Depreciated": ("Totalmente depreciado", "muted"),
+	"Sold": ("Vendido", "muted"), "Scrapped": ("Baixado", "bad"), "In Maintenance": ("Em manutenção", "warn"),
+	"Out of Order": ("Fora de operação", "bad"), "Issue": ("Entregue", "ok"), "Receipt": ("Recebido", "ok"),
+	"Capitalized": ("Capitalizado", "muted"), "Work In Progress": ("Em construção", "warn")
+} -%}
+{%- set USAGE = {"Em uso": "ok", "Ocioso": "warn", "Em manutenção": "warn", "Inservível": "bad"} -%}
+{%- set CONDITION = {"Excelente": "ok", "Bom": "ok", "Regular": "warn", "Ruim": "bad", "Péssimo": "bad"} -%}
+{%- set PURPOSES = {
+	"Receipt": ("Recebimento", "Entrada do bem no patrimônio da unidade."),
+	"Transfer": ("Transferência", "Mudança de localização ou de custodiante."),
+	"Issue": ("Saída / entrega", "Entrega do bem a um custodiante."),
+	"Transfer and Issue": ("Transferência e entrega", "Mudança de localização com entrega a um custodiante.")
+} -%}
+{%- set DEPRECIATION_METHODS = {"Straight Line": "Linear", "Double Declining Balance": "Saldo decrescente duplo", "Manual": "Manual"} -%}
+
+{%- macro asset_status_tag(value) -%}
+	{%- if value -%}{%- set entry = ASSET_STATUSES.get(value) or (_(value), "muted") -%}<span class="clm-tag clm-tag-{{ entry[1] }}">{{ entry[0] }}</span>{%- else -%}—{%- endif -%}
+{%- endmacro -%}
+
+{#- Selo de um Select customizado (Utilização / Estado de conservação); mapping: valor -> tom. -#}
+{%- macro value_tag(mapping, value) -%}
+	{%- if value -%}<span class="clm-tag clm-tag-{{ mapping.get(value, 'muted') }}">{{ value }}</span>{%- else -%}{%- endif -%}
+{%- endmacro -%}
+
+{%- macro purpose_label(value) -%}{{ (PURPOSES.get(value) or (_(value) if value else "", ""))[0] }}{%- endmacro -%}
+{%- macro purpose_description(value) -%}{{ (PURPOSES.get(value) or ("", ""))[1] }}{%- endmacro -%}
+{%- macro depreciation_method(value) -%}{{ DEPRECIATION_METHODS.get(value, value or "") }}{%- endmacro -%}
+
+{#- Número de Controle BHCL do ativo (referência principal); vazio quando não informado. -#}
+{%- macro control_number(asset) -%}
+	{{- (frappe.db.get_value("Asset", asset, "custom_número_de_controle_bhcl") or "") if asset else "" -}}
+{%- endmacro -%}
+
+{%- macro employee_name(employee) -%}
+	{{- (frappe.db.get_value("Employee", employee, "employee_name") or employee) if employee else "" -}}
+{%- endmacro -%}
+
+{#- Grade de campos com o QR Code do registro à direita. Os field_row vêm do caller. -#}
+{%- macro with_qr(url, caption) -%}
+	<table class="clm-grid">
+		<tr>
+			<td style="width: 80%;">{{ caller() }}</td>
+			<td style="width: 20%; text-align: center; vertical-align: top;">
+				<img src="{{ qr_data_uri(url) }}" alt="QR Code" style="width: 24mm; height: 24mm;">
+				<div class="clm-hash">{{ caption }}</div>
+			</td>
+		</tr>
+	</table>
+{%- endmacro -%}
+
+{#- Local e custodiante de origem ou destino numa linha de movimentação. -#}
+{%- macro place(location, employee) -%}
+	{%- if location or employee -%}
+	{{ location or "" }}{% if employee %}<div class="clm-desc">{{ employee_name(employee) }}</div>{% endif %}
+	{%- else -%}—{%- endif -%}
+{%- endmacro -%}

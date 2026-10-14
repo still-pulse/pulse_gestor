@@ -1,5 +1,16 @@
 # Changelog
 
+## [2026-10-14] — v0.10.0
+
+### Adicionado
+- Módulo Patrimonio com Print Formats no padrão institucional BHCL (`clm_base.html`, motor WeasyPrint): "Ficha do Ativo Imobilizado" (Asset) e "Ficha de Movimentacao de Ativos" (Asset Movement), definidos como padrão dos DocTypes via Property Setter no after_migrate; QR Code do registro gerado localmente (método Jinja `qr_data_uri`), sem serviço externo
+- Testes de padrão e de render dos Print Formats (`tests/test_print_formats.py`)
+
+### Alterado
+- "Ata de Reuniao de Comissao" e "Convocacao para Reuniao de Comissao" reescritos sobre `clm_base.html` e as macros do CLM (cabeçalho, rodapé, cartões, tabelas, selos de presença e cartão de assinatura padrão); a Ata passa a ser o formato padrão de Reuniao de Comissao
+- O app passa a exigir o `clm` (`required_apps`), que fornece a base de impressão e o motor de PDF (clm v0.1.95 ou superior)
+- As fichas antigas de ativos, que existiam só no banco ("Ficha de Ativo Imobilizado" e "Ficha de Movimentação de Ativos"), são desabilitadas sem ser apagadas; a acentuada é renomeada para "Ficha de Movimentacao de Ativos (antiga)" no before_migrate, porque a collation do banco a confundiria com o novo formato
+
 ## [2026-09-28] — v0.9.3
 
 ### Alterado

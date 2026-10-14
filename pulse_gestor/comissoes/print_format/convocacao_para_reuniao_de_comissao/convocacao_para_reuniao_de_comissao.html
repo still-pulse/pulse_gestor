@@ -1,0 +1,34 @@
+{% extends "clm/templates/print/clm_base.html" %}
+{% from "clm/templates/print/clm_macros.html" import textbox, signature_block, date with context %}
+{% from "pulse_gestor/templates/print/comissoes_macros.html" import commission_name, meeting_time, meeting_ref, meeting_card, agenda_card, participants_card with context %}
+
+{% block title %}Convocação para Reunião{% endblock %}
+{% block subtitle %}{{ [commission_name(doc) | e, doc.empresa] | select | join(" · ") }}{% endblock %}
+{% block meta %}<span class="clm-pill">Reunião de {{ date(doc.data_reuniao) }}</span>{% endblock %}
+{% block contract_pill %}{% endblock %}
+{% block pdf_ref %}{{ meeting_ref(doc) }}{% endblock %}
+{% block footer_ref %}Convocação para Reunião &middot; ID: {{ doc.name | e }}{% endblock %}
+{% block issue_date %}{{ frappe.utils.format_date(doc.data_convocacao, "dd/MM/yyyy") if doc.data_convocacao else "" }}{% endblock %}
+
+{% block body %}
+{{ meeting_card(doc) }}
+
+{%- set hour = meeting_time(doc) %}
+{{ textbox(
+	"<p>Ficam convocados os membros da <b>" ~ ((commission_name(doc) | e) or "comissão") ~ "</b>"
+	~ (" da <b>" ~ doc.empresa ~ "</b>" if doc.empresa else "")
+	~ " para reunião a realizar-se em <b>" ~ date(doc.data_reuniao) ~ "</b>"
+	~ (", às <b>" ~ hour ~ "</b>" if hour else "")
+	~ (", em <b>" ~ (doc.local_reuniao | e) ~ "</b>" if doc.local_reuniao else "")
+	~ ", conforme a pauta abaixo.</p>"
+	~ "<p>Solicita-se a confirmação de presença ou a justificativa de ausência antes da data da reunião.</p>"
+) }}
+
+{{ agenda_card(doc, "Pauta a ser definida.") }}
+
+{{ participants_card(doc, "Convocados") }}
+{% endblock %}
+
+{% block signatures %}
+{{ signature_block([("", "Presidência da " ~ ((commission_name(doc) | e) or "comissão"))], "Assinatura", "Data da convocação", date(doc.data_convocacao)) }}
+{% endblock %}

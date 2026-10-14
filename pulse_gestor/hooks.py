@@ -4,12 +4,15 @@ app_publisher = "Still Pulse"
 app_description = "Documentação da Unidade — cadastro de documentos por empresa/unidade com validade e alerta de vencimento"
 app_email = "dev@stillpulse.com.br"
 app_license = "mit"
-app_version = "0.9.3"
+app_version = "0.10.0"
 
-required_apps = ["frappe", "erpnext"]
+required_apps = ["frappe", "erpnext", "clm"]
 
 after_install = "pulse_gestor.setup.install.after_install"
 after_migrate = "pulse_gestor.setup.install.after_migrate"
+before_migrate = "pulse_gestor.print_formats.preserve_accented_legacy_print_formats"
+
+jinja = {"methods": ["pulse_gestor.print_formats.qr_data_uri"]}
 
 add_to_apps_screen = [
 	{

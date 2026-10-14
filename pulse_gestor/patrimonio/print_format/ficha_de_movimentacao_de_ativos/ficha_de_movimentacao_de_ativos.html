@@ -1,0 +1,52 @@
+{% extends "clm/templates/print/clm_base.html" %}
+{% from "clm/templates/print/clm_macros.html" import card, field_row, signature_block, date, datetime, or_dash with context %}
+{% from "pulse_gestor/templates/print/patrimonio_macros.html" import purpose_label, purpose_description, control_number, place, with_qr with context %}
+
+{% block title %}Ficha de Movimentação de Ativos{% endblock %}
+{% block subtitle %}{{ doc.company or "" }}{% endblock %}
+{% block meta %}<span class="clm-pill">Movimentação de {{ date(doc.transaction_date) }}</span>{% if doc.purpose %} <span class="clm-pill clm-pill-solid">{{ purpose_label(doc.purpose) }}</span>{% endif %}{% endblock %}
+{% block contract_pill %}{% endblock %}
+{% block pdf_ref %}{{ ([purpose_label(doc.purpose), ("Movimentação de " ~ date(doc.transaction_date)) if doc.transaction_date else ""] | select | join(" · ")) or (doc.name | e) }}{% endblock %}
+{% block footer_ref %}Ficha de Movimentação de Ativos &middot; ID: {{ doc.name | e }}{% endblock %}
+{% block issue_date %}{{ frappe.utils.format_date(doc.transaction_date, "dd/MM/yyyy") if doc.transaction_date else "" }}{% endblock %}
+
+{% block body %}
+{%- set count = (doc.assets or []) | length %}
+{% call card("Identificação da movimentação", True) %}
+	{% call with_qr(frappe.utils.get_url("/app/asset-movement/" ~ doc.name), count ~ (" bem" if count == 1 else " bens")) %}
+		{{ field_row([("Finalidade", purpose_label(doc.purpose), 40), ("Data e hora", datetime(doc.transaction_date) if doc.transaction_date else None, 30), ("Bens movimentados", count, 30)]) }}
+		{{ field_row([
+			("Empresa / unidade", doc.company, 40),
+			("Documento de referência", ((_(doc.reference_doctype) ~ (" " ~ doc.reference_name if doc.reference_name else "")) if doc.reference_doctype else None), 60),
+		]) }}
+		{%- if purpose_description(doc.purpose) %}<p class="clm-muted">{{ purpose_description(doc.purpose) }}</p>{% endif %}
+	{% endcall %}
+{% endcall %}
+
+{% call card("Relação de bens") %}
+	<table class="clm-table">
+		<thead><tr><th style="width: 5%;">#</th><th style="width: 33%;">Ativo</th><th style="width: 14%;">Controle BHCL</th><th style="width: 24%;">Origem</th><th style="width: 24%;">Destino</th></tr></thead>
+		<tbody>
+			{%- for d in (doc.assets or []) %}
+			<tr>
+				<td>{{ loop.index }}</td>
+				<td><strong>{{ or_dash(d.asset_name | e if d.asset_name else None) }}</strong>{% if d.asset %}<div class="clm-desc">ID: {{ d.asset }}</div>{% endif %}</td>
+				<td>{{ or_dash(control_number(d.asset) | e) }}</td>
+				<td>{{ place(d.source_location, d.from_employee) }}</td>
+				<td>{{ place(d.target_location, d.to_employee) }}</td>
+			</tr>
+			{%- else %}
+			<tr><td colspan="5" class="clm-muted">Nenhum bem informado.</td></tr>
+			{%- endfor %}
+		</tbody>
+	</table>
+	{%- if doc.purpose == "Receipt" %}
+	<p class="clm-muted">Movimentação de entrada: os bens acima não possuem localização de origem por se tratar de incorporação inicial ao patrimônio da unidade.</p>
+	{%- endif %}
+{% endcall %}
+{% endblock %}
+
+{% block signatures %}
+{%- set signers = [("", "Responsável pelo recebimento"), ("", "Responsável pelo patrimônio")] if doc.purpose == "Receipt" else [("", "Responsável pela entrega"), ("", "Responsável pelo recebimento"), ("", "Responsável pelo patrimônio")] %}
+{{ signature_block(signers, "Assinaturas", "Data da movimentação", date(doc.transaction_date)) }}
+{% endblock %}

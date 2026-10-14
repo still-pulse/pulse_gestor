@@ -1,0 +1,96 @@
+{% extends "clm/templates/print/clm_base.html" %}
+{% from "clm/templates/print/clm_macros.html" import card, field_row, signature_block, date, money with context %}
+{% from "pulse_gestor/templates/print/patrimonio_macros.html" import asset_status_tag, value_tag, depreciation_method, employee_name, with_qr, USAGE, CONDITION with context %}
+
+{% block title %}Ficha do Ativo Imobilizado{% endblock %}
+{% block subtitle %}{{ doc.company or "" }}{% endblock %}
+{% block meta %}
+{%- set ctrl = doc.get("custom_número_de_controle_bhcl") %}
+{%- set patr = doc.get("custom_número_patrimônio_prefeitura") %}
+<span class="clm-pill">Controle BHCL nº {{ (ctrl or "—") | e }}</span>
+{%- if patr %} <span class="clm-pill">Patrimônio Prefeitura nº {{ patr | e }}</span>{% endif %}
+{% endblock %}
+{% block contract_pill %}{% endblock %}
+{% block pdf_ref %}{{ ["Controle BHCL nº " ~ (doc.get("custom_número_de_controle_bhcl") or "—"), ("Patrimônio Prefeitura nº " ~ doc.get("custom_número_patrimônio_prefeitura")) if doc.get("custom_número_patrimônio_prefeitura") else ""] | select | join(" · ") | e }}{% endblock %}
+{% block footer_ref %}Ficha do Ativo Imobilizado &middot; ID: {{ doc.name | e }}{% endblock %}
+{% block issue_date %}{{ frappe.utils.format_date(doc.modified, "dd/MM/yyyy") if doc.modified else "" }}{% endblock %}
+
+{% block body %}
+{%- set custodian = employee_name(doc.custodian) %}
+
+{% call card("Identificação do bem", True) %}
+	{% call with_qr(frappe.utils.get_url("/app/asset/" ~ doc.name), doc.name | e) %}
+		{{ field_row([("Nome do bem", doc.asset_name | e if doc.asset_name else None, 60), ("Categoria", doc.asset_category, 40)]) }}
+		{{ field_row([("Item", doc.item_name or doc.get("item_name"), 60), ("ID do item", doc.item_code, 40)]) }}
+		{{ field_row([
+			("Controle BHCL", doc.get("custom_número_de_controle_bhcl") | e if doc.get("custom_número_de_controle_bhcl") else None, 35),
+			("Patrimônio Prefeitura", doc.get("custom_número_patrimônio_prefeitura") | e if doc.get("custom_número_patrimônio_prefeitura") else None, 35),
+			("Quantidade", doc.asset_quantity or 1, 30),
+		]) }}
+	{% endcall %}
+{% endcall %}
+
+{% call card("Localização e responsabilidade", True) %}
+	{{ field_row([("Empresa / unidade", doc.company, 50), ("Localização", doc.location, 50)]) }}
+	{{ field_row([("Custodiante", custodian or None, 50), ("Departamento", doc.department, 25), ("Centro de custo", doc.cost_center, 25)]) }}
+{% endcall %}
+
+{% call card("Situação do bem", True) %}
+	{{ field_row([
+		("Utilização", value_tag(USAGE, doc.get("custom_utilização")), 25),
+		("Estado de conservação", value_tag(CONDITION, doc.get("custom_estado_de_conservação")), 25),
+		("Situação no sistema", asset_status_tag(doc.status), 25),
+		("Origem do registro", ("Ativo preexistente" if doc.is_existing_asset else "Adquirido via compra") ~ (" · composto" if doc.is_composite_asset else ""), 25),
+	]) }}
+	{%- if doc.disposal_date %}
+	{{ field_row([("Data da baixa", date(doc.disposal_date))]) }}
+	{%- endif %}
+{% endcall %}
+
+{%- set owner_name = doc.customer if doc.asset_owner == "Customer" else (doc.supplier if doc.asset_owner == "Supplier" else (doc.asset_owner_company or doc.company)) %}
+{% call card("Propriedade do bem", True, box=(doc.asset_owner == "Customer")) %}
+	{{ field_row([("Proprietário", {"Customer": "Cliente", "Supplier": "Fornecedor"}.get(doc.asset_owner, "Empresa"), 25), ("Nome", owner_name, 75)]) }}
+	{%- if doc.asset_owner == "Customer" %}
+	<p class="clm-muted">Bem sob guarda e uso da OSS, sem incorporação patrimonial.</p>
+	{%- endif %}
+{% endcall %}
+
+{% call card("Aquisição e valores", True) %}
+	{{ field_row([
+		("Data de aquisição", date(doc.purchase_date) if doc.purchase_date else None, 25),
+		("Disponível para uso", date(doc.available_for_use_date) if doc.available_for_use_date else None, 25),
+		("Fatura de compra", doc.purchase_invoice, 25),
+		("Recebimento de compra", doc.purchase_receipt, 25),
+	]) }}
+	<table class="clm-table">
+		<thead><tr><th class="num">Valor de aquisição</th><th class="num">Custos adicionais</th><th class="num">Custo total</th><th class="num">Valor contábil</th></tr></thead>
+		<tbody><tr>
+			<td class="num">{{ money(doc.gross_purchase_amount or 0) }}</td>
+			<td class="num">{{ money(doc.additional_asset_cost or 0) }}</td>
+			<td class="num">{{ money(doc.total_asset_cost or doc.gross_purchase_amount or 0) }}</td>
+			<td class="num">{{ money(doc.value_after_depreciation if doc.calculate_depreciation else (doc.total_asset_cost or doc.gross_purchase_amount or 0)) }}</td>
+		</tr></tbody>
+	</table>
+	{%- if doc.calculate_depreciation %}
+	{{ field_row([
+		("Método de depreciação", depreciation_method(doc.depreciation_method), 25),
+		("Nº de depreciações", doc.total_number_of_depreciations, 25),
+		("Frequência (meses)", doc.frequency_of_depreciation, 25),
+		("Depreciação acumulada inicial", money(doc.opening_accumulated_depreciation or 0), 25),
+	]) }}
+	{%- if doc.is_fully_depreciated %}<p class="clm-muted">Ativo totalmente depreciado.</p>{% endif %}
+	{%- else %}
+	<p class="clm-muted">Depreciação não calculada neste registro.</p>
+	{%- endif %}
+{% endcall %}
+
+{%- if doc.policy_number or doc.insurer %}
+{% call card("Seguro", True) %}
+	{{ field_row([("Apólice", doc.policy_number | e if doc.policy_number else None, 25), ("Seguradora", doc.insurer | e if doc.insurer else None, 25), ("Valor segurado", doc.insured_value | e if doc.insured_value else None, 25), ("Vigência", (date(doc.insurance_start_date) ~ " a " ~ date(doc.insurance_end_date)) if doc.insurance_start_date else None, 25)]) }}
+{% endcall %}
+{%- endif %}
+{% endblock %}
+
+{% block signatures %}
+{{ signature_block([(employee_name(doc.custodian), "Custodiante do bem"), ("", "Responsável pelo patrimônio")], "Termo de responsabilidade", "Disponível para uso em", date(doc.available_for_use_date)) }}
+{% endblock %}

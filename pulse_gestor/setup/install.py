@@ -12,6 +12,8 @@ import frappe
 from frappe.model.rename_doc import rename_doc
 from frappe.permissions import add_permission
 
+from pulse_gestor.print_formats import ensure_default_print_formats, retire_legacy_print_formats
+
 ROLES = (
 	{"role_name": "Pulse Gestor Manager", "desk_access": 1},
 	{"role_name": "Pulse Gestor Viewer", "desk_access": 1},
@@ -42,6 +44,7 @@ def after_migrate():
 	ensure_comissoes_workspace()
 	backfill_cores_classificacao_diaria()
 	backfill_tempos_classificacao_diaria()
+	ensure_print_formats()
 	frappe.db.commit()
 
 
@@ -816,3 +819,8 @@ def sincronizar_dias_alerta():
 		dias,
 		update_modified=False,
 	)
+
+
+def ensure_print_formats():
+	retire_legacy_print_formats()
+	ensure_default_print_formats()

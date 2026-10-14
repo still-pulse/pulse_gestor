@@ -1,6 +1,7 @@
 {
 	"actions": [],
 	"creation": "2026-09-28 00:00:00.000000",
+	"default_print_format": "Ata de Reuniao de Comissao",
 	"doctype": "DocType",
 	"engine": "InnoDB",
 	"field_order": [
@@ -117,7 +118,7 @@
 		}
 	],
 	"links": [],
-	"modified": "2026-09-28 22:00:00.000000",
+	"modified": "2026-10-14 00:00:00.000000",
 	"modified_by": "Administrator",
 	"module": "Comissoes",
 	"name": "Reuniao de Comissao",
