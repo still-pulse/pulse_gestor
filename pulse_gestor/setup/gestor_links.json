@@ -1,0 +1,209 @@
+{
+	"links": [
+		{
+			"type": "Card Break",
+			"label": "Documentação da Unidade",
+			"link_count": 3,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
+			"type": "Link",
+			"label": "Documentos da Unidade",
+			"link_type": "DocType",
+			"link_to": "Documentacao da Unidade",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Tipos de Documento",
+			"link_type": "DocType",
+			"link_to": "Tipo de Documento da Unidade",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Configurações",
+			"link_type": "DocType",
+			"link_to": "Configuracoes Documentos da Unidade",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
+			"type": "Card Break",
+			"label": "Triagem",
+			"link_count": 3,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
+			"type": "Link",
+			"label": "Protocolos de Triagem",
+			"link_type": "DocType",
+			"link_to": "Protocolo de Triagem",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Vigências por Unidade",
+			"link_type": "DocType",
+			"link_to": "Unidade Protocolo Vigencia",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Classificações de Risco Diárias",
+			"link_type": "DocType",
+			"link_to": "Classificacao de Risco Diaria",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Card Break",
+			"label": "Atendimentos",
+			"link_count": 3,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
+			"type": "Link",
+			"label": "Especialidades",
+			"link_type": "DocType",
+			"link_to": "Especialidade",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Vigências de Especialidades",
+			"link_type": "DocType",
+			"link_to": "Unidade Especialidade Vigencia",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Atendimentos Médicos Diários",
+			"link_type": "DocType",
+			"link_to": "Atendimento Medico Diario",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Card Break",
+			"label": "Relatórios de Indicadores",
+			"link_count": 2,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
+			"type": "Link",
+			"label": "Apuração de Classificação de Risco",
+			"link_type": "Report",
+			"link_to": "Apuracao de Classificacao de Risco",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 0,
+			"is_query_report": 1
+		},
+		{
+			"type": "Link",
+			"label": "Relatório de Atendimentos por Período",
+			"link_type": "Report",
+			"link_to": "Relatorio de Atendimentos por Periodo",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 0,
+			"is_query_report": 1
+		},
+		{
+			"type": "Card Break",
+			"label": "Comissões",
+			"link_count": 3,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
+			"type": "Link",
+			"label": "Mandatos de Comissão",
+			"link_type": "DocType",
+			"link_to": "Mandato de Comissao",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Membros de Comissão",
+			"link_type": "DocType",
+			"link_to": "Membros de Comissao",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Reuniões de Comissão",
+			"link_type": "DocType",
+			"link_to": "Reuniao de Comissao",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Card Break",
+			"label": "Configurações de Comissões",
+			"link_count": 2,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
+			"type": "Link",
+			"label": "Categorias de Comissão",
+			"link_type": "DocType",
+			"link_to": "Categoria de Comissao",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Link",
+			"label": "Tipos de Comissão",
+			"link_type": "DocType",
+			"link_to": "Tipo de Comissao",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1
+		},
+		{
+			"type": "Card Break",
+			"label": "Relatórios de Comissões",
+			"link_count": 1,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
+			"type": "Link",
+			"label": "Atividades de Comissão",
+			"link_type": "Report",
+			"link_to": "Atividades de Comissao",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1,
+			"is_query_report": 1
+		}
+	]
+}

@@ -1,5 +1,19 @@
 # Changelog
 
+## [2026-10-16] — v0.10.0 — Print Formats de Comissões no padrão BHCL
+
+### Alterado
+- `Ata de Reuniao de Comissao` e `Convocacao para Reuniao de Comissao` passam a estender `clm_base.html` (manifesto `apps/clm/docs/brand-manifesto.md`): cartões, tabelas com cabeçalho `teal_dark`, selos de presença, referência "Comissão · Reunião de dd/mm/aaaa" e rodapé com ID
+- Assinatura da ata: com Processo de Assinatura encerrado, imprime o registro das evidências (OTP, IP, localização, integridade e QR); caso contrário, o cartão padrão `signature_block` com a caixa "Data da reunião". A convocação usa o cartão padrão com a "Data da convocação"
+- Macros próprias em `templates/print/comissoes_macros.html`; pastas dos formatos renomeadas para `scrub(nome)` (exigência do Frappe)
+- `required_apps` inclui `clm`
+
+## [2026-10-16] — Tudo no Workspace Gestor
+
+### Alterado
+- Os Workspaces Indicadores, Comissoes, Documentacao da Unidade e Pulse Gestor foram removidos; seus cards (Documentação da Unidade, Triagem, Atendimentos, Relatórios de Indicadores, Comissões, Configurações de Comissões, Relatórios de Comissões) e o painel de gestão agora ficam no Workspace Gestor
+- Links do app versionados em `setup/gestor_links.json`; `ensure_pulse_gestor_workspace` (after_migrate) os aplica ao Gestor sem alterar o restante do conteúdo e apaga os Workspaces antigos
+
 ## [2026-09-28] — v0.9.3
 
 ### Alterado

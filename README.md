@@ -8,7 +8,7 @@ Repositório: [still-pulse/pulse_gestor](https://github.com/still-pulse/pulse_ge
 
 Cadastro de documentos por unidade (`Company`), com tipo cadastrável, anexo PDF, vigência opcional e alerta de vencimento.
 
-O Workspace **Indicadores** permite cadastrar protocolos de triagem, seus níveis e metas, e associar cada unidade a um protocolo por período de vigência. A unidade corresponde ao cadastro `Company` já usado pelo app. Datas finais de vigência são inclusivas; uma data final vazia indica vigência por prazo indeterminado. Períodos da mesma unidade não podem se sobrepor.
+Os cards de **Indicadores** do Workspace **Gestor** permite cadastrar protocolos de triagem, seus níveis e metas, e associar cada unidade a um protocolo por período de vigência. A unidade corresponde ao cadastro `Company` já usado pelo app. Datas finais de vigência são inclusivas; uma data final vazia indica vigência por prazo indeterminado. Períodos da mesma unidade não podem se sobrepor.
 
 ## DocTypes
 

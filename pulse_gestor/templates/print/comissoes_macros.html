@@ -1,0 +1,121 @@
+{#- Macros dos formatos de impressão de Comissões sobre o padrão institucional BHCL (apps/clm/docs/brand-manifesto.md).
+    Importe junto com os do CLM; os imports do pai não chegam aos blocos do filho:
+    {% from "pulse_gestor/templates/print/comissoes_macros.html" import identificacao_card with context %} -#}
+{% from "clm/templates/print/clm_macros.html" import card, field_row, textbox, signature_block, tag, date, datetime, or_dash with context %}
+
+{%- set PRESENCA = {"Presente": ("Presente", "ok"), "Ausente": ("Ausente", "bad"), "Justificado": ("Justificado", "warn")} -%}
+
+{#- Referência principal: "<Comissão> · Reunião de dd/mm/aaaa". -#}
+{%- macro referencia(nome, data_reuniao) -%}
+	{{- nome | e }}{% if data_reuniao %} &middot; Reunião de {{ frappe.utils.format_date(data_reuniao, "dd/MM/yyyy") }}{% endif -%}
+{%- endmacro -%}
+
+{#- Identificação da reunião. -#}
+{%- macro identificacao_card(doc, nome, categoria, title="Identificação da reunião") -%}
+	{%- call card(title, True) %}
+		{{ field_row([("Comissão", nome, 50), ("Categoria", categoria, 50)]) }}
+		{{ field_row([("Empresa", doc.empresa, 50), ("Mandato", doc.mandato_comissao, 50)]) }}
+		{{ field_row([("Data e hora da reunião", datetime(doc.data_reuniao), 34), ("Local", doc.local_reuniao | e if doc.local_reuniao else None, 40), ("Data da convocação", date(doc.data_convocacao), 26)]) }}
+	{% endcall -%}
+{%- endmacro -%}
+
+{#- Pauta numerada. -#}
+{%- macro pauta_card(pauta, vazio, title="Pauta") -%}
+	{%- call card(title) %}
+	{%- if pauta %}
+	<table class="clm-table">
+		<thead><tr><th style="width: 8%;">Item</th><th>Assunto</th></tr></thead>
+		<tbody>
+			{%- for item in pauta %}
+			<tr><td>{{ loop.index }}</td><td>{{ or_dash(item.assunto | e if item.assunto else None) }}</td></tr>
+			{%- endfor %}
+		</tbody>
+	</table>
+	{%- else %}
+		{{ textbox(None, vazio) }}
+	{%- endif %}
+	{% endcall -%}
+{%- endmacro -%}
+
+{#- Participantes; com_presenca=False lista apenas nome e função (convocação). -#}
+{%- macro participantes_card(participantes, title="Participantes", com_presenca=True) -%}
+	{%- call card(title) %}
+	<table class="clm-table">
+		<thead>
+			<tr>
+				<th>Nome</th><th style="width: 34%;">Função</th>
+				{%- if com_presenca %}<th style="width: 16%;">Presença</th>{% endif %}
+			</tr>
+		</thead>
+		<tbody>
+			{%- for p in participantes %}
+			<tr>
+				<td>{{ or_dash(p.nome | e if p.nome else None) }}</td>
+				<td>{{ or_dash(p.funcao | e if p.funcao else None) }}</td>
+				{%- if com_presenca %}<td>{{ tag(PRESENCA, p.status_presenca, "Presente") if p.status_presenca else or_dash(None) }}</td>{% endif %}
+			</tr>
+			{%- else %}
+			<tr><td colspan="{{ 3 if com_presenca else 2 }}" class="clm-muted">Nenhum participante registrado.</td></tr>
+			{%- endfor %}
+		</tbody>
+	</table>
+	{% endcall -%}
+{%- endmacro -%}
+
+{#- Assinaturas pelo motor assinatura_eletronica (Processo de Assinatura do documento), com as classes rh-epi-* de
+    clm_print.css. Processo encerrado: um bloco por signatário com a evidência (método, data, código, IP, localização,
+    selfie e mapa) e, no fim, integridade, código e QR de verificação. Sem processo encerrado, ou sem o app: linhas de
+    assinatura em papel de `signers` no cartão padrão (signature_block), com a caixa de data informada pelo usuário. -#}
+{%- macro registro_assinaturas(doc, signers, date_label=None, date_value=None, title="Assinaturas", columns=None) -%}
+	{%- set p = (assinatura_processo(doc) if assinatura_processo is defined else none) %}
+	{%- if p and p.encerrado %}
+	{%- call card("Registro das assinaturas", True) %}
+		{%- for s in p.signatarios %}
+		<table class="rh-epi-registro"><tr>
+			<td>
+				<table class="rh-epi-meta">
+					<tr><th>{{ s.papel or "Signatário" }}</th><td><strong>{{ s.nome or "—" }}</strong> · {{ s.status }}{% if s.metodo %} ({{ s.metodo | lower }}){% endif %}</td></tr>
+					{%- if s.status == "Assinado" and s.eletronica %}
+					<tr><th>Assinado em</th><td>{{ datetime(s.assinado_em) }} · IP {{ s.evidencia.get("ip") or "—" }} · assinatura eletrônica simples (Lei 14.063/2020)</td></tr>
+					<tr><th>Código (OTP)</th><td>{{ s.canal or "—" }} → {{ s.evidencia.get("destino_mascarado") or "—" }} · verificado {{ (s.evidencia.get("codigo_verificado_em") or "—")[:19] }}</td></tr>
+					{%- if s.localizacao %}<tr><th>Localização</th><td>{{ "%.6f" | format(s.localizacao.lat) }}, {{ "%.6f" | format(s.localizacao.lon) }} (precisão ± {{ s.localizacao.precisao_m }} m)</td></tr>{% endif %}
+					{%- elif s.status == "Assinado" %}
+					<tr><th>Registrado em</th><td>{{ datetime(s.assinado_em) }}{% if s.evidencia.get("data_assinatura") %} · assinado em {{ date(s.evidencia.get("data_assinatura")) }}{% endif %} · assinatura física</td></tr>
+					{%- if s.evidencia.get("hash_arquivo") %}<tr><th>Documento assinado</th><td class="rh-epi-mono">{{ s.evidencia.get("hash_arquivo")[:32] }}</td></tr>{% endif %}
+					{%- elif s.status == "Recusado" %}
+					<tr><th>Recusado em</th><td>{{ datetime(s.assinado_em) }} · motivo: {{ s.motivo_recusa or "—" }}</td></tr>
+					{%- endif %}
+					{%- if s.hash_evidencia %}<tr><th>Evidência</th><td class="rh-epi-mono">{{ s.hash_evidencia[:24] }}</td></tr>{% endif %}
+				</table>
+			</td>
+			{%- if s.selfie_uri %}
+			<td class="rh-epi-qr"><img src="{{ s.selfie_uri }}" alt="Registro fotográfico do signatário" style="width: 18mm; height: 24mm; object-fit: cover;" /><div class="rh-epi-legenda">Registro fotográfico</div></td>
+			{%- endif %}
+			{%- if s.mapa_uri %}
+			<td class="rh-epi-mapa"><img src="{{ s.mapa_uri }}" alt="Mapa da localização da assinatura" /></td>
+			{%- endif %}
+		</tr></table>
+		{%- endfor %}
+		<table class="rh-epi-registro"><tr>
+			<td>
+				<table class="rh-epi-meta">
+					<tr><th>Conteúdo</th><td class="rh-epi-mono">{{ (p.hash_conteudo or "—")[:32] }}</td></tr>
+					<tr><th>Integridade</th><td>{% if p.integridade and p.integridade.integra %}Íntegra: os hashes conferem com o conteúdo e as evidências{% else %}<span class="rh-epi-alerta">ATENÇÃO: o conteúdo ou uma evidência foram alterados após a assinatura</span>{% endif %}</td></tr>
+				</table>
+			</td>
+			{%- if p.url_verificacao %}
+			<td class="rh-epi-qr">
+				<img src="{{ p.qr }}" alt="QR de verificação" />
+				<div class="rh-epi-codigo">{{ p.codigo_verificacao }}</div>
+				<div class="rh-epi-legenda">Confira a autenticidade deste PDF em {{ p.url_verificacao.split("?")[0] | e }}.</div>
+			</td>
+			{%- endif %}
+		</tr></table>
+	{% endcall -%}
+	{%- if date_label %}
+	{%- call card("Data da reunião", True) %}{{ field_row([(date_label, date_value)]) }}{% endcall -%}
+	{%- endif %}
+	{%- else %}
+	{{ signature_block(signers, title, date_label, date_value, columns) }}
+	{%- endif %}
+{%- endmacro -%}
