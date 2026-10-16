@@ -1,6 +1,6 @@
 # Changelog
 
-## [2026-10-16] — v0.10.0 — Print Formats de Comissões no padrão BHCL
+## [2026-10-16] — v0.10.1 — Print Formats de Comissões no padrão BHCL
 
 ### Alterado
 - `Ata de Reuniao de Comissao` e `Convocacao para Reuniao de Comissao` passam a estender `clm_base.html` (manifesto `apps/clm/docs/brand-manifesto.md`): cartões, tabelas com cabeçalho `teal_dark`, selos de presença, referência "Comissão · Reunião de dd/mm/aaaa" e rodapé com ID
