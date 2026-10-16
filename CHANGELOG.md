@@ -1,5 +1,10 @@
 # Changelog
 
+## [2026-10-16] — v0.10.2
+
+### Alterado
+- Integra a linha v0.10.0 (módulo Patrimonio e formatos de impressão) à `main`, que havia sido recriada a partir de um snapshot sem histórico em comum. Ata e Convocação ficam com as macros da v0.10.0 (`commission_name`, `meeting_card`, `agenda_card`, `participants_card`), acrescidas do registro da assinatura eletrônica da ata (`registro_assinaturas`: evidências quando há Processo de Assinatura encerrado; caso contrário, o cartão padrão com a data da reunião)
+
 ## [2026-10-16] — v0.10.1 — Print Formats de Comissões no padrão BHCL
 
 ### Alterado
@@ -13,6 +18,17 @@
 ### Alterado
 - Os Workspaces Indicadores, Comissoes, Documentacao da Unidade e Pulse Gestor foram removidos; seus cards (Documentação da Unidade, Triagem, Atendimentos, Relatórios de Indicadores, Comissões, Configurações de Comissões, Relatórios de Comissões) e o painel de gestão agora ficam no Workspace Gestor
 - Links do app versionados em `setup/gestor_links.json`; `ensure_pulse_gestor_workspace` (after_migrate) os aplica ao Gestor sem alterar o restante do conteúdo e apaga os Workspaces antigos
+
+## [2026-10-14] — v0.10.0
+
+### Adicionado
+- Módulo Patrimonio com Print Formats no padrão institucional BHCL (`clm_base.html`, motor WeasyPrint): "Ficha do Ativo Imobilizado" (Asset) e "Ficha de Movimentacao de Ativos" (Asset Movement), definidos como padrão dos DocTypes via Property Setter no after_migrate; QR Code do registro gerado localmente (método Jinja `qr_data_uri`), sem serviço externo
+- Testes de padrão e de render dos Print Formats (`tests/test_print_formats.py`)
+
+### Alterado
+- "Ata de Reuniao de Comissao" e "Convocacao para Reuniao de Comissao" reescritos sobre `clm_base.html` e as macros do CLM (cabeçalho, rodapé, cartões, tabelas, selos de presença e cartão de assinatura padrão); a Ata passa a ser o formato padrão de Reuniao de Comissao
+- O app passa a exigir o `clm` (`required_apps`), que fornece a base de impressão e o motor de PDF (clm v0.1.95 ou superior)
+- As fichas antigas de ativos, que existiam só no banco ("Ficha de Ativo Imobilizado" e "Ficha de Movimentação de Ativos"), são desabilitadas sem ser apagadas; a acentuada é renomeada para "Ficha de Movimentacao de Ativos (antiga)" no before_migrate, porque a collation do banco a confundiria com o novo formato
 
 ## [2026-09-28] — v0.9.3
 

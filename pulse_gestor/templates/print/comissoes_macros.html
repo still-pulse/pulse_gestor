@@ -1,64 +1,85 @@
-{#- Macros dos formatos de impressão de Comissões sobre o padrão institucional BHCL (apps/clm/docs/brand-manifesto.md).
+{#- Macros das Comissões sobre o padrão institucional BHCL (apps/clm/docs/brand-manifesto.md).
     Importe junto com os do CLM; os imports do pai não chegam aos blocos do filho:
-    {% from "pulse_gestor/templates/print/comissoes_macros.html" import identificacao_card with context %} -#}
-{% from "clm/templates/print/clm_macros.html" import card, field_row, textbox, signature_block, tag, date, datetime, or_dash with context %}
+    {% from "pulse_gestor/templates/print/comissoes_macros.html" import meeting_card, ... with context %} -#}
+{% from "clm/templates/print/clm_macros.html" import card, field_row, textbox, signature_block, date, datetime, or_dash with context %}
 
-{%- set PRESENCA = {"Presente": ("Presente", "ok"), "Ausente": ("Ausente", "bad"), "Justificado": ("Justificado", "warn")} -%}
+{#- Nome do Tipo de Comissão (a referência principal dos documentos de reunião). -#}
+{%- macro commission_name(doc) -%}
+	{{- (frappe.db.get_value("Tipo de Comissao", doc.tipo_comissao, "nome_tipo") or doc.tipo_comissao) if doc.tipo_comissao else "" -}}
+{%- endmacro -%}
 
-{#- Referência principal: "<Comissão> · Reunião de dd/mm/aaaa". -#}
-{%- macro referencia(nome, data_reuniao) -%}
-	{{- nome | e }}{% if data_reuniao %} &middot; Reunião de {{ frappe.utils.format_date(data_reuniao, "dd/MM/yyyy") }}{% endif -%}
+{%- macro commission_category(doc) -%}
+	{%- set category = frappe.db.get_value("Tipo de Comissao", doc.tipo_comissao, "categoria_comissao") if doc.tipo_comissao else None -%}
+	{{- (frappe.db.get_value("Categoria de Comissao", category, "nome_categoria") or category) if category else "" -}}
+{%- endmacro -%}
+
+{#- Hora da reunião (HH:mm); vazio quando o campo não tem hora (00:00) ou não foi preenchido. -#}
+{%- macro meeting_time(doc) -%}
+	{%- if doc.data_reuniao -%}
+	{%- set hour = frappe.utils.get_datetime(doc.data_reuniao).strftime("%H:%M") -%}
+	{{- hour if hour != "00:00" else "" -}}
+	{%- endif -%}
+{%- endmacro -%}
+
+{#- Referência do cabeçalho: "<Comissão> · Reunião de dd/mm/aaaa". -#}
+{%- macro meeting_ref(doc) -%}
+	{{- ([commission_name(doc) | e, ("Reunião de " ~ date(doc.data_reuniao)) if doc.data_reuniao else ""] | select | join(" · ")) or (doc.name | e) -}}
+{%- endmacro -%}
+
+{%- macro mandate_period(doc) -%}
+	{%- set m = frappe.db.get_value("Mandato de Comissao", doc.mandato_comissao, ["data_inicio_mandato", "data_encerramento_mandato"], as_dict=True) if doc.mandato_comissao else None -%}
+	{%- if m and m.data_inicio_mandato -%}{{ date(m.data_inicio_mandato) }} a {{ date(m.data_encerramento_mandato) }}{%- endif -%}
 {%- endmacro -%}
 
 {#- Identificação da reunião. -#}
-{%- macro identificacao_card(doc, nome, categoria, title="Identificação da reunião") -%}
+{%- macro meeting_card(doc, title="Identificação da reunião") -%}
 	{%- call card(title, True) %}
-		{{ field_row([("Comissão", nome, 50), ("Categoria", categoria, 50)]) }}
-		{{ field_row([("Empresa", doc.empresa, 50), ("Mandato", doc.mandato_comissao, 50)]) }}
-		{{ field_row([("Data e hora da reunião", datetime(doc.data_reuniao), 34), ("Local", doc.local_reuniao | e if doc.local_reuniao else None, 40), ("Data da convocação", date(doc.data_convocacao), 26)]) }}
+		{{ field_row([("Comissão", commission_name(doc) | e, 50), ("Categoria", commission_category(doc) | e, 25), ("Mandato", mandate_period(doc), 25)]) }}
+		{{ field_row([("Data da reunião", date(doc.data_reuniao) if doc.data_reuniao else None, 25), ("Horário", meeting_time(doc), 25), ("Local", doc.local_reuniao | e if doc.local_reuniao else None, 50)]) }}
+		{{ field_row([("Empresa / unidade", doc.empresa, 50), ("Data da convocação", date(doc.data_convocacao) if doc.data_convocacao else None, 50)]) }}
 	{% endcall -%}
 {%- endmacro -%}
 
 {#- Pauta numerada. -#}
-{%- macro pauta_card(pauta, vazio, title="Pauta") -%}
-	{%- call card(title) %}
-	{%- if pauta %}
-	<table class="clm-table">
-		<thead><tr><th style="width: 8%;">Item</th><th>Assunto</th></tr></thead>
-		<tbody>
-			{%- for item in pauta %}
-			<tr><td>{{ loop.index }}</td><td>{{ or_dash(item.assunto | e if item.assunto else None) }}</td></tr>
-			{%- endfor %}
-		</tbody>
-	</table>
-	{%- else %}
-		{{ textbox(None, vazio) }}
-	{%- endif %}
+{%- macro agenda_card(doc, empty) -%}
+	{%- call card("Pauta") %}
+		<table class="clm-table">
+			<thead><tr><th style="width: 8%;">Item</th><th>Assunto</th></tr></thead>
+			<tbody>
+				{%- for item in (doc.pauta or []) %}
+				<tr><td>{{ loop.index }}</td><td>{{ or_dash(item.assunto | e if item.assunto else None) }}</td></tr>
+				{%- else %}
+				<tr><td colspan="2" class="clm-muted">{{ empty }}</td></tr>
+				{%- endfor %}
+			</tbody>
+		</table>
 	{% endcall -%}
 {%- endmacro -%}
 
-{#- Participantes; com_presenca=False lista apenas nome e função (convocação). -#}
-{%- macro participantes_card(participantes, title="Participantes", com_presenca=True) -%}
+{#- Selo de presença (rótulo, tom). -#}
+{%- set PRESENCE = {"Presente": ("Presente", "ok"), "Ausente": ("Ausente", "bad"), "Justificado": ("Ausência justificada", "warn")} -%}
+{%- macro presence_tag(value) -%}
+	{%- if value -%}{%- set entry = PRESENCE.get(value) or (value, "muted") -%}<span class="clm-tag clm-tag-{{ entry[1] }}">{{ entry[0] }}</span>{%- else -%}—{%- endif -%}
+{%- endmacro -%}
+
+{#- Participantes; presence=True acrescenta a coluna de presença. -#}
+{%- macro participants_card(doc, title, presence=False) -%}
 	{%- call card(title) %}
-	<table class="clm-table">
-		<thead>
-			<tr>
-				<th>Nome</th><th style="width: 34%;">Função</th>
-				{%- if com_presenca %}<th style="width: 16%;">Presença</th>{% endif %}
-			</tr>
-		</thead>
-		<tbody>
-			{%- for p in participantes %}
-			<tr>
-				<td>{{ or_dash(p.nome | e if p.nome else None) }}</td>
-				<td>{{ or_dash(p.funcao | e if p.funcao else None) }}</td>
-				{%- if com_presenca %}<td>{{ tag(PRESENCA, p.status_presenca, "Presente") if p.status_presenca else or_dash(None) }}</td>{% endif %}
-			</tr>
-			{%- else %}
-			<tr><td colspan="{{ 3 if com_presenca else 2 }}" class="clm-muted">Nenhum participante registrado.</td></tr>
-			{%- endfor %}
-		</tbody>
-	</table>
+		<table class="clm-table">
+			<thead><tr><th style="width: 6%;">#</th><th>Nome</th><th style="width: 30%;">Função</th>{% if presence %}<th style="width: 24%;">Presença</th>{% endif %}</tr></thead>
+			<tbody>
+				{%- for p in (doc.participantes or []) %}
+				<tr>
+					<td>{{ loop.index }}</td>
+					<td>{{ or_dash(p.nome | e if p.nome else None) }}</td>
+					<td>{{ or_dash(p.funcao | e if p.funcao else None) }}</td>
+					{%- if presence %}<td>{{ presence_tag(p.status_presenca) }}</td>{% endif %}
+				</tr>
+				{%- else %}
+				<tr><td colspan="{{ 4 if presence else 3 }}" class="clm-muted">Nenhum participante informado.</td></tr>
+				{%- endfor %}
+			</tbody>
+		</table>
 	{% endcall -%}
 {%- endmacro -%}
 

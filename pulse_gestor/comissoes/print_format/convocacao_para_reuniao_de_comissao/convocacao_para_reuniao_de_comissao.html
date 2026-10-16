@@ -1,39 +1,34 @@
 {% extends "clm/templates/print/clm_base.html" %}
-{% from "clm/templates/print/clm_macros.html" import card, textbox, signature_block, date with context %}
-{% from "pulse_gestor/templates/print/comissoes_macros.html" import referencia, identificacao_card, pauta_card, participantes_card with context %}
+{% from "clm/templates/print/clm_macros.html" import textbox, signature_block, date with context %}
+{% from "pulse_gestor/templates/print/comissoes_macros.html" import commission_name, meeting_time, meeting_ref, meeting_card, agenda_card, participants_card with context %}
 
-{% set tipo = frappe.db.get_value("Tipo de Comissao", doc.tipo_comissao, ["nome_tipo", "categoria_comissao"], as_dict=True) or {} %}
-{% set nome = tipo.nome_tipo or doc.tipo_comissao or "" %}
-{% set categoria = (frappe.db.get_value("Categoria de Comissao", tipo.categoria_comissao, "nome_categoria") if tipo.categoria_comissao else "") %}
-{% set hora = frappe.utils.format_datetime(doc.data_reuniao, "HH:mm") if doc.data_reuniao else "" %}
 {% block title %}Convocação para Reunião{% endblock %}
-{% block subtitle %}{{ doc.empresa or "" }}{% endblock %}
-{% block meta %}<span class="clm-pill">{{ referencia(nome, doc.data_reuniao) }}</span>{% endblock %}
+{% block subtitle %}{{ [commission_name(doc) | e, doc.empresa] | select | join(" · ") }}{% endblock %}
+{% block meta %}<span class="clm-pill">Reunião de {{ date(doc.data_reuniao) }}</span>{% endblock %}
 {% block contract_pill %}{% endblock %}
-{% block pdf_ref %}{{ referencia(nome, doc.data_reuniao) }}{% endblock %}
-{% block footer_ref %}Convocação para Reunião de Comissão &middot; ID: {{ doc.name | e }}{% endblock %}
+{% block pdf_ref %}{{ meeting_ref(doc) }}{% endblock %}
+{% block footer_ref %}Convocação para Reunião &middot; ID: {{ doc.name | e }}{% endblock %}
 {% block issue_date %}{{ frappe.utils.format_date(doc.data_convocacao, "dd/MM/yyyy") if doc.data_convocacao else "" }}{% endblock %}
 
 {% block body %}
-{{ identificacao_card(doc, nome, categoria) }}
+{{ meeting_card(doc) }}
 
-{% call card("Convocação", True) %}
-	{% set texto %}
-		Ficam convocados os membros da <strong>{{ nome | e }}</strong> da <strong>{{ doc.empresa | e }}</strong>
-		para reunião a realizar-se em <strong>{{ frappe.utils.format_date(doc.data_reuniao, "dd 'de' MMMM 'de' yyyy") }}</strong>{% if hora and hora != "00:00" %}, às <strong>{{ hora }}</strong>{% endif %}{% if doc.local_reuniao %}, em <strong>{{ doc.local_reuniao | e }}</strong>{% endif %},
-		conforme a pauta abaixo.
-	{% endset %}
-	{{ textbox(texto) }}
-{% endcall %}
+{%- set hour = meeting_time(doc) %}
+{{ textbox(
+	"<p>Ficam convocados os membros da <b>" ~ ((commission_name(doc) | e) or "comissão") ~ "</b>"
+	~ (" da <b>" ~ doc.empresa ~ "</b>" if doc.empresa else "")
+	~ " para reunião a realizar-se em <b>" ~ date(doc.data_reuniao) ~ "</b>"
+	~ (", às <b>" ~ hour ~ "</b>" if hour else "")
+	~ (", em <b>" ~ (doc.local_reuniao | e) ~ "</b>" if doc.local_reuniao else "")
+	~ ", conforme a pauta abaixo.</p>"
+	~ "<p>Solicita-se a confirmação de presença ou a justificativa de ausência antes da data da reunião.</p>"
+) }}
 
-{{ pauta_card(doc.pauta, "Pauta a ser definida.") }}
-{% if doc.participantes %}{{ participantes_card(doc.participantes, "Convocados", False) }}{% endif %}
+{{ agenda_card(doc, "Pauta a ser definida.") }}
 
-{% call card("Solicitação", True) %}
-	{{ textbox("Solicita-se a confirmação de presença ou a justificativa de ausência antes da data da reunião.") }}
-{% endcall %}
+{{ participants_card(doc, "Convocados") }}
 {% endblock %}
 
 {% block signatures %}
-{{ signature_block([("", "Presidência da " ~ nome)], "Assinatura da convocação", "Data da convocação", date(doc.data_convocacao)) }}
+{{ signature_block([("", "Presidência da " ~ ((commission_name(doc) | e) or "comissão"))], "Assinatura", "Data da convocação", date(doc.data_convocacao)) }}
 {% endblock %}

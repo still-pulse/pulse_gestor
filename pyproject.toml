@@ -7,15 +7,19 @@ description = "Documentação da Unidade — cadastro de documentos por empresa/
 requires-python = ">=3.11"
 readme = "README.md"
 dynamic = ["version"]
-dependencies = []
+dependencies = [
+	# "frappe~=15.0.0" # Installed and managed by bench.
+	# "erpnext~=15.0.0" # Required app (see required_apps in hooks.py); installed and managed by bench.
+	# "clm" # Required in-house app (print formats extend clm_base.html, PDF engine); installed from its own repo.
+]
 
 [build-system]
 requires = ["flit_core >=3.4,<4"]
 build-backend = "flit_core.buildapi"
 
 [tool.bench.frappe-dependencies]
-frappe = ">=15.0.0"
-erpnext = ">=15.0.0"
+frappe = ">=15.0.0,<16.0.0"
+erpnext = ">=15.0.0,<16.0.0"
 
 [tool.ruff]
 line-length = 110
