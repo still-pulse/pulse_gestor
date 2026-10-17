@@ -1,0 +1,60 @@
+{% extends "clm/templates/print/clm_base.html" %}
+{% from "clm/templates/print/clm_macros.html" import card, field_row, textbox, date, datetime, or_dash with context %}
+{% from "pulse_gestor/templates/print/patrimonio_macros.html" import purpose_label, control_number, employee_name, place, with_qr with context %}
+{% from "pulse_gestor/templates/print/comissoes_macros.html" import registro_assinaturas with context %}
+{#- Termo assinado por quem recebe os bens (to_employee) no motor assinatura_eletronica
+    (perfil pulse_gestor.assinatura.PerfilTermoDeMovimentacao): um quadro e uma assinatura por custodiante. -#}
+{% set texto_declaracao = frappe.db.get_value("Modelo de Assinatura", "Asset Movement", "texto_declaracao") %}
+{%- set ns = namespace(custodiantes=[]) %}
+{%- for d in (doc.assets or []) if d.to_employee and d.to_employee not in ns.custodiantes %}{% set ns.custodiantes = ns.custodiantes + [d.to_employee] %}{% endfor %}
+
+{% block title %}Termo de Responsabilidade{% endblock %}
+{% block subtitle %}{{ doc.company or "" }}{% endblock %}
+{% block meta %}<span class="clm-pill">Movimentação de {{ date(doc.transaction_date) }}</span>{% if doc.purpose %} <span class="clm-pill clm-pill-solid">{{ purpose_label(doc.purpose) }}</span>{% endif %}{% endblock %}
+{% block contract_pill %}{% endblock %}
+{% block pdf_ref %}{{ ("Termo de Responsabilidade · Movimentação de " ~ date(doc.transaction_date)) if doc.transaction_date else "Termo de Responsabilidade" }}{% endblock %}
+{% block footer_ref %}Termo de Responsabilidade de Movimentação &middot; ID: {{ doc.name | e }}{% endblock %}
+{% block issue_date %}{{ frappe.utils.format_date(doc.transaction_date, "dd/MM/yyyy") if doc.transaction_date else "" }}{% endblock %}
+
+{% block body %}
+{% call card("Identificação da movimentação", True) %}
+	{% call with_qr(frappe.utils.get_url("/app/asset-movement/" ~ doc.name), doc.name | e) %}
+		{{ field_row([("Finalidade", purpose_label(doc.purpose) or None, 40), ("Data e hora", datetime(doc.transaction_date) if doc.transaction_date else None, 30), ("Custodiantes", ns.custodiantes | length, 30)]) }}
+		{{ field_row([("Empresa / unidade", doc.company, 100)]) }}
+	{% endcall %}
+{% endcall %}
+
+{%- for emp in ns.custodiantes %}
+{% call card("Bens sob responsabilidade de " ~ (employee_name(emp) | e)) %}
+	<table class="clm-table">
+		<thead><tr><th style="width: 5%;">#</th><th style="width: 35%;">Ativo</th><th style="width: 14%;">Controle BHCL</th><th style="width: 23%;">Origem</th><th style="width: 23%;">Destino</th></tr></thead>
+		<tbody>
+			{%- for d in (doc.assets or []) if d.to_employee == emp %}
+			<tr>
+				<td>{{ loop.index }}</td>
+				<td><strong>{{ or_dash(d.asset_name | e if d.asset_name else None) }}</strong>{% if d.asset %}<div class="clm-desc">ID: {{ d.asset }}</div>{% endif %}</td>
+				<td>{{ or_dash(control_number(d.asset) | e) }}</td>
+				<td>{{ place(d.source_location, d.from_employee) }}</td>
+				<td>{{ d.target_location or "—" }}</td>
+			</tr>
+			{%- endfor %}
+		</tbody>
+	</table>
+{% endcall %}
+{%- else %}
+{% call card("Bens sob responsabilidade") %}
+<p class="clm-muted">Nenhum bem foi entregue a um custodiante nesta movimentação.</p>
+{% endcall %}
+{%- endfor %}
+
+{% call card("Declaração de responsabilidade") %}
+{{ textbox(texto_declaracao or "<p>Declaro que recebi os bens acima relacionados, em condições de uso, e assumo a responsabilidade pela sua guarda e conservação.</p>") }}
+{% endcall %}
+{% endblock %}
+
+{% block signatures %}
+{%- set ns2 = namespace(signers=[]) %}
+{%- for emp in ns.custodiantes %}{% set ns2.signers = ns2.signers + [(employee_name(emp) | e, "Custodiante")] %}{% endfor %}
+{%- set ns2.signers = ns2.signers + [("", "Responsável pelo patrimônio")] %}
+{{ registro_assinaturas(doc, ns2.signers, "Data da movimentação", date(doc.transaction_date), "Assinaturas", 2) }}
+{% endblock %}

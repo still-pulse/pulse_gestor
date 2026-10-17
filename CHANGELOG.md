@@ -1,5 +1,18 @@
 # Changelog
 
+## [2026-10-17] — v0.11.0 — Relatórios de Patrimônio e Termo de Responsabilidade
+
+### Adicionado
+- Relatórios "Relação de Ativos" e "Ativos por Localização" (Script Reports do módulo Patrimonio, card "Relatórios de Patrimônio" no Workspace Gestor). Filtros por empresa e por localização vinculada à empresa (`Location.custom_empresa`), incluindo sublocais, além de categoria, situação, utilização e estado de conservação. O relatório por localização agrupa os bens em árvore, com quantidade, valores e gráfico das localizações com mais bens
+- "Termo de Responsabilidade do Ativo" (Asset, assinado pelo custodiante na custódia inicial) e "Termo de Responsabilidade de Movimentacao" (Asset Movement, assinado por cada colaborador em "Para Funcionário", que vê só os seus bens), no padrão BHCL e com o registro das evidências da assinatura
+- Perfis `PerfilTermoDoAtivo` e `PerfilTermoDeMovimentacao` no motor `assinatura_eletronica` e Modelos de Assinatura semeados para Asset e Asset Movement (paralelo, após o submit, aceite eletrônico, comprovante no formato do Termo). O recebimento automático (Receipt) é recusado na movimentação: a custódia inicial se assina no próprio Ativo
+- Custodiante do Ativo filtrado por colaboradores ativos da empresa do bem, com validação no servidor
+
+### Alterado
+- A "Data do termo" do Termo do Ativo e a data de emissão usam a data de criação do Ativo
+- `registro_assinaturas` usa o próprio rótulo de data no cartão do processo encerrado (era fixo em "Data da reunião")
+- `ensure_modelo_assinatura` virou `ensure_modelos_assinatura`, com os modelos em `MODELOS`
+
 ## [2026-10-16] — v0.10.2
 
 ### Alterado

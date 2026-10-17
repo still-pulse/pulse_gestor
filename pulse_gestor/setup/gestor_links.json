@@ -204,6 +204,33 @@
 			"hidden": 0,
 			"onboard": 1,
 			"is_query_report": 1
+		},
+		{
+			"type": "Card Break",
+			"label": "Relatórios de Patrimônio",
+			"link_count": 2,
+			"hidden": 0,
+			"onboard": 0
+		},
+		{
+			"type": "Link",
+			"label": "Relação de Ativos",
+			"link_type": "Report",
+			"link_to": "Relacao de Ativos",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1,
+			"is_query_report": 1
+		},
+		{
+			"type": "Link",
+			"label": "Ativos por Localização",
+			"link_type": "Report",
+			"link_to": "Ativos por Localizacao",
+			"link_count": 0,
+			"hidden": 0,
+			"onboard": 1,
+			"is_query_report": 1
 		}
 	]
 }

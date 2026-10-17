@@ -1,0 +1,47 @@
+{% extends "clm/templates/print/clm_base.html" %}
+{% from "clm/templates/print/clm_macros.html" import card, field_row, textbox, date with context %}
+{% from "pulse_gestor/templates/print/patrimonio_macros.html" import value_tag, with_qr, USAGE, CONDITION with context %}
+{% from "pulse_gestor/templates/print/comissoes_macros.html" import registro_assinaturas with context %}
+{#- Termo assinado pelo custodiante no motor assinatura_eletronica (perfil pulse_gestor.assinatura.PerfilTermoDoAtivo). -#}
+{% set emp = frappe.get_doc("Employee", doc.custodian) if doc.custodian and frappe.db.exists("Employee", doc.custodian) else None %}
+{% set texto_declaracao = frappe.db.get_value("Modelo de Assinatura", "Asset", "texto_declaracao") %}
+
+{% block title %}Termo de Responsabilidade{% endblock %}
+{% block subtitle %}{{ doc.company or "" }}{% endblock %}
+{% block meta %}<span class="clm-pill">Controle BHCL nº {{ (doc.get("custom_número_de_controle_bhcl") or "—") | e }}</span>{% endblock %}
+{% block contract_pill %}{% endblock %}
+{% block pdf_ref %}{{ "Termo de Responsabilidade · Controle BHCL nº " ~ (doc.get("custom_número_de_controle_bhcl") or "—") | e }}{% endblock %}
+{% block footer_ref %}Termo de Responsabilidade do Ativo &middot; ID: {{ doc.name | e }}{% endblock %}
+{% block issue_date %}{{ frappe.utils.format_date(doc.creation, "dd/MM/yyyy") if doc.creation else "" }}{% endblock %}
+
+{% block body %}
+{% call card("Custodiante", True) %}
+	{{ field_row([("Nome", (emp.employee_name if emp else doc.custodian) or None, 60), ("Matrícula", emp.get("custom_matricula") if emp else None, 40)]) }}
+	{{ field_row([("Cargo / função", emp.designation if emp else None, 50), ("Departamento", emp.department if emp else doc.department, 50)]) }}
+{% endcall %}
+
+{% call card("Bem sob responsabilidade", True) %}
+	{% call with_qr(frappe.utils.get_url("/app/asset/" ~ doc.name), doc.name | e) %}
+		{{ field_row([("Nome do bem", doc.asset_name | e if doc.asset_name else None, 60), ("Categoria", doc.asset_category, 40)]) }}
+		{{ field_row([
+			("Controle BHCL", doc.get("custom_número_de_controle_bhcl") | e if doc.get("custom_número_de_controle_bhcl") else None, 35),
+			("Patrimônio Prefeitura", doc.get("custom_número_patrimônio_prefeitura") | e if doc.get("custom_número_patrimônio_prefeitura") else None, 35),
+			("Quantidade", doc.asset_quantity or 1, 30),
+		]) }}
+		{{ field_row([("Empresa / unidade", doc.company, 50), ("Localização", doc.location, 50)]) }}
+		{{ field_row([
+			("Estado de conservação", value_tag(CONDITION, doc.get("custom_estado_de_conservação")) or None, 50),
+			("Utilização", value_tag(USAGE, doc.get("custom_utilização")) or None, 50),
+		]) }}
+	{% endcall %}
+{% endcall %}
+
+{% call card("Declaração de responsabilidade") %}
+{{ textbox(texto_declaracao or "<p>Declaro que recebi o bem acima identificado, em condições de uso, e assumo a responsabilidade pela sua guarda e conservação.</p>") }}
+{% endcall %}
+{% endblock %}
+
+{% block signatures %}
+{%- set custodiante = ((emp.employee_name if emp else doc.custodian) or "") | e %}
+{{ registro_assinaturas(doc, [(custodiante, "Custodiante"), ("", "Responsável pelo patrimônio")], "Data do termo", date(doc.creation) if doc.creation else None, "Assinaturas", 2) }}
+{% endblock %}

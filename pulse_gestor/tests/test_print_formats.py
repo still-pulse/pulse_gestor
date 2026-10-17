@@ -13,6 +13,7 @@ from pulse_gestor.print_formats import DEFAULT_PRINT_FORMATS, LEGACY_PRINT_FORMA
 BASE_TEMPLATE = "clm/templates/print/clm_base.html"
 FORMATS = ("Ata de Reuniao de Comissao", "Convocacao para Reuniao de Comissao")
 ASSET_FORMATS = ("Ficha do Ativo Imobilizado", "Ficha de Movimentacao de Ativos")
+TERMO_FORMATS = ("Termo de Responsabilidade do Ativo", "Termo de Responsabilidade de Movimentacao")
 
 
 def format_html(name):
@@ -46,7 +47,7 @@ def visible_text(html):
 
 class TestComissoesPrintFormats(FrappeTestCase):
 	def test_every_format_follows_the_institutional_standard(self):
-		for name in FORMATS + ASSET_FORMATS:
+		for name in FORMATS + ASSET_FORMATS + TERMO_FORMATS:
 			with self.subTest(print_format=name):
 				self.assertTrue(name.isascii())
 				doc = frappe.get_doc("Print Format", name)
@@ -125,3 +126,22 @@ class TestComissoesPrintFormats(FrappeTestCase):
 		)
 		self.assertIn('data-ref="Controle BHCL nº BH-42"', html)
 		self.assertIn("ID: TEST-001", html)
+
+	def test_blank_custody_terms_render_without_missing_values(self):
+		for name, doctype in zip(TERMO_FORMATS, ("Asset", "Asset Movement"), strict=True):
+			with self.subTest(print_format=name):
+				html = render(name, new_doc(doctype))
+				self.assertIn("Termo de Responsabilidade", html)
+				self.assertIsNone(re.search(r"\bNone\b|\bnull\b|\bundefined\b", visible_text(html)))
+				self.assertTrue(generate_pdf(name, html, pdf_generator="weasyprint").startswith(b"%PDF"))
+
+	def test_movement_term_groups_assets_by_custodian(self):
+		employees = frappe.get_all("Employee", pluck="name", limit=2)
+		if len(employees) < 2:
+			self.skipTest("Sem colaboradores suficientes")
+		doc = new_doc("Asset Movement", purpose="Transfer")
+		for asset_name, employee in (("Mesa", employees[0]), ("Cadeira", employees[1]), ("Monitor", None)):
+			doc.append("assets", {"asset_name": asset_name, "to_employee": employee})
+		html = render(TERMO_FORMATS[1], doc)
+		self.assertEqual(html.count("Bens sob responsabilidade de "), 2)
+		self.assertNotIn("Monitor", visible_text(html))

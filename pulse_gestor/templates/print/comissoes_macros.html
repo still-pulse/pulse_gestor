@@ -132,9 +132,10 @@
 			</td>
 			{%- endif %}
 		</tr></table>
+		{{ p.aviso_digital | safe }}
 	{% endcall -%}
 	{%- if date_label %}
-	{%- call card("Data da reunião", True) %}{{ field_row([(date_label, date_value)]) }}{% endcall -%}
+	{%- call card(date_label, True) %}{{ field_row([(date_label, date_value)]) }}{% endcall -%}
 	{%- endif %}
 	{%- else %}
 	{{ signature_block(signers, title, date_label, date_value, columns) }}
