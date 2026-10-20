@@ -43,3 +43,4 @@ def ensure_settings_card():
 		ws.flags.ignore_permissions = True
 		ws.flags.ignore_links = True
 		ws.save()
+		frappe.clear_cache()  # o desk guarda a página do workspace em cache por usuário
