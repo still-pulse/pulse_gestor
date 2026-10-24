@@ -6,7 +6,8 @@
 from __future__ import annotations
 
 import frappe
-from frappe.utils import add_days, nowdate
+from frappe import _
+from frappe.utils import add_days, escape_html, get_url_to_form, nowdate, strip_html
 
 from pulse_gestor.utils import calcular_dias_para_vencimento, calcular_status
 
@@ -72,7 +73,20 @@ def enviar_avisos_vencimento_documentos():
 		frappe.sendmail(
 			recipients=recipients_by_company[doc.company],
 			subject=formatted["subject"],
-			message=formatted["message"],
+			message=corpo_email_vencimento(formatted, full_doc),
 			reference_doctype=DOCTYPE,
 			reference_name=doc.name,
 		)
+
+
+def corpo_email_vencimento(formatted, doc):
+	"""Corpo do Email Template dentro do layout institucional do clm (manifesto, seção 6)."""
+	from clm.clm.services.email_layout import is_branded, render_email
+
+	if is_branded(formatted["message"]):
+		return formatted["message"]
+	return render_email(
+		escape_html(strip_html(formatted["subject"] or "")),
+		formatted["message"],
+		action=(_("Abrir documento"), get_url_to_form(DOCTYPE, doc.name)),
+	)
