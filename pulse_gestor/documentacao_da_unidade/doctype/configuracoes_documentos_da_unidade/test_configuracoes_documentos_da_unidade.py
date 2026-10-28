@@ -35,12 +35,13 @@ class TestConfiguracoesDocumentosdaUnidade(FrappeTestCase):
 			destinatarios_vencimento=[SimpleNamespace(company="Empresa A", emails="a@example.com\nb@example.com")],
 		)
 		template = SimpleNamespace(get_formatted_email=lambda context: {"subject": "Assunto", "message": "Corpo"})
-		documento = SimpleNamespace(as_dict=lambda: {"name": "DOC-1"})
+		documento = SimpleNamespace(name="DOC-1", as_dict=lambda: {"name": "DOC-1"})
 		with (
 			patch("pulse_gestor.tasks.frappe.get_single", return_value=settings),
 			patch("pulse_gestor.tasks.frappe.get_all", return_value=[SimpleNamespace(name="DOC-1", company="Empresa A")]) as get_all,
 			patch("pulse_gestor.tasks.frappe.get_doc", side_effect=[template, documento]),
 			patch("pulse_gestor.tasks.frappe.db.exists", return_value=False),
+			patch("pulse_gestor.tasks.corpo_email_vencimento", side_effect=lambda formatted, doc: formatted["message"]),
 			patch("pulse_gestor.tasks.frappe.sendmail") as sendmail,
 		):
 			enviar_avisos_vencimento_documentos()
