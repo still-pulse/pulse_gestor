@@ -1,5 +1,10 @@
 # Changelog
 
+## [2026-10-29] — v0.11.7 — Alinhamento de versão
+
+### Alterado
+- `app_version` dos hooks alinhado a `__version__` (0.11.7) após o merge da feature de configurações de documentos da unidade
+
 ## [2026-10-17] — v0.11.0 — Relatórios de Patrimônio e Termo de Responsabilidade
 
 ### Adicionado
