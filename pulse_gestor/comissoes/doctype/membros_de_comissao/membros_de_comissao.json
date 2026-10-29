@@ -1,0 +1,154 @@
+{
+	"actions": [],
+	"creation": "2026-09-28 00:00:00.000000",
+	"doctype": "DocType",
+	"engine": "InnoDB",
+	"field_order": [
+		"mandato_comissao",
+		"empresa",
+		"tipo_comissao",
+		"column_break_datas",
+		"data_inicio_mandato",
+		"data_encerramento_mandato",
+		"status_mandato",
+		"section_break_membros",
+		"membros"
+	],
+	"fields": [
+		{
+			"fieldname": "mandato_comissao",
+			"fieldtype": "Link",
+			"label": "Mandato de comissão",
+			"options": "Mandato de Comissao",
+			"reqd": 1,
+			"unique": 1,
+			"in_list_view": 1,
+			"in_standard_filter": 1
+		},
+		{
+			"fieldname": "empresa",
+			"fieldtype": "Link",
+			"label": "Empresa",
+			"options": "Company",
+			"fetch_from": "mandato_comissao.empresa",
+			"read_only": 1,
+			"in_list_view": 1
+		},
+		{
+			"fieldname": "tipo_comissao",
+			"fieldtype": "Link",
+			"label": "Tipo de comissão",
+			"options": "Tipo de Comissao",
+			"fetch_from": "mandato_comissao.tipo_comissao",
+			"read_only": 1,
+			"in_list_view": 1
+		},
+		{
+			"fieldname": "column_break_datas",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "data_inicio_mandato",
+			"fieldtype": "Date",
+			"label": "Data de início do mandato",
+			"fetch_from": "mandato_comissao.data_inicio_mandato",
+			"read_only": 1
+		},
+		{
+			"fieldname": "data_encerramento_mandato",
+			"fieldtype": "Date",
+			"label": "Data de encerramento do mandato",
+			"fetch_from": "mandato_comissao.data_encerramento_mandato",
+			"read_only": 1
+		},
+		{
+			"fieldname": "status_mandato",
+			"fieldtype": "Select",
+			"label": "Status do mandato",
+			"options": "Vigente\nEncerrado\nProrrogado\nEm Seleção",
+			"fetch_from": "mandato_comissao.status_mandato",
+			"read_only": 1
+		},
+		{
+			"fieldname": "section_break_membros",
+			"fieldtype": "Section Break",
+			"label": "Membros"
+		},
+		{
+			"fieldname": "membros",
+			"fieldtype": "Table",
+			"label": "Membros",
+			"options": "Comissao Membro",
+			"reqd": 1
+		}
+	],
+	"links": [
+		{
+			"link_doctype": "Reuniao de Comissao",
+			"link_fieldname": "membros_comissao"
+		}
+	],
+	"modified": "2026-09-28 00:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Comissoes",
+	"name": "Membros de Comissao",
+	"owner": "Administrator",
+	"sort_field": "modified",
+	"sort_order": "DESC",
+	"states": [],
+	"autoname": "field:mandato_comissao",
+	"naming_rule": "By fieldname",
+	"title_field": "mandato_comissao",
+	"search_fields": "mandato_comissao,empresa,tipo_comissao",
+	"track_changes": 1,
+	"permissions": [
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"share": 1,
+			"write": 1,
+			"select": 1,
+			"import": 1,
+			"role": "System Manager"
+		},
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"share": 1,
+			"write": 1,
+			"select": 1,
+			"import": 1,
+			"role": "Administrator"
+		},
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"share": 1,
+			"write": 1,
+			"role": "Pulse Gestor Manager"
+		},
+		{
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "Pulse Gestor Viewer"
+		}
+	]
+}

@@ -1,0 +1,133 @@
+{
+	"actions": [],
+	"creation": "2026-09-28 00:00:00.000000",
+	"doctype": "DocType",
+	"engine": "InnoDB",
+	"field_order": [
+		"tipo_comissao",
+		"empresa",
+		"column_break_datas",
+		"data_inicio_mandato",
+		"data_encerramento_mandato",
+		"status_mandato"
+	],
+	"fields": [
+		{
+			"fieldname": "tipo_comissao",
+			"fieldtype": "Link",
+			"label": "Tipo de comissão",
+			"options": "Tipo de Comissao",
+			"reqd": 1,
+			"in_list_view": 1,
+			"in_standard_filter": 1
+		},
+		{
+			"fieldname": "empresa",
+			"fieldtype": "Link",
+			"label": "Empresa",
+			"options": "Company",
+			"fetch_from": "tipo_comissao.empresa",
+			"read_only": 1,
+			"in_list_view": 1,
+			"in_standard_filter": 1
+		},
+		{
+			"fieldname": "column_break_datas",
+			"fieldtype": "Column Break"
+		},
+		{
+			"fieldname": "data_inicio_mandato",
+			"fieldtype": "Date",
+			"label": "Data de início do mandato",
+			"reqd": 1,
+			"in_list_view": 1
+		},
+		{
+			"fieldname": "data_encerramento_mandato",
+			"fieldtype": "Date",
+			"label": "Data de encerramento do mandato"
+		},
+		{
+			"fieldname": "status_mandato",
+			"fieldtype": "Select",
+			"label": "Status do mandato",
+			"options": "Vigente\nEncerrado\nProrrogado\nEm Seleção",
+			"default": "Vigente",
+			"in_list_view": 1,
+			"in_standard_filter": 1
+		}
+	],
+	"links": [
+		{
+			"link_doctype": "Membros de Comissao",
+			"link_fieldname": "mandato_comissao"
+		},
+		{
+			"link_doctype": "Reuniao de Comissao",
+			"link_fieldname": "mandato_comissao"
+		}
+	],
+	"modified": "2026-09-28 18:00:00.000000",
+	"modified_by": "Administrator",
+	"module": "Comissoes",
+	"name": "Mandato de Comissao",
+	"owner": "Administrator",
+	"sort_field": "data_inicio_mandato",
+	"sort_order": "DESC",
+	"states": [],
+	"autoname": "MC-.YYYY.-.#####",
+	"naming_rule": "Expression",
+	"title_field": "empresa",
+	"search_fields": "empresa,tipo_comissao,status_mandato",
+	"track_changes": 1,
+	"permissions": [
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"share": 1,
+			"write": 1,
+			"select": 1,
+			"import": 1,
+			"role": "System Manager"
+		},
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"share": 1,
+			"write": 1,
+			"select": 1,
+			"import": 1,
+			"role": "Administrator"
+		},
+		{
+			"create": 1,
+			"delete": 1,
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"share": 1,
+			"write": 1,
+			"role": "Pulse Gestor Manager"
+		},
+		{
+			"email": 1,
+			"export": 1,
+			"print": 1,
+			"read": 1,
+			"report": 1,
+			"role": "Pulse Gestor Viewer"
+		}
+	]
+}

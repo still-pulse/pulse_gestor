@@ -1,0 +1,52 @@
+{% extends "clm/templates/print/clm_base.html" %}
+{% from "clm/templates/print/clm_macros.html" import card, textbox, signature_block, date with context %}
+{% from "pulse_gestor/templates/print/comissoes_macros.html" import commission_name, meeting_time, meeting_ref, meeting_card, agenda_card, participants_card, registro_assinaturas with context %}
+
+{% block title %}Ata de Reunião{% endblock %}
+{% block subtitle %}{{ [commission_name(doc) | e, doc.empresa] | select | join(" · ") }}{% endblock %}
+{% block meta %}<span class="clm-pill">Reunião de {{ date(doc.data_reuniao) }}</span>{% endblock %}
+{% block contract_pill %}{% endblock %}
+{% block pdf_ref %}{{ meeting_ref(doc) }}{% endblock %}
+{% block footer_ref %}Ata de Reunião &middot; ID: {{ doc.name | e }}{% endblock %}
+{% block issue_date %}{{ frappe.utils.format_date(doc.data_reuniao, "dd/MM/yyyy") if doc.data_reuniao else "" }}{% endblock %}
+
+{% block body %}
+{{ meeting_card(doc) }}
+
+{%- set presentes = (doc.participantes or []) | selectattr("status_presenca", "equalto", "Presente") | list %}
+{%- set hour = meeting_time(doc) %}
+{% call card("Abertura") %}
+{{ textbox(
+	"<p>Em <b>" ~ date(doc.data_reuniao) ~ "</b>"
+	~ (", às <b>" ~ hour ~ "</b>" if hour else "")
+	~ (", em <b>" ~ (doc.local_reuniao | e) ~ "</b>" if doc.local_reuniao else "")
+	~ ", reuniu-se a <b>" ~ ((commission_name(doc) | e) or "comissão") ~ "</b>"
+	~ (" da <b>" ~ doc.empresa ~ "</b>" if doc.empresa else "")
+	~ (", convocada em " ~ date(doc.data_convocacao) if doc.data_convocacao else "")
+	~ ", com a presença de " ~ (presentes | length) ~ " de " ~ ((doc.participantes or []) | length)
+	~ " participantes, conforme lista abaixo.</p>"
+) }}
+{% endcall %}
+
+{{ participants_card(doc, "Participantes", presence=True) }}
+
+{{ agenda_card(doc, "Sem pauta registrada.") }}
+
+{% call card("Deliberações") %}
+{{ textbox(doc.deliberacoes, "Sem deliberações registradas.") }}
+{% endcall %}
+
+{%- if doc.encaminhamentos_conclusoes %}
+{% call card("Encaminhamentos e conclusões") %}
+{{ textbox(doc.encaminhamentos_conclusoes) }}
+{% endcall %}
+{%- endif %}
+
+{{ textbox("<p>Nada mais havendo a tratar, foi encerrada a reunião, e a presente ata segue assinada pelos presentes.</p>") }}
+{% endblock %}
+
+{% block signatures %}
+{%- set ns = namespace(signers=[]) %}
+{%- for p in (doc.participantes or []) if p.status_presenca == "Presente" %}{% set ns.signers = ns.signers + [((p.nome or "") | e, (p.funcao or "") | e)] %}{% endfor %}
+{{ registro_assinaturas(doc, ns.signers, "Data da reunião", date(doc.data_reuniao), "Assinaturas dos presentes", 2) }}
+{% endblock %}
