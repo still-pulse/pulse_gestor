@@ -13,3 +13,16 @@
 - O grid do Frappe reserva uma célula final para a ação de cada linha, alinhada ao ícone de configuração no cabeçalho. Ao ocultar a ação de expansão, manter essa célula vazia; removê-la desalinha as colunas. Para a faixa colorida, usar sombra interna em vez de borda para não alterar a largura da linha.
 - Os relatórios de Patrimônio (`Relacao de Ativos`, `Ativos por Localizacao`) usam o campo `custom_empresa` de `Location`, um Custom Field criado no site (não está nas fixtures do app). A consulta comum fica em `patrimonio/report/utils.py`; o filtro de localização inclui os sublocais (lft/rgt).
 - Termo de Responsabilidade do custodiante: perfis `PerfilTermoDoAtivo` (Asset, assina o `custodian`) e `PerfilTermoDeMovimentacao` (Asset Movement, assina cada `to_employee`) em `assinatura.py`, com Modelos semeados em `MODELOS`. O `Receipt` criado pelo ERPNext ao submeter o Asset é recusado na movimentação: a custódia inicial se assina no próprio Asset. As Fichas continuam como formato padrão; os Termos são o formato do comprovante.
+
+## Dependências, versão e documentação
+
+- `required_apps = ["frappe", "erpnext", "clm"]`. Os formatos de Comissões e de Patrimônio estendem `clm_base.html`; os
+  módulos `Comissoes` e `Patrimonio` precisam continuar em `PDF_ENGINE_MODULES` do `clm`
+  (`clm/clm/services/pdf_engine.py`) e seguem o `docs/brand-manifesto.md` do `clm`.
+- Dependências **não declaradas**: `assinatura_eletronica` (opcional; `assinatura.py` importa dentro de `try`) e
+  `integracoes_customizadas` (`telefone.py` e a reunião de comissão importam dentro de funções; confira a guarda antes de
+  depender deles).
+- `__version__` em `pulse_gestor/__init__.py` deve bater com a tag (hoje 0.11.0). Os patches usam o prefixo `vX_Y_Z_` e não
+  acompanham a versão do app.
+- Pedido só de README/CHANGELOG que diga "não commitar" prevalece sobre qualquer regra de commit e tag. Dependências entre
+  apps e andamento da documentação: `../../CLAUDE.md`.
