@@ -16,8 +16,11 @@ Versão atual: **0.11.7** (`pulse_gestor/__init__.py`, `hooks.py` e tag `v0.11.7
 - **Documentação da Unidade**: documento por unidade, com anexo em PDF e vigência opcional. O status é
   `Válido`, `Vencido` ou `Sem validade`, com contagem de dias para o vencimento.
 - **Rotinas diárias**: recalculam o status e os dias para vencimento e enfileiram avisos por e-mail no prazo
-  configurado.
-- **Configurações Documentos da Unidade**: dias de alerta, modelo de e-mail e destinatários por empresa.
+  configurado. O corpo do e-mail sai no layout institucional do `clm` (`clm.clm.services.email_layout`), com o botão
+  "Abrir documento", a menos que o Email Template já venha no layout (`is_branded`).
+- **Configurações Documentos da Unidade**: dias de alerta, modelo de e-mail e destinatários por empresa. Um card
+  "Pulse Gestor" no Workspace **ERPNext Settings** leva a elas (`setup/settings_workspace.py`, aplicado no
+  `after_migrate`; o Workspace Gestor é restrito, o ERPNext Settings não).
 - Notificações `Documento da Unidade a Vencer` e `Documento da Unidade Vencido`, e Number Cards (total, válidos e
   vencidos) no Workspace.
 
@@ -148,11 +151,11 @@ pulse_gestor/
 ├── telefone.py                # máscara e validação de telefone
 ├── tasks.py                   # rotinas agendadas (diárias)
 ├── utils.py                   # cálculo de status e vencimento
-├── setup/                     # install.py (after_install/after_migrate), gestor_links.json
+├── setup/                     # install.py (after_install/after_migrate), settings_workspace.py, gestor_links.json
 ├── public/js/asset.js         # filtro do custodiante
 ├── templates/print/           # comissoes_macros.html, patrimonio_macros.html
 ├── patches/ · fixtures/ · translations/pt-BR.csv
-└── tests/                     # formatos de impressão, status, termos
+└── tests/                     # formatos de impressão, status, termos, e-mail de vencimento
 ```
 
 Convenções do
@@ -166,6 +169,10 @@ A partir da raiz do bench:
 ```bash
 bench --site <site> run-tests --app pulse_gestor
 ```
+
+São 13 módulos de teste (`git ls-files`): 4 em `pulse_gestor/tests/` e os demais ao lado dos DocTypes e relatórios.
+O repositório também tem `.github/workflows/` (`ci.yml` roda os testes; `linter.yml` roda commitlint, pre-commit e
+Semgrep, só em PR), `.pre-commit-config.yaml`, `.eslintrc` e `commitlint.config.js` (mensagens convencionais).
 
 ## Documentação
 
