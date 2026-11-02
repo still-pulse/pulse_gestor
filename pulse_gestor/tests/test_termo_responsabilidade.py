@@ -1,7 +1,12 @@
+import unittest
+
 import frappe
 from frappe.tests.utils import FrappeTestCase
 
-from pulse_gestor.assinatura import PerfilTermoDeMovimentacao, PerfilTermoDoAtivo
+try:
+	from pulse_gestor.assinatura import PerfilTermoDeMovimentacao, PerfilTermoDoAtivo
+except ImportError:  # assinatura_eletronica (opcional) não instalado: os perfis não existem
+	PerfilTermoDeMovimentacao = PerfilTermoDoAtivo = None
 
 
 def movimentacao(purpose="Transfer", *destinos):
@@ -12,6 +17,7 @@ def movimentacao(purpose="Transfer", *destinos):
 	return doc
 
 
+@unittest.skipUnless(PerfilTermoDoAtivo, "assinatura_eletronica ausente")
 class TestTermoDeResponsabilidade(FrappeTestCase):
 	def test_um_signatario_por_custodiante_de_destino(self):
 		perfil = PerfilTermoDeMovimentacao()
