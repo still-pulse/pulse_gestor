@@ -13,3 +13,8 @@
 - O grid do Frappe reserva uma célula final para a ação de cada linha, alinhada ao ícone de configuração no cabeçalho. Ao ocultar a ação de expansão, manter essa célula vazia; removê-la desalinha as colunas. Para a faixa colorida, usar sombra interna em vez de borda para não alterar a largura da linha.
 - Os relatórios de Patrimônio (`Relacao de Ativos`, `Ativos por Localizacao`) usam o campo `custom_empresa` de `Location`, um Custom Field criado no site (não está nas fixtures do app). A consulta comum fica em `patrimonio/report/utils.py`; o filtro de localização inclui os sublocais (lft/rgt).
 - Termo de Responsabilidade do custodiante: perfis `PerfilTermoDoAtivo` (Asset, assina o `custodian`) e `PerfilTermoDeMovimentacao` (Asset Movement, assina cada `to_employee`) em `assinatura.py`, com Modelos semeados em `MODELOS`. O `Receipt` criado pelo ERPNext ao submeter o Asset é recusado na movimentação: a custódia inicial se assina no próprio Asset. As Fichas continuam como formato padrão; os Termos são o formato do comprovante.
+
+- **Branch `feature/*` usa o major da `main` + 1** (regra vigente desde 2026-11-01). Minor e patch correm normalmente
+  dentro dele: com a `main` em `vX.Y.Z`, a feature nasce em `v(X+1).0.0` e segue `v(X+1).0.1`, `v(X+1).1.0`...
+  enquanto estiver na branch. Se a `main` subir de major, a feature sobe junto. Confira a versão da `main`
+  (`git show main:pulse_gestor/__init__.py`) e `git tag` antes de tagear, e não reutilize número existente.
