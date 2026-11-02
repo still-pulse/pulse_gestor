@@ -6,7 +6,7 @@ DocType `Company` do ERPNext. Os cadastros e relatórios ficam no Workspace **Ge
 
 Repositório: [still-pulse/pulse_gestor](https://github.com/still-pulse/pulse_gestor)
 
-Versão atual: **0.11.7** (`pulse_gestor/__init__.py`, `hooks.py` e tag `v0.11.7`). Histórico em [CHANGELOG.md](CHANGELOG.md).
+Versão atual: **1.0.0** (`pulse_gestor/__init__.py`, `hooks.py` e tag `v1.0.0`). Histórico em [CHANGELOG.md](CHANGELOG.md).
 
 ## Funcionalidades
 
