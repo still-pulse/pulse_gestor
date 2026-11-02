@@ -28,6 +28,11 @@ git permite:
     `after_migrate` (`setup/install.py`).
 - Não há tags `rc/*` neste repositório.
 
+## v1.0.0 — Dependências fixadas · 2026-11-02
+
+- `required_apps` passa a `["frappe", "frappe/erpnext@version-15", "still-pulse/clm@main"]` (o `clm` sem org era procurado em `frappe/clm`).
+- README: ordem de instalação com ERPNext no `version-15` e `clm` antes do app.
+
 ## v0.11.7 — alinhamento de versão · 2026-10-29
 
 Merge `d02b9d8` de `feature/configuracoes-documentos-unidade` em `main`, com o commit `d63d20f`: `app_version` dos hooks

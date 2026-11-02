@@ -112,8 +112,10 @@ aplicado.
 
 ```bash
 cd $PATH_TO_YOUR_BENCH
-bench get-app https://github.com/still-pulse/pulse_gestor
-bench --site <site> install-app pulse_gestor
+bench get-app erpnext --branch version-15
+bench get-app still-pulse/clm --branch main
+bench get-app still-pulse/pulse_gestor --branch main
+bench --site <site> install-app erpnext clm pulse_gestor
 bench --site <site> migrate
 ```
 
