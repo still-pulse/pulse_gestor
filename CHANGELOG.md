@@ -28,6 +28,10 @@ git permite:
     `after_migrate` (`setup/install.py`).
 - Não há tags `rc/*` neste repositório.
 
+## v1.0.1 — frappe fixado em required_apps · 2026-11-02
+
+- `required_apps` passa a `frappe/frappe@version-15`: o `"frappe"` solto resolvia para o app local e fazia o `bench get-app --resolve-deps` falhar ("Invalid frappe path").
+
 ## v1.0.0 — Dependências fixadas · 2026-11-02
 
 - `required_apps` passa a `["frappe", "frappe/erpnext@version-15", "still-pulse/clm@main"]` (o `clm` sem org era procurado em `frappe/clm`).
