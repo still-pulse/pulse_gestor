@@ -180,6 +180,8 @@ Semgrep, só em PR), `.pre-commit-config.yaml`, `.eslintrc` e `commitlint.config
 
 - [CHANGELOG.md](CHANGELOG.md): histórico de versões e limites do git.
 - [AGENTS.md](AGENTS.md): convenções, Workspace, Termos de Responsabilidade e dependências.
+- [docs/adr-001-leitura-minima-em-doctypes-vinculados.md](docs/adr-001-leitura-minima-em-doctypes-vinculados.md):
+  leitura mínima garantida nos papéis do app sobre DocTypes de outros módulos referenciados por Link.
 
 ## Licença
 
