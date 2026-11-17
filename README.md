@@ -182,6 +182,9 @@ Semgrep, só em PR), `.pre-commit-config.yaml`, `.eslintrc` e `commitlint.config
 - [AGENTS.md](AGENTS.md): convenções, Workspace, Termos de Responsabilidade e dependências.
 - [docs/adr-001-leitura-minima-em-doctypes-vinculados.md](docs/adr-001-leitura-minima-em-doctypes-vinculados.md):
   leitura mínima garantida nos papéis do app sobre DocTypes de outros módulos referenciados por Link.
+- [docs/adr-002-qualidade-e-legibilidade-de-logs.md](docs/adr-002-qualidade-e-legibilidade-de-logs.md):
+  padrão de log para integrações externas (contexto estruturado, sem segredo em claro, classificação de erro,
+  agrupamento por execução).
 
 ## Licença
 
