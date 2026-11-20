@@ -28,6 +28,13 @@ git permite:
     `after_migrate` (`setup/install.py`).
 - Não há tags `rc/*` neste repositório.
 
+## v1.0.2 — WhatsApp habilitado por padrão nas assinaturas · 2026-11-20
+
+- Acompanha o `assinatura_eletronica` v0.3.9: o membro de comissão deixa de informar `aceita_whatsapp` (o padrão do motor é
+  habilitado; sem telefone o motor pula o canal) e o Modelo de Assinatura semeado nasce com
+  `exigir_aceite_whatsapp = 1` ("Respeitar a desabilitação do envio por WhatsApp"). Modelos já criados são ajustados pelo
+  patch do motor.
+
 ## v1.0.1 — frappe fixado em required_apps · 2026-11-02
 
 - `required_apps` passa a `frappe/frappe@version-15`: o `"frappe"` solto resolvia para o app local e fazia o `bench get-app --resolve-deps` falhar ("Invalid frappe path").

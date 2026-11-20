@@ -33,8 +33,8 @@ def destinatario_membro(name):
 	linha = frappe.db.get_value("Comissao Membro", name, ["nome", "telefone", "email"], as_dict=True)
 	if not linha:
 		return None
-	# Ser membro e cadastrar o telefone já indica o canal; o aceite formal vem no link (OTP + declaração).
-	return Destinatario(linha.nome, linha.telefone, linha.email, True, bool(linha.telefone))
+	# O WhatsApp vale para todos (padrão do motor); sem telefone o motor pula o canal. O aceite formal vem no link (OTP + declaração).
+	return Destinatario(linha.nome, linha.telefone, linha.email, aceita_eletronica=True)
 
 
 if PerfilAssinatura:
@@ -231,7 +231,7 @@ COMUM = {
 	"ativo": 1,
 	"modo": "Paralelo",
 	"exigir_aceite_eletronico": 1,
-	"exigir_aceite_whatsapp": 0,
+	"exigir_aceite_whatsapp": 1,  # respeita a desabilitação do WhatsApp; o padrão é habilitado
 	"validade_link_horas": 72,
 	"emitir_comprovante": 1,
 	"enviar_comprovante": 1,
