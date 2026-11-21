@@ -37,12 +37,15 @@ def criar_ativo(nome, empresa, localizacao):
 
 
 class TestRelatoriosDePatrimonio(FrappeTestCase):
-	def setUp(self):
-		super().setUp()
-		self.local_a = criar_localizacao("Local A de Teste", EMPRESA_A).name
-		self.local_b = criar_localizacao("Local B de Teste", EMPRESA_B).name
-		criar_ativo("PAT-TESTE-A", EMPRESA_A, self.local_a)
-		criar_ativo("PAT-TESTE-B", EMPRESA_B, self.local_b)
+	@classmethod
+	def setUpClass(cls):
+		# FrappeTestCase só desfaz o banco no fim da classe, não entre testes: criar uma vez aqui evita
+		# DuplicateEntryError (nomes fixos) a partir do segundo teste.
+		super().setUpClass()
+		cls.local_a = criar_localizacao("Local A de Teste", EMPRESA_A).name
+		cls.local_b = criar_localizacao("Local B de Teste", EMPRESA_B).name
+		criar_ativo("PAT-TESTE-A", EMPRESA_A, cls.local_a)
+		criar_ativo("PAT-TESTE-B", EMPRESA_B, cls.local_b)
 
 	def test_filtra_por_empresa(self):
 		dados = relacao_de_ativos({"empresa": EMPRESA_A})[1]
