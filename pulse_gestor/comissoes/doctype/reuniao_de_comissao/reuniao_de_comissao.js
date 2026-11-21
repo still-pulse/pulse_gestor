@@ -1,7 +1,9 @@
 frappe.ui.form.on("Reuniao de Comissao", {
 	refresh(frm) {
 		if (frm.doc.membros_comissao) {
-			frm.add_custom_button(__("Buscar Participantes"), () => carregar_participantes(frm, true));
+			frm.add_custom_button(__("Buscar Participantes"), () =>
+				carregar_participantes(frm, true)
+			);
 		}
 		if (!frm.is_new()) {
 			frm.add_custom_button(__("Convocar membros"), () => convocar(frm), __("Ações"));
@@ -24,7 +26,7 @@ async function carregar_participantes(frm, forcar) {
 			frappe.confirm(
 				__("Isso substitui a lista de participantes atual. Deseja continuar?"),
 				() => resolve(true),
-				() => resolve(false),
+				() => resolve(false)
 			);
 		});
 		if (!confirmado) {
@@ -75,7 +77,10 @@ function convocar(frm) {
 				callback: (r) => {
 					const res = r.message || {};
 					frappe.show_alert({
-						message: __("Convocados: {0}. Falhas: {1}.", [res.enviados || 0, res.falhas || 0]),
+						message: __("Convocados: {0}. Falhas: {1}.", [
+							res.enviados || 0,
+							res.falhas || 0,
+						]),
 						indicator: res.falhas ? "orange" : "green",
 					});
 					frm.reload_doc();
