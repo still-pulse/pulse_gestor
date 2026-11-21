@@ -61,6 +61,24 @@ fixtures = [
 			]
 		],
 	},
+	# Campos de Patrimônio criados à mão em produção. O arquivo fixtures/custom_field.json só passa a existir
+	# depois de `bench export-fixtures` no site de produção (ver tests/test_fixtures_patrimonio.py).
+	{
+		"dt": "Custom Field",
+		"filters": [
+			[
+				"name",
+				"in",
+				[
+					"Location-custom_empresa",
+					"Asset-custom_número_de_controle_bhcl",
+					"Asset-custom_número_patrimônio_prefeitura",
+					"Asset-custom_utilização",
+					"Asset-custom_estado_de_conservação",
+				],
+			]
+		],
+	},
 	{
 		"dt": "Number Card",
 		"filters": [["module", "=", "Documentacao da Unidade"]],
