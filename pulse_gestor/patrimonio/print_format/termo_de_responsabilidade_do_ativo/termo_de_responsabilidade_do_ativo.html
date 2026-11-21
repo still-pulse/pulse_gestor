@@ -2,7 +2,7 @@
 {% from "clm/templates/print/clm_macros.html" import card, field_row, textbox, date with context %}
 {% from "pulse_gestor/templates/print/patrimonio_macros.html" import value_tag, with_qr, USAGE, CONDITION with context %}
 {% from "pulse_gestor/templates/print/comissoes_macros.html" import registro_assinaturas with context %}
-{#- Termo assinado pelo custodiante no motor assinatura_eletronica (perfil pulse_gestor.signature_profiles.AssetTermProfile). -#}
+{#- Term signed by the custodian in the assinatura_eletronica engine (profile pulse_gestor.signature_profiles.AssetTermProfile). -#}
 {% set emp = frappe.get_doc("Employee", doc.custodian) if doc.custodian and frappe.db.exists("Employee", doc.custodian) else None %}
 {% set texto_declaracao = frappe.db.get_value("Modelo de Assinatura", "Asset", "texto_declaracao") %}
 

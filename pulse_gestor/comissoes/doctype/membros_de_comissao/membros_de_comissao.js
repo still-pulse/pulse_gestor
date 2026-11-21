@@ -1,4 +1,4 @@
-// Máscara (DD) 99999-9999 no telefone dos membros; o servidor revalida no validate.
+// (DD) 99999-9999 mask on the members' phone; the server revalidates in validate.
 function mask_phone(value) {
 	let d = String(value || "").replace(/\D/g, "");
 	if (d.length > 11 && d.startsWith("55")) {

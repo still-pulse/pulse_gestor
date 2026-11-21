@@ -1,6 +1,6 @@
 frappe.listview_settings["Classificacao de Risco Diaria"] = {
 	onload(listview) {
-		// O validador SQL deste Frappe rejeita o nome acentuado da tabela em ORDER BY.
+		// This Frappe's SQL validator rejects the accented table name in ORDER BY.
 		listview.sort_selector.get_sql_string = function () {
 			const fields = new Set([
 				"name",

@@ -59,7 +59,7 @@ async function load_levels(frm) {
 		}
 		frm.refresh_field("niveis_classificados");
 	} catch (error) {
-		// A chamada apresenta a mensagem do servidor; o documento permanece sem protocolo.
+		// The call shows the server message; the document stays without a protocol.
 	}
 }
 

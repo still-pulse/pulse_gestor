@@ -1,9 +1,9 @@
-{#- Macros das Comissões sobre o padrão institucional BHCL (apps/clm/docs/brand-manifesto.md).
-    Importe junto com os do CLM; os imports do pai não chegam aos blocos do filho:
+{#- Committee macros on the institutional standard (apps/clm/docs/brand-manifesto.md).
+    Import them together with the CLM ones; the parent's imports do not reach the child's blocks:
     {% from "pulse_gestor/templates/print/comissoes_macros.html" import meeting_card, ... with context %} -#}
 {% from "clm/templates/print/clm_macros.html" import card, field_row, textbox, signature_block, date, datetime, or_dash with context %}
 
-{#- Nome do Tipo de Comissão (a referência principal dos documentos de reunião). -#}
+{#- Committee Type name (the main reference of the meeting documents). -#}
 {%- macro commission_name(doc) -%}
 	{{- (frappe.db.get_value("Tipo de Comissao", doc.tipo_comissao, "nome_tipo") or doc.tipo_comissao) if doc.tipo_comissao else "" -}}
 {%- endmacro -%}
@@ -13,7 +13,7 @@
 	{{- (frappe.db.get_value("Categoria de Comissao", category, "nome_categoria") or category) if category else "" -}}
 {%- endmacro -%}
 
-{#- Hora da reunião (HH:mm); vazio quando o campo não tem hora (00:00) ou não foi preenchido. -#}
+{#- Meeting time (HH:mm); empty when the field has no time (00:00) or is not filled in. -#}
 {%- macro meeting_time(doc) -%}
 	{%- if doc.data_reuniao -%}
 	{%- set hour = frappe.utils.get_datetime(doc.data_reuniao).strftime("%H:%M") -%}
@@ -21,7 +21,7 @@
 	{%- endif -%}
 {%- endmacro -%}
 
-{#- Referência do cabeçalho: "<Comissão> · Reunião de dd/mm/aaaa". -#}
+{#- Header reference: "<Committee> · Meeting of dd/mm/yyyy" (rendered in pt-BR). -#}
 {%- macro meeting_ref(doc) -%}
 	{{- ([commission_name(doc) | e, ("Reunião de " ~ date(doc.data_reuniao)) if doc.data_reuniao else ""] | select | join(" · ")) or (doc.name | e) -}}
 {%- endmacro -%}
@@ -31,7 +31,7 @@
 	{%- if m and m.data_inicio_mandato -%}{{ date(m.data_inicio_mandato) }} a {{ date(m.data_encerramento_mandato) }}{%- endif -%}
 {%- endmacro -%}
 
-{#- Identificação da reunião. -#}
+{#- Meeting identification. -#}
 {%- macro meeting_card(doc, title="Identificação da reunião") -%}
 	{%- call card(title, True) %}
 		{{ field_row([("Comissão", commission_name(doc) | e, 50), ("Categoria", commission_category(doc) | e, 25), ("Mandato", mandate_period(doc), 25)]) }}
@@ -40,7 +40,7 @@
 	{% endcall -%}
 {%- endmacro -%}
 
-{#- Pauta numerada. -#}
+{#- Numbered agenda. -#}
 {%- macro agenda_card(doc, empty) -%}
 	{%- call card("Pauta") %}
 		<table class="clm-table">
@@ -56,13 +56,13 @@
 	{% endcall -%}
 {%- endmacro -%}
 
-{#- Selo de presença (rótulo, tom). -#}
+{#- Attendance tag (label, tone). -#}
 {%- set PRESENCE = {"Presente": ("Presente", "ok"), "Ausente": ("Ausente", "bad"), "Justificado": ("Ausência justificada", "warn")} -%}
 {%- macro presence_tag(value) -%}
 	{%- if value -%}{%- set entry = PRESENCE.get(value) or (value, "muted") -%}<span class="clm-tag clm-tag-{{ entry[1] }}">{{ entry[0] }}</span>{%- else -%}—{%- endif -%}
 {%- endmacro -%}
 
-{#- Participantes; presence=True acrescenta a coluna de presença. -#}
+{#- Participants; presence=True adds the attendance column. -#}
 {%- macro participants_card(doc, title, presence=False) -%}
 	{%- call card(title) %}
 		<table class="clm-table">
@@ -83,10 +83,10 @@
 	{% endcall -%}
 {%- endmacro -%}
 
-{#- Assinaturas pelo motor assinatura_eletronica (Processo de Assinatura do documento), com as classes rh-epi-* de
-    clm_print.css. Processo encerrado: um bloco por signatário com a evidência (método, data, código, IP, localização,
-    selfie e mapa) e, no fim, integridade, código e QR de verificação. Sem processo encerrado, ou sem o app: linhas de
-    assinatura em papel de `signers` no cartão padrão (signature_block), com a caixa de data informada pelo usuário. -#}
+{#- Signatures through the assinatura_eletronica engine (the document's Signature Process), with the rh-epi-* classes of
+    clm_print.css. Finished process: one block per signatory with the evidence (method, date, code, IP, location,
+    selfie and map) and, at the end, integrity, code and verification QR. Without a finished process, or without the app:
+    paper signature lines for `signers` in the standard card (signature_block), with the date box filled in by the user. -#}
 {%- macro registro_assinaturas(doc, signers, date_label=None, date_value=None, title="Assinaturas", columns=None) -%}
 	{%- set p = (assinatura_processo(doc) if assinatura_processo is defined else none) %}
 	{%- if p and p.encerrado %}

@@ -51,7 +51,7 @@ async function load_specialties(frm) {
 		}
 		frm.refresh_field("especialidades");
 	} catch (error) {
-		// A chamada mostra a mensagem do servidor e o formulário permanece sem especialidades.
+		// The call shows the server message and the form stays without specialties.
 	}
 }
 
@@ -72,7 +72,7 @@ function configure_grid(frm) {
 	grid.refresh();
 }
 
-// O cabeçalho reserva uma célula final para a ação da linha; mantê-la vazia preserva o alinhamento.
+// The header reserves a final cell for the row action; keeping it empty preserves the alignment.
 function keep_action_spacer(row) {
 	let cell = row.row.children(".pulse-grid-action-spacer");
 	if (!cell.length) {

@@ -1,9 +1,9 @@
-{#- Macros de Patrimônio (Asset / Asset Movement) sobre o padrão institucional BHCL (apps/clm/docs/brand-manifesto.md).
-    Importe junto com os do CLM; os imports do pai não chegam aos blocos do filho:
+{#- Asset macros (Asset / Asset Movement) on the institutional standard (apps/clm/docs/brand-manifesto.md).
+    Import them together with the CLM ones; the parent's imports do not reach the child's blocks:
     {% from "pulse_gestor/templates/print/patrimonio_macros.html" import asset_status_tag, ... with context %} -#}
 {% from "clm/templates/print/clm_macros.html" import field, field_row, or_dash with context %}
 
-{#- Rótulos e tons (ok / warn / bad / muted) dos Selects do ERPNext e dos campos customizados do site. -#}
+{#- Labels and tones (ok / warn / bad / muted) of the ERPNext Selects and the site's custom fields. -#}
 {%- set ASSET_STATUSES = {
 	"Draft": ("Rascunho", "muted"), "Submitted": ("Registrado", "ok"), "Cancelled": ("Cancelado", "muted"),
 	"Partially Depreciated": ("Parcialmente depreciado", "ok"), "Fully Depreciated": ("Totalmente depreciado", "muted"),
@@ -25,7 +25,7 @@
 	{%- if value -%}{%- set entry = ASSET_STATUSES.get(value) or (_(value), "muted") -%}<span class="clm-tag clm-tag-{{ entry[1] }}">{{ entry[0] }}</span>{%- else -%}—{%- endif -%}
 {%- endmacro -%}
 
-{#- Selo de um Select customizado (Utilização / Estado de conservação); mapping: valor -> tom. -#}
+{#- Tag of a custom Select (Utilização / Estado de conservação); mapping: value -> tone. -#}
 {%- macro value_tag(mapping, value) -%}
 	{%- if value -%}<span class="clm-tag clm-tag-{{ mapping.get(value, 'muted') }}">{{ value }}</span>{%- else -%}{%- endif -%}
 {%- endmacro -%}
@@ -34,7 +34,7 @@
 {%- macro purpose_description(value) -%}{{ (PURPOSES.get(value) or ("", ""))[1] }}{%- endmacro -%}
 {%- macro depreciation_method(value) -%}{{ DEPRECIATION_METHODS.get(value, value or "") }}{%- endmacro -%}
 
-{#- Número de Controle BHCL do ativo (referência principal); vazio quando não informado. -#}
+{#- Asset control number (main reference); empty when not provided. -#}
 {%- macro control_number(asset) -%}
 	{{- (frappe.db.get_value("Asset", asset, "custom_número_de_controle_bhcl") or "") if asset else "" -}}
 {%- endmacro -%}
@@ -43,7 +43,7 @@
 	{{- (frappe.db.get_value("Employee", employee, "employee_name") or employee) if employee else "" -}}
 {%- endmacro -%}
 
-{#- Grade de campos com o QR Code do registro à direita. Os field_row vêm do caller. -#}
+{#- Field grid with the record's QR Code on the right. The field_row calls come from the caller. -#}
 {%- macro with_qr(url, caption) -%}
 	<table class="clm-grid">
 		<tr>
@@ -56,7 +56,7 @@
 	</table>
 {%- endmacro -%}
 
-{#- Local e custodiante de origem ou destino numa linha de movimentação. -#}
+{#- Location and custodian of origin or destination in a movement row. -#}
 {%- macro place(location, employee) -%}
 	{%- if location or employee -%}
 	{{ location or "" }}{% if employee %}<div class="clm-desc">{{ employee_name(employee) }}</div>{% endif %}
