@@ -22,8 +22,13 @@ class TestApuracaoDeClassificacaoDeRisco(FrappeTestCase):
 			(temporario, INDICADORES_RELATORIO_ANTIGO),
 		):
 			rename_doc(
-				"Report", origem, destino,
-				force=True, ignore_permissions=True, show_alert=False, rebuild_search=False,
+				"Report",
+				origem,
+				destino,
+				force=True,
+				ignore_permissions=True,
+				show_alert=False,
+				rebuild_search=False,
 			)
 		ensure_ascii_indicadores_report()
 		self.assertEqual(
@@ -31,9 +36,7 @@ class TestApuracaoDeClassificacaoDeRisco(FrappeTestCase):
 			INDICADORES_RELATORIO,
 		)
 		self.assertFalse(
-			frappe.db.sql(
-				"SELECT name FROM `tabReport` WHERE BINARY name = %s", INDICADORES_RELATORIO_ANTIGO
-			)
+			frappe.db.sql("SELECT name FROM `tabReport` WHERE BINARY name = %s", INDICADORES_RELATORIO_ANTIGO)
 		)
 
 	def test_periodo_com_duas_escalas_e_total_do_card(self):
@@ -48,8 +51,18 @@ class TestApuracaoDeClassificacaoDeRisco(FrappeTestCase):
 					"doctype": "Protocolo de Triagem",
 					"nome_protocolo": f"Teste apuração {uuid4().hex[:10]}",
 					"niveis": [
-						{"ordem": 1, "nome_nivel": "Vermelho", "cor": cor_vermelho, "tempo_maximo_espera_min": 0},
-						{"ordem": 2, "nome_nivel": "Amarelo", "cor": cor_amarelo, "tempo_maximo_espera_min": alvo},
+						{
+							"ordem": 1,
+							"nome_nivel": "Vermelho",
+							"cor": cor_vermelho,
+							"tempo_maximo_espera_min": 0,
+						},
+						{
+							"ordem": 2,
+							"nome_nivel": "Amarelo",
+							"cor": cor_amarelo,
+							"tempo_maximo_espera_min": alvo,
+						},
 					],
 				}
 			).insert()

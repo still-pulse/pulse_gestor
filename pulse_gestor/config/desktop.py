@@ -12,5 +12,5 @@ def get_data():
 			"module_name": "Documentacao da Unidade",
 			"type": "module",
 			"label": _("Documentação da Unidade"),
-		}
+		},
 	]

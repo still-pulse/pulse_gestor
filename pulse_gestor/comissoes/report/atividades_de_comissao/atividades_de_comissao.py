@@ -90,11 +90,28 @@ def execute(filters=None):
 
 def get_columns(incluir_pauta):
 	columns = [
-		{"label": _("Reunião"), "fieldname": "reuniao", "fieldtype": "Link", "options": "Reuniao de Comissao", "width": 130},
-		{"label": _("Data e hora da reunião"), "fieldname": "data_reuniao", "fieldtype": "Datetime", "width": 150},
+		{
+			"label": _("Reunião"),
+			"fieldname": "reuniao",
+			"fieldtype": "Link",
+			"options": "Reuniao de Comissao",
+			"width": 130,
+		},
+		{
+			"label": _("Data e hora da reunião"),
+			"fieldname": "data_reuniao",
+			"fieldtype": "Datetime",
+			"width": 150,
+		},
 		{"label": _("Local"), "fieldname": "local_reuniao", "fieldtype": "Data", "width": 160},
 		{"label": _("Data da convocação"), "fieldname": "data_convocacao", "fieldtype": "Date", "width": 120},
-		{"label": _("Empresa"), "fieldname": "empresa", "fieldtype": "Link", "options": "Company", "width": 260},
+		{
+			"label": _("Empresa"),
+			"fieldname": "empresa",
+			"fieldtype": "Link",
+			"options": "Company",
+			"width": 260,
+		},
 		{"label": _("Categoria"), "fieldname": "categoria", "fieldtype": "Data", "width": 150},
 		{"label": _("Comissão"), "fieldname": "comissao", "fieldtype": "Data", "width": 220},
 		{"label": _("Mandato"), "fieldname": "mandato", "fieldtype": "Data", "width": 170},

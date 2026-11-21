@@ -22,7 +22,9 @@ def execute():
 			if _exists_exactly(old):
 				if _exists_exactly(new):
 					frappe.throw(f"Os DocTypes {old} e {new} existem simultaneamente.")
-				rename_doc("DocType", old, new, force=True, ignore_permissions=True, show_alert=False, validate=False)
+				rename_doc(
+					"DocType", old, new, force=True, ignore_permissions=True, show_alert=False, validate=False
+				)
 	finally:
 		builder.TABLE_NAME_PATTERN = old_pattern
 

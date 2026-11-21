@@ -44,6 +44,4 @@ class DocumentacaodaUnidade(Document):
 	def _atualizar_status(self):
 		hoje = nowdate()
 		self.status = calcular_status(self.possui_validade, self.data_fim, hoje)
-		self.dias_para_vencimento = calcular_dias_para_vencimento(
-			self.possui_validade, self.data_fim, hoje
-		)
+		self.dias_para_vencimento = calcular_dias_para_vencimento(self.possui_validade, self.data_fim, hoje)
