@@ -89,7 +89,8 @@ class ClassificacaodeRiscoDiaria(Document):
 			and anterior.unidade == self.unidade
 			and getdate(anterior.data) == getdate(self.data)
 			and anterior.protocolo == self.protocolo
-			and [linha.nivel for linha in anterior.niveis_classificados] == [nivel["nivel"] for nivel in niveis]
+			and [linha.nivel for linha in anterior.niveis_classificados]
+			== [nivel["nivel"] for nivel in niveis]
 		)
 		for indice, linha in enumerate(linhas):
 			linha.cor = anterior.niveis_classificados[indice].cor if mesmo_contexto else niveis[indice]["cor"]
@@ -123,4 +124,6 @@ class ClassificacaodeRiscoDiaria(Document):
 			},
 		)
 		if outro:
-			frappe.throw(_("Já existe uma classificação diária para esta unidade e data ({0}).").format(outro))
+			frappe.throw(
+				_("Já existe uma classificação diária para esta unidade e data ({0}).").format(outro)
+			)

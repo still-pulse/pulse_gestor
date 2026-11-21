@@ -18,9 +18,7 @@ class ConfiguracoesDocumentosdaUnidade(Document):
 				frappe.throw(_("A empresa {0} foi informada mais de uma vez.").format(row.company))
 			companies.add(row.company)
 			emails = [
-				email.strip()
-				for email in (row.emails or "").replace(",", "\n").splitlines()
-				if email.strip()
+				email.strip() for email in (row.emails or "").replace(",", "\n").splitlines() if email.strip()
 			]
 			if not emails or any(not validate_email_address(email) for email in emails):
 				frappe.throw(_("Informe e-mails válidos para a empresa {0}.").format(row.company))

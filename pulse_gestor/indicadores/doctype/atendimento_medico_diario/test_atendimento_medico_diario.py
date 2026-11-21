@@ -54,7 +54,9 @@ class TestAtendimentoMedicoDiario(FrappeTestCase):
 			{"doctype": "Atendimento Medico Diario", "unidade": unidade, "data": "2098-01-31"}
 		).insert()
 		self.assertEqual(atendimento.vigencia, vigencia.name)
-		self.assertEqual([linha.especialidade for linha in atendimento.especialidades], [e.name for e in especialidades])
+		self.assertEqual(
+			[linha.especialidade for linha in atendimento.especialidades], [e.name for e in especialidades]
+		)
 		self.assertEqual(atendimento.total_dia, 0)
 		self.assertEqual(atendimento.status, "Rascunho")
 		self.assertTrue(atendimento.lancado_por)
@@ -86,15 +88,17 @@ class TestAtendimentoMedicoDiario(FrappeTestCase):
 			atendimento = frappe.get_doc(
 				{"doctype": "Atendimento Medico Diario", "unidade": unidade, "data": data}
 			).insert()
-			for linha, quantidade in zip(atendimento.especialidades, quantidades):
+			for linha, quantidade in zip(atendimento.especialidades, quantidades, strict=True):
 				linha.quantidade = quantidade
 			atendimento.save()
 			atendimento.submit()
 		# Rascunho no período não entra na apuração.
-		frappe.get_doc({"doctype": "Atendimento Medico Diario", "unidade": unidade, "data": "2097-03-03"}).insert()
+		frappe.get_doc(
+			{"doctype": "Atendimento Medico Diario", "unidade": unidade, "data": "2097-03-03"}
+		).insert()
 
 		filtros = {"unidade": unidade, "data_inicio": "2097-03-01", "data_fim": "2097-03-31"}
-		colunas, linhas, _msg, grafico, resumo = executar_relatorio(filtros)
+		_colunas, linhas, _msg, grafico, resumo = executar_relatorio(filtros)
 		por_especialidade = {linha.especialidade: linha for linha in linhas}
 		primeira, segunda = (por_especialidade[e.name] for e in especialidades)
 		self.assertEqual((primeira.quantidade, segunda.quantidade), (30, 5))

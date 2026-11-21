@@ -19,7 +19,7 @@ repos:
       - id: debug-statements
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.8.1
+    rev: v0.16.10
     hooks:
       - id: ruff
         name: "Run ruff import sorter"
@@ -39,11 +39,8 @@ repos:
         # Ignore any files that might contain jinja / bundles
         exclude: |
             (?x)^(
-                pulse_gestor/public/dist/.*|
                 .*node_modules.*|
-                .*boilerplate.*|
-                pulse_gestor/templates/includes/.*|
-                pulse_gestor/public/js/lib/.*
+                .*boilerplate.*
             )$
 
 
@@ -56,12 +53,8 @@ repos:
         # Ignore any files that might contain jinja / bundles
         exclude: |
             (?x)^(
-                pulse_gestor/public/dist/.*|
-                cypress/.*|
                 .*node_modules.*|
-                .*boilerplate.*|
-                pulse_gestor/templates/includes/.*|
-                pulse_gestor/public/js/lib/.*
+                .*boilerplate.*
             )$
 
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook

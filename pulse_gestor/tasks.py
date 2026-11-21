@@ -58,7 +58,11 @@ def enviar_avisos_vencimento_documentos():
 	target_date = add_days(nowdate(), int(settings.dias_alerta_vencimento or 0))
 	for doc in frappe.get_all(
 		DOCTYPE,
-		filters={"possui_validade": 1, "data_fim": target_date, "company": ["in", list(recipients_by_company)]},
+		filters={
+			"possui_validade": 1,
+			"data_fim": target_date,
+			"company": ["in", list(recipients_by_company)],
+		},
 		fields=["name", "company"],
 	):
 		if frappe.db.exists(

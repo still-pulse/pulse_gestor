@@ -322,7 +322,7 @@ def ensure_modelo_convocacao():
 			"titulo": MODELO_CONVOCACAO,
 			"documento": REUNIAO,
 			"ativo": 1,
-			"assunto_email": "Convocação para reunião – {{ extra.comissao }}",
+			"assunto_email": "Convocação para reunião – {{ extra.comissao }}",  # noqa: RUF001
 			"mensagem": (
 				"Olá, {{ seguro(extra.participante.nome) }}!\n\n"
 				"Você está convocado(a) para a reunião da *{{ seguro(extra.comissao) }}*.\n\n"

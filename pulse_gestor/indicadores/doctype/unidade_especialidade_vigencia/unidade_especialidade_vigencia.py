@@ -22,7 +22,9 @@ class UnidadeEspecialidadeVigencia(Document):
 			if not linha.especialidade:
 				frappe.throw(_("Informe a especialidade em todas as linhas."))
 			if linha.especialidade in vistas:
-				frappe.throw(_("A especialidade {0} foi informada mais de uma vez.").format(linha.especialidade))
+				frappe.throw(
+					_("A especialidade {0} foi informada mais de uma vez.").format(linha.especialidade)
+				)
 			vistas.add(linha.especialidade)
 
 		for periodo in frappe.get_all(
@@ -36,4 +38,8 @@ class UnidadeEspecialidadeVigencia(Document):
 				periodo.data_inicio_vigencia,
 				periodo.data_fim_vigencia,
 			):
-				frappe.throw(_("A unidade já possui uma vigência de especialidades nesse período ({0}).").format(periodo.name))
+				frappe.throw(
+					_("A unidade já possui uma vigência de especialidades nesse período ({0}).").format(
+						periodo.name
+					)
+				)

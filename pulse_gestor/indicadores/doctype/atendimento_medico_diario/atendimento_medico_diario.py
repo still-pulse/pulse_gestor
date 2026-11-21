@@ -62,12 +62,18 @@ class AtendimentoMedicoDiario(Document):
 				self.append("especialidades", item)
 		linhas = self.especialidades or []
 		if [linha.especialidade for linha in linhas] != [item["especialidade"] for item in especialidades]:
-			frappe.throw(_("As especialidades devem corresponder, na mesma ordem, à vigência da unidade na data."))
+			frappe.throw(
+				_("As especialidades devem corresponder, na mesma ordem, à vigência da unidade na data.")
+			)
 		total = 0
 		for linha in linhas:
 			quantidade = linha.quantidade or 0
 			if flt(quantidade) != cint(quantidade) or cint(quantidade) < 0:
-				frappe.throw(_("A quantidade da especialidade {0} deve ser um inteiro não negativo.").format(linha.especialidade))
+				frappe.throw(
+					_("A quantidade da especialidade {0} deve ser um inteiro não negativo.").format(
+						linha.especialidade
+					)
+				)
 			total += cint(quantidade)
 		self.total_dia = total
 		self.status = "Rascunho" if self.docstatus == 0 else "Enviado"

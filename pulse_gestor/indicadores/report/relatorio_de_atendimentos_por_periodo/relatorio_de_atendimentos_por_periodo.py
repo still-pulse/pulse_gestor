@@ -51,7 +51,12 @@ def execute(filters=None):
 	)[0][0]
 	summary = [
 		{"label": _("Total de atendimentos"), "value": int(total), "datatype": "Int", "indicator": "Blue"},
-		{"label": _("Dias com lançamento"), "value": int(dias_lancados), "datatype": "Int", "indicator": "Green"},
+		{
+			"label": _("Dias com lançamento"),
+			"value": int(dias_lancados),
+			"datatype": "Int",
+			"indicator": "Green",
+		},
 		{
 			"label": _("Média diária"),
 			"value": round(total / dias_lancados, 1) if dias_lancados else 0,
@@ -93,5 +98,11 @@ def get_columns():
 			"width": 160,
 		},
 		{"fieldname": "dias_lancados", "label": _("Dias lançados"), "fieldtype": "Int", "width": 130},
-		{"fieldname": "media_por_dia", "label": _("Média por dia lançado"), "fieldtype": "Float", "precision": 1, "width": 170},
+		{
+			"fieldname": "media_por_dia",
+			"label": _("Média por dia lançado"),
+			"fieldtype": "Float",
+			"precision": 1,
+			"width": 170,
+		},
 	]

@@ -8,7 +8,6 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import Any
 
-
 STATUS_VALIDO = "Válido"
 STATUS_VENCIDO = "Vencido"
 STATUS_SEM_VALIDADE = "Sem validade"

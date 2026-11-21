@@ -35,7 +35,11 @@ def ensure_settings_card():
 		blocos = []
 	if not any((b.get("data") or {}).get("card_name") == CARD_LABEL for b in blocos):
 		blocos.append(
-			{"id": frappe.generate_hash(length=10), "type": "card", "data": {"card_name": CARD_LABEL, "col": 4}}
+			{
+				"id": frappe.generate_hash(length=10),
+				"type": "card",
+				"data": {"card_name": CARD_LABEL, "col": 4},
+			}
 		)
 		ws.content = json.dumps(blocos, ensure_ascii=False)
 		alterado = True

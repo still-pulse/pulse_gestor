@@ -105,7 +105,11 @@ def _blocos_do_app(links: list[dict]) -> tuple[list[dict], list[dict]]:
 	"""(cards do app, number cards + blocos de comissões do topo do Workspace)."""
 
 	def bloco(tipo, chave, nome, col):
-		return {"id": f"{PREFIXO_BLOCOS}painel_{_slug(nome)}", "type": tipo, "data": {chave: nome, "col": col}}
+		return {
+			"id": f"{PREFIXO_BLOCOS}painel_{_slug(nome)}",
+			"type": tipo,
+			"data": {chave: nome, "col": col},
+		}
 
 	cards = [
 		{
@@ -192,7 +196,9 @@ def ensure_pulse_gestor_workspace():
 		doc.set("number_cards", manter)
 		changed = True
 	for nome, label in [(n, l) for n, _a, l in COMISSOES_CUSTOM_BLOCKS]:
-		if frappe.db.exists("Custom HTML Block", nome) and not any(r.custom_block_name == nome for r in doc.custom_blocks):
+		if frappe.db.exists("Custom HTML Block", nome) and not any(
+			r.custom_block_name == nome for r in doc.custom_blocks
+		):
 			doc.append("custom_blocks", {"custom_block_name": nome, "label": label})
 			changed = True
 
@@ -248,9 +254,7 @@ def ensure_classificacao_import_permissions():
 		["name", "import"],
 	)
 	if permissao_classificacao and not permissao_classificacao[1]:
-		frappe.db.set_value(
-			"Custom DocPerm", permissao_classificacao[0], "import", 1, update_modified=False
-		)
+		frappe.db.set_value("Custom DocPerm", permissao_classificacao[0], "import", 1, update_modified=False)
 		changed = True
 	if changed:
 		frappe.clear_cache()
@@ -351,16 +355,24 @@ def ensure_ascii_indicadores_report():
 	# A troca direta parece um nome já existente nessa collation; usar um nome intermediário.
 	temporario = "Pulse Gestor Report Rename Temporario"
 	rename_doc(
-		"Report", INDICADORES_RELATORIO_ANTIGO, temporario,
-		force=True, ignore_permissions=True, show_alert=False, rebuild_search=False,
+		"Report",
+		INDICADORES_RELATORIO_ANTIGO,
+		temporario,
+		force=True,
+		ignore_permissions=True,
+		show_alert=False,
+		rebuild_search=False,
 	)
 	rename_doc(
-		"Report", temporario, INDICADORES_RELATORIO,
-		force=True, ignore_permissions=True, show_alert=False, rebuild_search=False,
+		"Report",
+		temporario,
+		INDICADORES_RELATORIO,
+		force=True,
+		ignore_permissions=True,
+		show_alert=False,
+		rebuild_search=False,
 	)
 	frappe.db.set_value("Report", INDICADORES_RELATORIO, "report_name", INDICADORES_RELATORIO)
-
-
 
 
 def ensure_roles():

@@ -30,9 +30,14 @@ function configurar_grade(frm) {
 function manter_espaco_acao(linha) {
 	let celula = linha.row.children(".pulse-grid-action-spacer");
 	if (!celula.length) {
-		celula = linha.open_form_button?.parent() || $('<div class="col"></div>').appendTo(linha.row);
+		celula =
+			linha.open_form_button?.parent() || $('<div class="col"></div>').appendTo(linha.row);
 	}
-	celula.addClass("pulse-grid-action-spacer").off("click keydown").empty().attr("aria-hidden", "true");
+	celula
+		.addClass("pulse-grid-action-spacer")
+		.off("click keydown")
+		.empty()
+		.attr("aria-hidden", "true");
 }
 
 function aplicar_cor_linha(linha) {

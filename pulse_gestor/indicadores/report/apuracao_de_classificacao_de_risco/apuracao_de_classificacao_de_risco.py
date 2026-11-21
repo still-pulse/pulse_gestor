@@ -40,9 +40,7 @@ def execute(filters=None):
 	)
 	for row in data:
 		row.percentual_classificacao = (
-			100 * row.qtd_pacientes_classificados / row.total_classificados
-			if row.total_classificados
-			else 0
+			100 * row.qtd_pacientes_classificados / row.total_classificados if row.total_classificados else 0
 		)
 
 	total = frappe.db.sql(
@@ -100,7 +98,9 @@ def get_chart(data, params):
 			"datasets": [{"name": _("Classificados"), "values": list(por_nivel.values())}],
 		},
 		"type": "donut",
-		"colors": [cores.get(nivel) or cores_padrao[i % len(cores_padrao)] for i, nivel in enumerate(por_nivel)],
+		"colors": [
+			cores.get(nivel) or cores_padrao[i % len(cores_padrao)] for i, nivel in enumerate(por_nivel)
+		],
 		"height": 300,
 	}
 
