@@ -15,11 +15,12 @@ padrão adotado, sem alterar lógica nem comportamento em runtime.
 ## Decisão
 
 1. **Piso de Python 3.11** (`target-version = "py311"`, `requires-python = ">=3.11"`), mantido por restrição de
-   produção: as imagens de produção/homologação usam Python 3.11 ou 3.12 (versão exata **a confirmar**). O alvo de
-   migração ao Frappe v16 é `>=3.13` (`target-version = "py313"`, `requires-python = ">=3.13"`, com `linter.yml` e
-   `ci.yml` coerentes), a executar na migração, não antes. Risco registrado: o `ci.yml` roda Python 3.14, acima da
-   produção, então o CI não reflete o ambiente real (hoje o Run Tests falha em `main` por isso: `freezegun`, usado
-   pelos testes do ERPNext, quebra no import com Python 3.14, `uuid._load_system_functions`).
+   produção. Produção e homologação estão confirmadas em **Python 3.12**; o `ci.yml` passou a rodar 3.12 para
+   refletir a produção (o 3.14 anterior é incompatível com o Frappe v15: `freezegun`, usado pelos testes do
+   ERPNext, quebra na coleta com `AttributeError: module 'uuid' has no attribute '_load_system_functions'`, o que
+   deixava o Run Tests vermelho em `main`). O `linter.yml` continua em 3.11 (o piso). O alvo de migração ao
+   Frappe v16 é `>=3.13` (`target-version = "py313"`, `requires-python = ">=3.13"`, com `linter.yml` e `ci.yml`
+   coerentes), a executar na migração, não antes.
 2. **ruff fixado em v0.16.10** via `ruff-pre-commit`, regras `F, E, W, I, UP, B, RUF` e lista de `ignore`
    idêntica à do CLM.
 3. **pyupgrade coberto pela regra `UP` do ruff**, sem hook separado.
@@ -55,10 +56,19 @@ troca temporariamente `builder.TABLE_NAME_PATTERN` para renomear DocTypes com ac
 o Frappe 15 não oferece hook para isso. Aprovado pelo responsável do repositório. O achado só apareceu porque o
 `semgrep ci` é diff-aware e o `ruff --fix`/`format` reescreveu o arquivo.
 
+### Achados `frappe-sql-format-injection` em patches
+
+`patches/v0_2_6_remove_triagem_fields.py` e `patches/v0_9_0_remove_metas_e_setor_especialidades.py` montavam
+`ALTER TABLE ... DROP COLUMN` com f-string e `frappe.db.sql`. Os nomes de tabela e coluna são constantes do próprio
+patch (sem entrada externa) e identificadores SQL não aceitam parâmetros. Em vez de `nosemgrep`, a chamada passou
+a `frappe.db.sql_ddl`, API do Frappe própria para DDL (faz commit e executa a query); o SQL emitido é idêntico e a
+guarda `has_column` mantém a idempotência. Semgrep com `frappe/semgrep-rules`: 2 achados antes, 0 depois. Risco:
+baixo; patches já aplicados não reexecutam (Patch Log), e em instalações novas o commit explícito antes do DDL é
+inócuo, pois o DDL já causa commit implícito no MariaDB.
+
 ## Pendências
 
-- Confirmar a versão exata do Python das imagens de produção; alinhar o Python do `ci.yml` (3.14) à produção ou
-  migrar para `>=3.13` junto com o v16; e revisar as versões de prettier/eslint na preparação para v16/v17.
+- Migrar para Python `>=3.13` junto com o v16 e revisar as versões de prettier/eslint na preparação para v16/v17.
 - Ampliar o pip-audit para cobrir as dependências efetivamente instaladas (hoje comentadas no `pyproject`).
 
 ## Estado deste repositório

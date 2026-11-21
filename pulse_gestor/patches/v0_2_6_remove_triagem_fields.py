@@ -8,4 +8,4 @@ def execute():
 		("Classificacao Diaria Nivel", "qtd_atendidos_dentro_do_tempo"),
 	):
 		if frappe.db.has_column(doctype, column):
-			frappe.db.sql(f"ALTER TABLE `tab{doctype}` DROP COLUMN `{column}`")
+			frappe.db.sql_ddl(f"ALTER TABLE `tab{doctype}` DROP COLUMN `{column}`")
