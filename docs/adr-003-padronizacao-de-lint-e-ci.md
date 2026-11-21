@@ -14,7 +14,12 @@ padrão adotado, sem alterar lógica nem comportamento em runtime.
 
 ## Decisão
 
-1. **Python 3.11** no CI, `target-version = "py311"` e `requires-python = ">=3.11"` (alvo a revisar para o v16).
+1. **Piso de Python 3.11** (`target-version = "py311"`, `requires-python = ">=3.11"`), mantido por restrição de
+   produção: as imagens de produção/homologação usam Python 3.11 ou 3.12 (versão exata **a confirmar**). O alvo de
+   migração ao Frappe v16 é `>=3.13` (`target-version = "py313"`, `requires-python = ">=3.13"`, com `linter.yml` e
+   `ci.yml` coerentes), a executar na migração, não antes. Risco registrado: o `ci.yml` roda Python 3.14, acima da
+   produção, então o CI não reflete o ambiente real (hoje o Run Tests falha em `main` por isso: `freezegun`, usado
+   pelos testes do ERPNext, quebra no import com Python 3.14, `uuid._load_system_functions`).
 2. **ruff fixado em v0.16.10** via `ruff-pre-commit`, regras `F, E, W, I, UP, B, RUF` e lista de `ignore`
    idêntica à do CLM.
 3. **pyupgrade coberto pela regra `UP` do ruff**, sem hook separado.
@@ -42,9 +47,18 @@ padrão adotado, sem alterar lógica nem comportamento em runtime.
 - Atualizações de prettier/eslint exigem uma rodada própria, com possível reformatação de JS.
 - O pip-audit atual dá falsa sensação de cobertura, pois não audita as dependências Frappe/ERPNext/HRMS.
 
+## Exceção de semgrep
+
+`pulse_gestor/patches/v0_2_6_rename_indicadores_doctypes.py` recebe `# nosemgrep: frappe-monkey-patching-not-allowed`
+na linha do `import` (o semgrep reporta o match desde o import até a atribuição). É um patch único e histórico que
+troca temporariamente `builder.TABLE_NAME_PATTERN` para renomear DocTypes com acento e restaura o valor em `finally`;
+o Frappe 15 não oferece hook para isso. Aprovado pelo responsável do repositório. O achado só apareceu porque o
+`semgrep ci` é diff-aware e o `ruff --fix`/`format` reescreveu o arquivo.
+
 ## Pendências
 
-- Revisar o alvo Python (`py311`) e as versões de prettier/eslint na preparação para v16/v17.
+- Confirmar a versão exata do Python das imagens de produção; alinhar o Python do `ci.yml` (3.14) à produção ou
+  migrar para `>=3.13` junto com o v16; e revisar as versões de prettier/eslint na preparação para v16/v17.
 - Ampliar o pip-audit para cobrir as dependências efetivamente instaladas (hoje comentadas no `pyproject`).
 
 ## Estado deste repositório
