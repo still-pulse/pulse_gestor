@@ -1,7 +1,7 @@
-"""Card "Pulse Gestor" no workspace ERPNext Settings (idempotente).
+""" "Pulse Gestor" card in the ERPNext Settings workspace (idempotent).
 
-O workspace Gestor é restrito ao papel Gerente de Unidade, mas as configurações são lidas por System Manager e
-pelos papéis Pulse Gestor; ERPNext Settings é aberto e o Frappe mostra o link só a quem pode ler o DocType.
+The Gestor workspace is restricted to the unit manager role, but the settings are read by System Manager and
+the Pulse Gestor roles; ERPNext Settings is open and Frappe shows the link only to those who can read the DocType.
 """
 
 import json
@@ -16,35 +16,37 @@ LINKS = [("Configuracoes Documentos da Unidade", "Configurações de Documentos 
 def ensure_settings_card():
 	if not frappe.db.exists("Workspace", WORKSPACE):
 		return
-	desejados = [(d, r) for d, r in LINKS if frappe.db.exists("DocType", d)]
-	if not desejados:
+	desired = [(d, r) for d, r in LINKS if frappe.db.exists("DocType", d)]
+	if not desired:
 		return
 	ws = frappe.get_doc("Workspace", WORKSPACE)
-	alterado = False
+	changed = False
 	if CARD_LABEL not in {l.label for l in ws.links if l.type == "Card Break"}:
 		ws.append("links", {"type": "Card Break", "label": CARD_LABEL, "hidden": 0})
-		alterado = True
-	existentes = {l.link_to for l in ws.links if l.type == "Link"}
-	for doctype, rotulo in desejados:
-		if doctype not in existentes:
-			ws.append("links", {"type": "Link", "label": rotulo, "link_type": "DocType", "link_to": doctype})
-			alterado = True
+		changed = True
+	existing = {l.link_to for l in ws.links if l.type == "Link"}
+	for doctype, link_label in desired:
+		if doctype not in existing:
+			ws.append(
+				"links", {"type": "Link", "label": link_label, "link_type": "DocType", "link_to": doctype}
+			)
+			changed = True
 	try:
-		blocos = json.loads(ws.content or "[]")
+		blocks = json.loads(ws.content or "[]")
 	except Exception:
-		blocos = []
-	if not any((b.get("data") or {}).get("card_name") == CARD_LABEL for b in blocos):
-		blocos.append(
+		blocks = []
+	if not any((b.get("data") or {}).get("card_name") == CARD_LABEL for b in blocks):
+		blocks.append(
 			{
 				"id": frappe.generate_hash(length=10),
 				"type": "card",
 				"data": {"card_name": CARD_LABEL, "col": 4},
 			}
 		)
-		ws.content = json.dumps(blocos, ensure_ascii=False)
-		alterado = True
-	if alterado:
+		ws.content = json.dumps(blocks, ensure_ascii=False)
+		changed = True
+	if changed:
 		ws.flags.ignore_permissions = True
 		ws.flags.ignore_links = True
 		ws.save()
-		frappe.clear_cache()  # o desk guarda a página do workspace em cache por usuário
+		frappe.clear_cache()  # the desk caches the workspace page per user

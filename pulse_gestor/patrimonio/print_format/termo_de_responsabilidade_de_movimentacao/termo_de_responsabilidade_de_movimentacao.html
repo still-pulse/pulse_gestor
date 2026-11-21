@@ -3,7 +3,7 @@
 {% from "pulse_gestor/templates/print/patrimonio_macros.html" import purpose_label, control_number, employee_name, place, with_qr with context %}
 {% from "pulse_gestor/templates/print/comissoes_macros.html" import registro_assinaturas with context %}
 {#- Termo assinado por quem recebe os bens (to_employee) no motor assinatura_eletronica
-    (perfil pulse_gestor.assinatura.PerfilTermoDeMovimentacao): um quadro e uma assinatura por custodiante. -#}
+    (perfil pulse_gestor.signature_profiles.AssetMovementTermProfile): um quadro e uma assinatura por custodiante. -#}
 {% set texto_declaracao = frappe.db.get_value("Modelo de Assinatura", "Asset Movement", "texto_declaracao") %}
 {%- set ns = namespace(custodiantes=[]) %}
 {%- for d in (doc.assets or []) if d.to_employee and d.to_employee not in ns.custodiantes %}{% set ns.custodiantes = ns.custodiantes + [d.to_employee] %}{% endfor %}

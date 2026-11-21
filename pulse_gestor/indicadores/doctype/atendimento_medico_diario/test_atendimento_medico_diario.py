@@ -92,7 +92,7 @@ class TestAtendimentoMedicoDiario(FrappeTestCase):
 				linha.quantidade = quantidade
 			atendimento.save()
 			atendimento.submit()
-		# Rascunho no período não entra na apuração.
+		# A draft in the period is not counted.
 		frappe.get_doc(
 			{"doctype": "Atendimento Medico Diario", "unidade": unidade, "data": "2097-03-03"}
 		).insert()

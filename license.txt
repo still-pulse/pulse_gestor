@@ -1,21 +1,114 @@
-MIT License
+PROPRIETARY AND RESTRICTED-USE LICENSE
+Pulse Gestor — Unit Management
 
-Copyright (c) 2026 Still Pulse / BHCL
+Proprietary — Copyright (c) 2026 StillPulse Tecnologia LTDA. All rights reserved,
+except as expressly provided in Section 4 below.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+1. DEFINITIONS
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+"Software" means the Pulse Gestor application, including
+source code, scripts, configuration files, data schemas (DocTypes), documentation
+and other artifacts contained in this repository, authored by StillPulse
+Tecnologia LTDA.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+"Owner" means StillPulse Tecnologia LTDA, the company holding the property
+rights in the Software.
+
+"Licensee" means any natural or legal person who has been given access to the
+Software with the express written authorization of the Owner.
+
+"Third-Party Components" means the Frappe Framework and ERPNext, on which the
+Software depends and with which it integrates, as detailed in Section 4.
+
+2. GRANT OF RESTRICTED USE
+
+With the express written authorization of the Owner, the Licensee is granted a
+limited, non-exclusive, non-transferable and revocable right to install and use
+the Software solely for internal purposes, under the terms and conditions set
+out herein.
+
+Nothing in this license transfers to the Licensee ownership of the Software or
+of any intellectual property right relating to it.
+
+3. RESTRICTIONS
+
+Unless the Owner has given prior express written authorization, no person may:
+
+  a) copy, reproduce, duplicate or store the Software, in whole or in part, by
+     any means or in any format;
+  b) distribute, sublicense, rent, assign, lend or otherwise make the Software
+     available to third parties;
+  c) modify, adapt, translate or create derivative works of the Software;
+  d) reverse engineer, decompile or disassemble the Software, except where
+     such practice is guaranteed by mandatory law or by the Third-Party
+     Components referred to in Section 4;
+  e) remove, obscure or alter copyright notices, trademarks or other
+     ownership notices contained in the Software.
+
+Failure to comply with these restrictions constitutes copyright infringement
+and subjects the infringer to the applicable civil and criminal sanctions,
+without prejudice to any compensation for losses and damages.
+
+4. THIRD-PARTY COMPONENTS AND LIMITS OF THIS LICENSE
+
+The Software is built on the Frappe Framework, licensed under the MIT License,
+and integrates directly — at source-code level, by importing and extending
+internal classes and functions — with ERPNext modules, licensed under the GNU
+General Public License version 3 (GPLv3).
+
+The restrictions imposed in Sections 2 and 3 apply solely to the original code
+authored by StillPulse Tecnologia LTDA contained in this Software. They do NOT
+restrict, suppress or replace the rights and obligations established:
+
+  a) by the MIT License of the Frappe Framework, as to the portions that derive
+     from it or depend on it; and
+
+  b) by the GNU GPLv3 of ERPNext, as to the portions that constitute a work
+     derived from or combined with ERPNext code (including, without
+     limitation, the modules that extend `Asset` and `Asset Movement` or use
+     utilities imported from `erpnext.*`).
+
+In case of distribution or making available of this Software, or of any
+derivative work that incorporates the portions mentioned in item (b), the terms
+of the GPLv3 apply fully to those portions, which guarantees every recipient the
+right to copy, modify and redistribute the corresponding code. This license may
+not be invoked to restrict such rights, and the GPLv3 prevails in case of
+conflict.
+
+This license presupposes internal use of the Software by the Owner and by
+expressly authorized Licensees, without distribution to third parties. If the
+Software, or a work derived from it, is to be distributed to third parties, the
+scope of the source-code disclosure obligations imposed by the GPLv3 on the
+portions it covers must be assessed beforehand.
+
+5. INTELLECTUAL PROPERTY
+
+The Software, including its structure, organization, original source code and
+documentation, is protected by copyright law and other applicable intellectual
+property rules. All rights not expressly granted in this license remain
+reserved to the Owner.
+
+6. DISCLAIMER OF WARRANTIES
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING, WITHOUT LIMITATION, WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT OF THIRD-PARTY RIGHTS.
+
+7. LIMITATION OF LIABILITY
+
+IN NO EVENT SHALL THE OWNER BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL OR CONSEQUENTIAL DAMAGES ARISING FROM THE USE OF OR INABILITY TO USE THE
 SOFTWARE.
+
+8. TERMINATION
+
+This license remains in force until terminated. The Owner may terminate it at
+any time, by notice, if the Licensee breaches any of its provisions. Upon
+termination, the Licensee must immediately cease all use of the Software and
+delete all copies in its possession.
+
+9. GOVERNING LAW AND VENUE
+
+This license is governed by the laws of the Federative Republic of Brazil. The
+courts of the Owner's domicile are elected to settle any disputes arising from
+it, waiving any other, however privileged.

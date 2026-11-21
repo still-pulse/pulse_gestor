@@ -1,7 +1,7 @@
-# Copyright (c) 2026, Still Pulse and contributors
+# Copyright (c) 2026, StillPulse Tecnologia LTDA and contributors
 # For license information, please see license.txt
 
-"""Jobs agendados do Pulse Gestor."""
+"""Scheduled jobs of Pulse Gestor."""
 
 from __future__ import annotations
 
@@ -9,43 +9,43 @@ import frappe
 from frappe import _
 from frappe.utils import add_days, escape_html, get_url_to_form, nowdate, strip_html
 
-from pulse_gestor.utils import calcular_dias_para_vencimento, calcular_status
+from pulse_gestor.utils import calculate_days_to_expiry, calculate_status
 
 DOCTYPE = "Documentacao da Unidade"
 
 
-def atualizar_status_documentos():
-	"""Recalcula status e dias para vencimento de todos os documentos."""
-	hoje = nowdate()
-	documentos = frappe.get_all(
+def update_document_statuses():
+	"""Recompute the status and days to expiry of all documents."""
+	today = nowdate()
+	documents = frappe.get_all(
 		DOCTYPE,
 		fields=["name", "possui_validade", "data_fim", "status", "dias_para_vencimento"],
 	)
 
-	atualizados = 0
-	for doc in documentos:
-		novo_status = calcular_status(doc.possui_validade, doc.data_fim, hoje)
-		novos_dias = calcular_dias_para_vencimento(doc.possui_validade, doc.data_fim, hoje)
+	updated_count = 0
+	for doc in documents:
+		new_status = calculate_status(doc.possui_validade, doc.data_fim, today)
+		new_days = calculate_days_to_expiry(doc.possui_validade, doc.data_fim, today)
 
-		valores = {}
-		if doc.status != novo_status:
-			valores["status"] = novo_status
-		if doc.dias_para_vencimento != novos_dias:
-			valores["dias_para_vencimento"] = novos_dias
+		values = {}
+		if doc.status != new_status:
+			values["status"] = new_status
+		if doc.dias_para_vencimento != new_days:
+			values["dias_para_vencimento"] = new_days
 
-		if not valores:
+		if not values:
 			continue
 
-		frappe.db.set_value(DOCTYPE, doc.name, valores, update_modified=False)
-		atualizados += 1
+		frappe.db.set_value(DOCTYPE, doc.name, values, update_modified=False)
+		updated_count += 1
 
-	if atualizados:
+	if updated_count:
 		frappe.db.commit()
-		frappe.logger("pulse_gestor").info("Status atualizado em %s documento(s).", atualizados)
+		frappe.logger("pulse_gestor").info("Status updated on %s document(s).", updated_count)
 
 
-def enviar_avisos_vencimento_documentos():
-	"""Enfileira um aviso por documento no prazo configurado, para a empresa correspondente."""
+def send_expiry_notices():
+	"""Queue one notice per document at the configured lead time, for the matching company."""
 	settings = frappe.get_single("Configuracoes Documentos da Unidade")
 	if not settings.modelo_email_vencimento or not settings.destinatarios_vencimento:
 		return
@@ -77,14 +77,14 @@ def enviar_avisos_vencimento_documentos():
 		frappe.sendmail(
 			recipients=recipients_by_company[doc.company],
 			subject=formatted["subject"],
-			message=corpo_email_vencimento(formatted, full_doc),
+			message=build_expiry_email_body(formatted, full_doc),
 			reference_doctype=DOCTYPE,
 			reference_name=doc.name,
 		)
 
 
-def corpo_email_vencimento(formatted, doc):
-	"""Corpo do Email Template dentro do layout institucional do clm (manifesto, seção 6)."""
+def build_expiry_email_body(formatted, doc):
+	"""Email Template body inside the institutional clm layout (manifesto, section 6)."""
 	from clm.clm.services.email_layout import is_branded, render_email
 
 	if is_branded(formatted["message"]):

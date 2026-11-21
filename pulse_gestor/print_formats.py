@@ -1,11 +1,11 @@
-# Copyright (c) 2026, Still Pulse and contributors
+# Copyright (c) 2026, StillPulse Tecnologia LTDA and contributors
 # For license information, please see license.txt
 
-"""Print Formats institucionais do Pulse Gestor (padrao BHCL, ver apps/clm/docs/brand-manifesto.md).
+"""Institutional Print Formats of Pulse Gestor (see apps/clm/docs/brand-manifesto.md).
 
-Os formatos sao standard (JSON + HTML em ``<modulo>/print_format/``) e estendem
-``clm/templates/print/clm_base.html``. Este modulo define o formato padrao dos DocTypes do ERPNext que
-ganharam formato proprio e retira os formatos antigos que existiam so no banco do site.
+The formats are standard (JSON + HTML in ``<module>/print_format/``) and extend
+``clm/templates/print/clm_base.html``. This module sets the default format of the ERPNext DocTypes that
+got their own format and retires the old formats that existed only in the site database.
 """
 
 from __future__ import annotations
@@ -14,28 +14,28 @@ import frappe
 import pyqrcode
 from frappe.custom.doctype.property_setter.property_setter import make_property_setter
 
-# DocType (Core) -> Print Format padrao
+# DocType (Core) -> default Print Format
 DEFAULT_PRINT_FORMATS = {
 	"Asset": "Ficha do Ativo Imobilizado",
 	"Asset Movement": "Ficha de Movimentacao de Ativos",
 }
 
-# Formatos antigos (standard=No, so no banco) substituidos -> novo formato. Sao apenas desabilitados,
-# para nao perder o conteudo.
+# Legacy formats (standard=No, database only) that were replaced -> new format. They are only disabled,
+# so that no content is lost.
 LEGACY_PRINT_FORMATS = {
 	"Ficha de Ativo Imobilizado": "Ficha do Ativo Imobilizado",
 	"Ficha de Movimentacao de Ativos (antiga)": "Ficha de Movimentacao de Ativos",
 }
 
-# A collation do banco ignora acentos: o formato antigo acentuado e o novo em ASCII seriam o mesmo registro e a
-# importacao do standard sobrescreveria o antigo. Antes da sincronizacao (before_migrate) o antigo e renomeado.
+# The database collation ignores accents: the old accented format and the new ASCII one would be the same record,
+# and importing the standard would overwrite the old one. Before the sync (before_migrate) the old one is renamed.
 ACCENTED_LEGACY_NAMES = {
 	"Ficha de Movimentação de Ativos": "Ficha de Movimentacao de Ativos (antiga)",
 }
 
 
 def _exact(name):
-	"""Print Format com exatamente este nome (a comparacao do banco ignora acentos e caixa)."""
+	"""Print Format with exactly this name (the database comparison ignores accents and case)."""
 	row = frappe.db.get_value("Print Format", name, ["name", "standard"], as_dict=True)
 	return row if row and row.name == name else None
 
@@ -50,10 +50,10 @@ def preserve_accented_legacy_print_formats():
 
 
 def ensure_default_print_formats():
-	"""Define o formato do Pulse Gestor como padrao de cada DocType, idempotente.
+	"""Set the Pulse Gestor format as the default of each DocType (idempotent).
 
-	So troca o padrao quando ele esta vazio ou aponta para um formato antigo substituido; uma escolha
-	explicita de outro formato feita pelo usuario e preservada.
+	The default is replaced only when it is empty or points to a replaced legacy format; an explicit
+	choice of another format made by the user is preserved.
 	"""
 	for doctype, print_format in DEFAULT_PRINT_FORMATS.items():
 		if not frappe.db.exists("DocType", doctype) or not frappe.db.exists("Print Format", print_format):
@@ -74,7 +74,7 @@ def ensure_default_print_formats():
 
 
 def retire_legacy_print_formats():
-	"""Desabilita os formatos antigos cujo substituto ja existe."""
+	"""Disable legacy formats whose replacement already exists."""
 	for old, new in LEGACY_PRINT_FORMATS.items():
 		row = _exact(old)
 		if row and row.standard == "No" and frappe.db.exists("Print Format", new):
@@ -82,7 +82,7 @@ def retire_legacy_print_formats():
 
 
 def qr_data_uri(content: str, scale: int = 4) -> str:
-	"""QR Code em PNG (data URI), gerado localmente; exposto como metodo Jinja."""
+	"""QR Code as PNG (data URI), generated locally; exposed as a Jinja method."""
 	if not content:
 		return ""
 	return "data:image/png;base64," + pyqrcode.create(content, error="M").png_as_base64_str(

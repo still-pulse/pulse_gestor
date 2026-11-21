@@ -16,8 +16,8 @@ frappe.query_reports["Ativos por Localizacao"] = {
 			fieldtype: "Link",
 			options: "Location",
 			get_query: () => {
-				const empresa = frappe.query_report.get_filter_value("empresa");
-				return empresa ? { filters: { custom_empresa: empresa } } : {};
+				const company = frappe.query_report.get_filter_value("empresa");
+				return company ? { filters: { custom_empresa: company } } : {};
 			},
 		},
 		{

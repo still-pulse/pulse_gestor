@@ -2,7 +2,7 @@ import frappe
 from frappe import _
 from frappe.utils import cint, formatdate, getdate
 
-CAMPOS_DA_REUNIAO = (
+MEETING_FIELDS = (
 	"reuniao",
 	"data_reuniao",
 	"local_reuniao",
@@ -23,24 +23,24 @@ def execute(filters=None):
 	if getdate(filters.data_inicio) > getdate(filters.data_fim):
 		frappe.throw(_("A data início não pode ser posterior à data fim."))
 
-	incluir_pauta = cint(filters.incluir_pauta)
+	include_agenda = cint(filters.incluir_pauta)
 	params = {"data_inicio": filters.data_inicio, "data_fim": filters.data_fim}
-	condicoes = ["DATE(reuniao.data_reuniao) BETWEEN %(data_inicio)s AND %(data_fim)s"]
-	for campo in ("empresa", "tipo_comissao"):
-		if filters.get(campo):
-			condicoes.append(f"reuniao.{campo} = %({campo})s")
-			params[campo] = filters[campo]
+	conditions = ["DATE(reuniao.data_reuniao) BETWEEN %(data_inicio)s AND %(data_fim)s"]
+	for field in ("empresa", "tipo_comissao"):
+		if filters.get(field):
+			conditions.append(f"reuniao.{field} = %({field})s")
+			params[field] = filters[field]
 
-	# Com a pauta, o relatório traz uma linha por item; reuniões sem pauta aparecem
-	# uma vez, com o assunto vazio. Sem a pauta, é uma linha por reunião.
-	pauta_select = "pauta.assunto AS assunto," if incluir_pauta else ""
-	pauta_join = (
+	# With the agenda, the report has one row per item; meetings without an agenda appear
+	# once, with an empty subject. Without the agenda, it is one row per meeting.
+	agenda_select = "pauta.assunto AS assunto," if include_agenda else ""
+	agenda_join = (
 		"""LEFT JOIN `tabComissao Pauta Item` pauta
 			ON pauta.parent = reuniao.name AND pauta.parenttype = 'Reuniao de Comissao'"""
-		if incluir_pauta
+		if include_agenda
 		else ""
 	)
-	pauta_order = ", pauta.idx" if incluir_pauta else ""
+	agenda_order = ", pauta.idx" if include_agenda else ""
 
 	data = frappe.db.sql(
 		f"""
@@ -48,7 +48,7 @@ def execute(filters=None):
 			reuniao.empresa, categoria.nome_categoria AS categoria,
 			tipo.nome_tipo AS comissao, mandato.data_inicio_mandato,
 			mandato.status_mandato,
-			{pauta_select}
+			{agenda_select}
 			(SELECT COUNT(*) FROM `tabComissao Reuniao Participante` p
 				WHERE p.parent = reuniao.name AND p.parenttype = 'Reuniao de Comissao'
 				AND p.status_presenca = 'Presente') AS presentes,
@@ -58,37 +58,37 @@ def execute(filters=None):
 		LEFT JOIN `tabTipo de Comissao` tipo ON tipo.name = reuniao.tipo_comissao
 		LEFT JOIN `tabCategoria de Comissao` categoria ON categoria.name = tipo.categoria_comissao
 		LEFT JOIN `tabMandato de Comissao` mandato ON mandato.name = reuniao.mandato_comissao
-		{pauta_join}
-		WHERE {" AND ".join(condicoes)}
-		ORDER BY reuniao.data_reuniao, reuniao.empresa, reuniao.tipo_comissao, reuniao.name{pauta_order}
+		{agenda_join}
+		WHERE {" AND ".join(conditions)}
+		ORDER BY reuniao.data_reuniao, reuniao.empresa, reuniao.tipo_comissao, reuniao.name{agenda_order}
 		""",
 		params,
 		as_dict=True,
 	)
 
-	reunioes = {row.reuniao for row in data}
-	vistas = set()
+	meetings = {row.reuniao for row in data}
+	seen = set()
 	for row in data:
 		row.mandato = (
 			f"{formatdate(row.data_inicio_mandato)} ({row.status_mandato})" if row.data_inicio_mandato else ""
 		)
-		# Com a pauta, os dados da reunião aparecem só na primeira linha.
-		if row.reuniao in vistas:
-			for campo in CAMPOS_DA_REUNIAO:
-				row[campo] = None
-		vistas.add(row.reuniao)
+		# With the agenda, the meeting data appears only on the first row.
+		if row.reuniao in seen:
+			for field in MEETING_FIELDS:
+				row[field] = None
+		seen.add(row.reuniao)
 	summary = [
 		{
 			"label": _("Reuniões no período"),
-			"value": len(reunioes),
+			"value": len(meetings),
 			"datatype": "Int",
 			"indicator": "Blue",
 		}
 	]
-	return get_columns(incluir_pauta), data, None, None, summary
+	return get_columns(include_agenda), data, None, None, summary
 
 
-def get_columns(incluir_pauta):
+def get_columns(include_agenda):
 	columns = [
 		{
 			"label": _("Reunião"),
@@ -118,6 +118,6 @@ def get_columns(incluir_pauta):
 		{"label": _("Presentes"), "fieldname": "presentes", "fieldtype": "Int", "width": 80},
 		{"label": _("Participantes"), "fieldname": "convocados", "fieldtype": "Int", "width": 100},
 	]
-	if incluir_pauta:
+	if include_agenda:
 		columns.append({"label": _("Pauta"), "fieldname": "assunto", "fieldtype": "Small Text", "width": 350})
 	return columns
