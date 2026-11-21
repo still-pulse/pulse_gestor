@@ -1,114 +1,115 @@
 # Pulse Gestor (`pulse_gestor`)
 
-App Frappe/ERPNext de gestão por unidade, com quatro áreas: **Documentação da Unidade**, **Indicadores** (triagem e
-atendimentos), **Comissões** e **Patrimônio** (impressos e relatórios de ativos). Em todas elas, a *unidade* é o
-DocType `Company` do ERPNext. Os cadastros e relatórios ficam no Workspace **Gestor**.
+Frappe/ERPNext app for unit management, with four areas: **Unit Documentation** (Documentação da Unidade),
+**Indicators** (triage and medical visits), **Committees** (Comissões) and **Assets** (Patrimônio: asset printouts and
+reports). In all of them, the *unit* is ERPNext's `Company` DocType. Registries and reports live in the **Gestor**
+Workspace.
 
-Repositório: [still-pulse/pulse_gestor](https://github.com/still-pulse/pulse_gestor)
+Repository: [still-pulse/pulse_gestor](https://github.com/still-pulse/pulse_gestor)
 
-Versão atual: **1.0.1** (`pulse_gestor/__init__.py`, `hooks.py` e tag `v1.0.1`). Histórico em [CHANGELOG.md](CHANGELOG.md).
+Current version: **1.0.2** (`pulse_gestor/__init__.py` and `hooks.py`). History in [CHANGELOG.md](CHANGELOG.md).
 
-## Funcionalidades
+## Features
 
-### Documentação da Unidade
+### Unit Documentation
 
-- **Tipo de Documento da Unidade**: cadastro dos tipos de documento exigidos das unidades.
-- **Documentação da Unidade**: documento por unidade, com anexo em PDF e vigência opcional. O status é
-  `Válido`, `Vencido` ou `Sem validade`, com contagem de dias para o vencimento.
-- **Rotinas diárias**: recalculam o status e os dias para vencimento e enfileiram avisos por e-mail no prazo
-  configurado. O corpo do e-mail sai no layout institucional do `clm` (`clm.clm.services.email_layout`), com o botão
-  "Abrir documento", a menos que o Email Template já venha no layout (`is_branded`).
-- **Configurações Documentos da Unidade**: dias de alerta, modelo de e-mail e destinatários por empresa. Um card
-  "Pulse Gestor" no Workspace **ERPNext Settings** leva a elas (`setup/settings_workspace.py`, aplicado no
-  `after_migrate`; o Workspace Gestor é restrito, o ERPNext Settings não).
-- Notificações `Documento da Unidade a Vencer` e `Documento da Unidade Vencido`, e Number Cards (total, válidos e
-  vencidos) no Workspace.
+- **Tipo de Documento da Unidade** (unit document type): registry of the document types required from units.
+- **Documentacao da Unidade**: a document per unit, with a PDF attachment and optional validity. The status is
+  `Válido` (valid), `Vencido` (expired) or `Sem validade` (no expiry), with a count of days to expiry.
+- **Daily jobs**: recompute the status and days to expiry and queue e-mail notices at the configured lead time. The
+  e-mail body uses the institutional layout of `clm` (`clm.clm.services.email_layout`), with the "Abrir documento"
+  (open document) button, unless the Email Template already comes in that layout (`is_branded`).
+- **Configuracoes Documentos da Unidade** (settings): alert days, e-mail template and recipients per company. A
+  "Pulse Gestor" card in the **ERPNext Settings** Workspace leads to them (`setup/settings_workspace.py`, applied in
+  `after_migrate`; the Gestor Workspace is restricted, ERPNext Settings is not).
+- `Documento da Unidade a Vencer` and `Documento da Unidade Vencido` Notifications, and Number Cards (total, valid and
+  expired) in the Workspace.
 
-### Indicadores
+### Indicators
 
-- **Triagem**: **Protocolo de Triagem** com níveis (cor e tempo de cada escala, tabela filha *Protocolo Nivel*) e
-  **Unidade Protocolo Vigencia**, que associa cada unidade a um protocolo por período. Datas finais são
-  inclusivas, data final vazia indica prazo indeterminado e períodos da mesma unidade não podem se sobrepor.
-- **Classificação de Risco Diária**: lançamento de pacientes classificados por nível, por unidade e data. O
-  servidor resolve o protocolo vigente, exige uma linha por nível na ordem do protocolo e recalcula o total.
-  Permite **importação em massa** pelo Data Import.
-- **Atendimentos médicos**: **Especialidade**, **Unidade Especialidade Vigencia** (especialidades atendidas pela
-  unidade em um período) e **Atendimento Medico Diario** (quantidade por especialidade, submetível, um
-  lançamento não cancelado por unidade e data).
-- **Relatórios**: *Apuração de Classificação de Risco* e *Relatório de Atendimentos por Período* (totais por
-  especialidade, percentual, dias com atendimento, média por dia lançado e gráfico). Somente lançamentos enviados
-  entram nas apurações.
+- **Triage**: **Protocolo de Triagem** (triage protocol) with levels (color and time of each scale, child table
+  *Protocolo Nivel*) and **Unidade Protocolo Vigencia**, which associates each unit with a protocol per period. End
+  dates are inclusive, an empty end date means an open-ended period and periods of the same unit cannot overlap.
+- **Classificacao de Risco Diaria** (daily risk classification): entry of patients classified by level, per unit and
+  date. The server resolves the protocol in force, requires one row per level in protocol order and recalculates the
+  total. Allows **bulk import** through Data Import.
+- **Medical visits**: **Especialidade**, **Unidade Especialidade Vigencia** (specialties served by the unit in a
+  period) and **Atendimento Medico Diario** (quantity per specialty, submittable, one non-cancelled entry per unit and
+  date).
+- **Reports**: *Apuracao de Classificacao de Risco* and *Relatorio de Atendimentos por Periodo* (totals per specialty,
+  percentage, days with visits, daily average per entered day and chart). Only submitted entries count in the tallies.
 
-### Comissões
+### Committees
 
-- **Categoria de Comissão**, **Tipo de Comissão** (empresa, regimento com histórico de alterações e motivo
-  obrigatório ao alterar) e **Mandato de Comissão** (período e status).
-- **Membros de Comissão** por mandato e **Reunião de Comissão** com pauta, participantes e presença,
-  deliberações e encaminhamentos; a lista de participantes pode ser copiada dos membros.
-- **Convocação** pelo botão *Convocar membros* da reunião, por WhatsApp, e-mail ou ambos, conforme o canal
-  preferencial de cada participante. Exige o app `integracoes_customizadas` (veja *Requisitos*).
-- **Ata assinável**: com o app `assinatura_eletronica`, os participantes presentes assinam a ata pelo motor de
-  assinatura (perfil `PerfilReuniaoDeComissao`, Modelo de Assinatura semeado no `after_migrate`). Quando há Processo
-  de Assinatura encerrado, a ata imprime o registro das evidências.
-- **Formatos de impressão** no padrão BHCL: *Convocação para Reunião de Comissão* e *Ata de Reunião de Comissão*
-  (padrão do DocType).
-- **Relatório** *Atividades de Comissão* (reuniões por período, presença e pauta opcional).
-- **Painel de gestão** no Workspace: reuniões nos próximos 7 dias, mandatos a vencer em 60 dias, comissões sem
-  reunião há mais de 90 dias, mandatos vigentes, reuniões no mês e presença média, além dos blocos *Próximas
-  reuniões* e *Comissões que exigem atenção*.
+- **Categoria de Comissao**, **Tipo de Comissao** (company, bylaws with change history and a mandatory reason when
+  changing) and **Mandato de Comissao** (period and status).
+- **Membros de Comissao** per term and **Reuniao de Comissao** with agenda, participants and attendance, resolutions
+  and referrals; the participant list can be copied from the members.
+- **Convocation** through the meeting's *Convocar membros* button, by WhatsApp, e-mail or both, according to each
+  participant's preferred channel. Requires the `integracoes_customizadas` app (see *Requirements*).
+- **Signable minutes**: with the `assinatura_eletronica` app, the present participants sign the minutes through the
+  signature engine (`CommitteeMeetingProfile` profile, Signature Template seeded in `after_migrate`). When a finished
+  Signature Process exists, the minutes print the evidence record.
+- **Print formats** in the institutional standard: *Convocacao para Reuniao de Comissao* and *Ata de Reuniao de
+  Comissao* (the DocType default).
+- **Report** *Atividades de Comissao* (meetings per period, attendance and optional agenda).
+- **Management panel** in the Workspace: meetings in the next 7 days, terms expiring in 60 days, committees without a
+  meeting for more than 90 days, terms in force, meetings in the month and average attendance, plus the blocks
+  *Próximas reuniões* and *Comissões que exigem atenção*.
 
-### Patrimônio
+### Assets (Patrimonio)
 
-O módulo **Patrimonio** não cria DocTypes: estende o `Asset` e o `Asset Movement` do ERPNext.
+The **Patrimonio** module creates no DocTypes: it extends ERPNext's `Asset` and `Asset Movement`.
 
-- **Formatos de impressão** (padrão BHCL, motor WeasyPrint): *Ficha do Ativo Imobilizado* e *Ficha de Movimentacao
-  de Ativos*, definidos como padrão dos DocTypes no `after_migrate`; *Termo de Responsabilidade do Ativo* e *Termo de
-  Responsabilidade de Movimentacao*, usados como comprovante da assinatura. O QR Code do registro é gerado
-  localmente (método Jinja `qr_data_uri`).
-- **Relatórios** (Script Reports sobre `Asset`): *Relacao de Ativos* e *Ativos por Localizacao* (bens agrupados em
-  árvore, com quantidade, valores e gráfico). Filtram por empresa, localização (incluindo sublocais), categoria,
-  situação, utilização e estado de conservação. A empresa da localização vem do campo `custom_empresa` de
-  `Location`, um Custom Field criado no site, que **não** está nas fixtures do app.
-- **Custodiante**: no `Asset`, só colaboradores ativos da empresa do bem (filtro em `public/js/asset.js`), com
-  validação no servidor (`validar_custodiante`, evento `validate`).
-- **Termos assinados eletronicamente**: com o app `assinatura_eletronica`, o custodiante assina o Termo na custódia
-  inicial, no próprio `Asset` (`PerfilTermoDoAtivo`), e cada colaborador em *Para Funcionário* assina o Termo da
-  `Asset Movement` (`PerfilTermoDeMovimentacao`). O recebimento (`Receipt`) criado pelo ERPNext ao submeter o Asset
-  é recusado na movimentação, para não duplicar a assinatura.
+- **Print formats** (institutional standard, WeasyPrint engine): *Ficha do Ativo Imobilizado* and *Ficha de
+  Movimentacao de Ativos*, set as the DocTypes' default in `after_migrate`; *Termo de Responsabilidade do Ativo* and
+  *Termo de Responsabilidade de Movimentacao*, used as the signature receipt. The record's QR Code is generated
+  locally (Jinja method `qr_data_uri`).
+- **Reports** (Script Reports on `Asset`): *Relacao de Ativos* and *Ativos por Localizacao* (assets grouped in a tree,
+  with count, amounts and chart). They filter by company, location (including sublocations), category, status, usage
+  and condition. The location's company comes from the `custom_empresa` field of `Location`, a Custom Field created on
+  the site, which is **not** in the app's fixtures.
+- **Custodian**: on the `Asset`, only active employees of the asset's company (filter in `public/js/asset.js`), with
+  server-side validation (`validate_custodian`, `validate` event).
+- **Electronically signed terms**: with the `assinatura_eletronica` app, the custodian signs the Term at initial
+  custody, on the `Asset` itself (`AssetTermProfile`), and each employee in *Para Funcionário* signs the Term of the
+  `Asset Movement` (`AssetMovementTermProfile`). The receipt (`Receipt`) created by ERPNext when submitting the Asset is
+  refused on movement, so the signature is not duplicated.
 
-### Workspace Gestor
+### Gestor Workspace
 
-Os cards do app ficam num só Workspace, o **Gestor**: Documentação da Unidade, Triagem, Atendimentos, Relatórios de
-Indicadores, Comissões, Configurações de Comissões, Relatórios de Comissões e Relatórios de Patrimônio, mais o
-painel de gestão no topo. Os links vêm de `pulse_gestor/setup/gestor_links.json` e são aplicados pelo `after_migrate`
-(`ensure_pulse_gestor_workspace`), que também apaga os Workspaces antigos `Pulse Gestor`, `Indicadores`, `Comissoes` e
-`Documentacao da Unidade`. O Workspace `Gestor` **não é criado por este app**: se não existir no site, nada é
-aplicado.
+The app's cards live in a single Workspace, **Gestor**: Unit Documentation, Triage, Visits, Indicator Reports,
+Committees, Committee Settings, Committee Reports and Asset Reports, plus the management panel on top. The links come
+from `pulse_gestor/setup/gestor_links.json` and are applied by `after_migrate` (`ensure_pulse_gestor_workspace`), which
+also deletes the old Workspaces `Pulse Gestor`, `Indicadores`, `Comissoes` and `Documentacao da Unidade`. The `Gestor`
+Workspace is **not created by this app**: if it does not exist on the site, nothing is applied.
 
-## Papéis e permissões
+## Roles and permissions
 
-| Papel | Acesso |
+| Role | Access |
 | --- | --- |
-| `Pulse Gestor Manager` | Cadastro, edição e importação em massa |
-| `Pulse Gestor Viewer` | Somente leitura |
-| `System Manager` / `Administrator` | Acesso completo aos DocTypes e Workspaces |
+| `Pulse Gestor Manager` | Registration, editing and bulk import |
+| `Pulse Gestor Viewer` | Read-only |
+| `System Manager` / `Administrator` | Full access to DocTypes and Workspaces |
 
-## Requisitos
+## Requirements
 
-- Frappe v15 e ERPNext v15.
-- App `clm`: `required_apps = ["frappe", "erpnext", "clm"]`. Os formatos de impressão estendem
-  `clm/templates/print/clm_base.html` (macros, manifesto de marca em `clm/docs/brand-manifesto.md`) e o PDF sai do
-  motor do `clm`, que só atende aos módulos listados em `PDF_ENGINE_MODULES` (`apps/clm/clm/clm/services/pdf_engine.py`). `Comissoes` e
-  `Patrimonio` já estão nessa lista. Instale o `clm` antes do `pulse_gestor`.
-- Workspace `Gestor` existente no site (veja *Workspace Gestor*).
-- Fila de e-mail configurada para os avisos de vencimento.
-- **Opcionais, não declarados em `required_apps`**:
-  - `assinatura_eletronica`: assinatura da ata e dos Termos de Responsabilidade. `assinatura.py` importa o app dentro
-    de `try`; sem ele, os perfis não são definidos e nada é semeado.
-  - `integracoes_customizadas`: convocação por WhatsApp/e-mail (`Modelo WhatsApp`) e normalização de telefone. Os
-    imports ficam dentro das funções; sem o app, *Convocar membros* responde com erro.
+- Frappe v15 and ERPNext v15.
+- `clm` app: `required_apps = ["frappe/frappe@version-15", "frappe/erpnext@version-15", "still-pulse/clm@main"]`. The
+  print formats extend `clm/templates/print/clm_base.html` (macros, brand manifesto in `clm/docs/brand-manifesto.md`)
+  and the PDF comes from the `clm` engine, which only serves the modules listed in `PDF_ENGINE_MODULES`
+  (`apps/clm/clm/clm/services/pdf_engine.py`). `Comissoes` and `Patrimonio` are already on that list. Install `clm`
+  before `pulse_gestor`.
+- Existing `Gestor` Workspace on the site (see *Gestor Workspace*).
+- E-mail queue configured for the expiry notices.
+- **Optional, not declared in `required_apps`** (map in [docs/dependencies.md](docs/dependencies.md)):
+  - `assinatura_eletronica`: signature of the minutes and the Responsibility Terms. `signature_profiles.py` imports the
+    app inside `try`; without it, the profiles are not defined and nothing is seeded.
+  - `integracoes_customizadas`: WhatsApp/e-mail convocation (`Modelo WhatsApp`) and phone normalization. The imports
+    stay inside functions and are guarded by `get_installed_apps()`; without the app, *Convocar membros* answers with an
+    error.
 
-## Instalação
+## Installation
 
 ```bash
 cd $PATH_TO_YOUR_BENCH
@@ -119,73 +120,74 @@ bench --site <site> install-app erpnext clm pulse_gestor
 bench --site <site> migrate
 ```
 
-Atribua o papel **Pulse Gestor Manager** ou **Pulse Gestor Viewer** aos usuários. Em seguida, em *Configurações
-Documentos da Unidade*, defina os dias de alerta, o modelo de e-mail e os destinatários.
+Assign the **Pulse Gestor Manager** or **Pulse Gestor Viewer** role to users. Then, in *Configuracoes Documentos da
+Unidade*, set the alert days, the e-mail template and the recipients.
 
-## Uso: atendimentos médicos diários
+## Usage: daily medical visits
 
-1. **Especialidade**: cadastre cada especialidade uma vez.
-2. **Unidade Especialidade Vigencia**: escolha a unidade, o período e as especialidades atendidas nele.
-3. **Atendimento Medico Diario**: informe unidade e data; o app carrega as especialidades vigentes e basta
-   preencher a **Quantidade**. Use **Enviar** para concluir o lançamento.
+1. **Especialidade**: register each specialty once.
+2. **Unidade Especialidade Vigencia**: choose the unit, the period and the specialties served in it.
+3. **Atendimento Medico Diario**: enter unit and date; the app loads the specialties in force and you only fill in the
+   **Quantidade**. Use **Submit** to finish the entry.
 
-## Uso: importação em massa da classificação de risco
+## Usage: bulk import of the risk classification
 
-Na lista **Classificacao de Risco Diaria**, use **Importar** e baixe o modelo do Data Import. Informe **Unidade**
-e **Data** na primeira linha de cada lançamento e preencha a tabela **Níveis classificados** com uma linha por
-nível, na ordem do protocolo vigente. Marque **Enviar após importar** para incluir os lançamentos na apuração.
+In the **Classificacao de Risco Diaria** list, use **Import** and download the Data Import template. Enter **Unidade**
+and **Data** on the first row of each entry and fill the **Níveis classificados** table with one row per level, in the
+order of the protocol in force. Check **Submit after import** to include the entries in the tallies.
 
-## Desenvolvimento
+## Development
 
-Contagem em `git ls-files`: 23 DocTypes (14 independentes, sendo 1 Single, e 9 tabelas filhas), 5 Script Reports, 6 formatos
-de impressão, 6 Number Cards de Comissões (`comissoes/number_card`) e 3 de Documentação (`fixtures/number_card.json`),
-2 jobs diários, 7 patches e 46 testes em 11 arquivos.
+Counts from `git ls-files`: 23 DocTypes (14 standalone, 1 of them Single, and 9 child tables), 5 Script Reports, 6 print
+formats, 6 Committee Number Cards (`comissoes/number_card`) and 3 Documentation ones (`fixtures/number_card.json`),
+2 daily jobs, 7 patches and 46 tests in 11 files.
 
 ```text
 pulse_gestor/
 ├── hooks.py · modules.txt · patches.txt
-├── documentacao_da_unidade/   # 4 DocTypes (1 Single, 1 filho)
-├── indicadores/               # 10 DocTypes, 2 relatórios
-├── comissoes/                 # 9 DocTypes, relatório, 2 formatos, Number Cards, custom_blocks (painel)
-├── patrimonio/                # 2 relatórios (e report/utils.py), 4 formatos, asset.py (custodiante)
-├── assinatura.py              # perfis do motor assinatura_eletronica, Modelos semeados (opcional)
-├── print_formats.py           # formatos padrão, legados, qr_data_uri
-├── telefone.py                # máscara e validação de telefone
-├── tasks.py                   # rotinas agendadas (diárias)
-├── utils.py                   # cálculo de status e vencimento
+├── documentacao_da_unidade/   # 4 DocTypes (1 Single, 1 child)
+├── indicadores/               # 10 DocTypes, 2 reports
+├── comissoes/                 # 9 DocTypes, report, 2 formats, Number Cards, custom_blocks (panel)
+├── patrimonio/                # 2 reports (and report/utils.py), 4 formats, asset.py (custodian)
+├── signature_profiles.py      # assinatura_eletronica engine profiles, seeded Templates (optional)
+├── print_formats.py           # default and legacy formats, qr_data_uri
+├── phone.py                   # phone mask and validation
+├── tasks.py                   # scheduled jobs (daily)
+├── utils.py                   # status and expiry calculation
 ├── setup/                     # install.py (after_install/after_migrate), settings_workspace.py, gestor_links.json
-├── public/js/asset.js         # filtro do custodiante
+├── public/js/asset.js         # custodian filter
 ├── templates/print/           # comissoes_macros.html, patrimonio_macros.html
 ├── patches/ · fixtures/ · translations/pt-BR.csv
-└── tests/                     # formatos de impressão, status, termos, e-mail de vencimento
+└── tests/                     # print formats, status, terms, expiry e-mail
 ```
 
-Convenções do
-projeto (identificadores técnicos em ASCII, Workspaces e migração) estão em [AGENTS.md](AGENTS.md). Após alterar
-metadados ou Workspaces, execute `bench --site <site> migrate`.
+Project conventions (language and naming, ASCII technical identifiers, Workspaces and migration) are in
+[AGENTS.md](AGENTS.md). After changing metadata or Workspaces, run `bench --site <site> migrate`.
 
-### Testes
+### Tests
 
-A partir da raiz do bench:
+From the bench root:
 
 ```bash
 bench --site <site> run-tests --app pulse_gestor
 ```
 
-São 13 módulos de teste (`git ls-files`): 4 em `pulse_gestor/tests/` e os demais ao lado dos DocTypes e relatórios.
-O repositório também tem `.github/workflows/` (`ci.yml` roda os testes; `linter.yml` roda commitlint, pre-commit e
-Semgrep, só em PR), `.pre-commit-config.yaml`, `.eslintrc` e `commitlint.config.js` (mensagens convencionais).
+There are 13 test modules (`git ls-files`): 4 in `pulse_gestor/tests/` and the rest next to the DocTypes and reports.
+The repository also has `.github/workflows/` (`ci.yml` runs the tests; `linter.yml` runs commitlint, pre-commit and
+Semgrep, on PRs only), `.pre-commit-config.yaml`, `.eslintrc` and `commitlint.config.js` (conventional messages).
 
-## Documentação
+## Documentation
 
-- [CHANGELOG.md](CHANGELOG.md): histórico de versões e limites do git.
-- [AGENTS.md](AGENTS.md): convenções, Workspace, Termos de Responsabilidade e dependências.
-- [docs/adr-001-leitura-minima-em-doctypes-vinculados.md](docs/adr-001-leitura-minima-em-doctypes-vinculados.md):
-  leitura mínima garantida nos papéis do app sobre DocTypes de outros módulos referenciados por Link.
-- [docs/adr-002-qualidade-e-legibilidade-de-logs.md](docs/adr-002-qualidade-e-legibilidade-de-logs.md):
-  padrão de log para integrações externas (contexto estruturado, sem segredo em claro, classificação de erro,
-  agrupamento por execução).
+- [CHANGELOG.md](CHANGELOG.md): version history and git limits.
+- [AGENTS.md](AGENTS.md): conventions, Workspace, Responsibility Terms and dependencies.
+- [docs/dependencies.md](docs/dependencies.md): strong and weak dependencies of the app.
+- [docs/adr-001-minimum-read-access-on-linked-doctypes.md](docs/adr-001-minimum-read-access-on-linked-doctypes.md):
+  guaranteed minimum read access for the app's roles on DocTypes of other modules referenced by Link.
+- [docs/adr-002-log-quality-and-readability.md](docs/adr-002-log-quality-and-readability.md):
+  log standard for external integrations (structured context, no secrets in clear text, error classification,
+  grouping per run).
+- [docs/adr-003-lint-and-ci-standardization.md](docs/adr-003-lint-and-ci-standardization.md): lint and CI decisions.
 
-## Licença
+## License
 
-MIT — Still Pulse / BHCL (veja [license.txt](license.txt)).
+Proprietary — StillPulse Tecnologia LTDA (see [license.txt](license.txt)).
