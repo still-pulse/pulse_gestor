@@ -30,3 +30,8 @@
   (`git show main:pulse_gestor/__init__.py`) e `git tag` antes de tagear, e não reutilize número existente.
 - Pedido só de README/CHANGELOG que diga "não commitar" prevalece sobre qualquer regra de commit e tag. Dependências entre
   apps e andamento da documentação: `../../CLAUDE.md`.
+
+## Lint e pre-commit
+
+- Rode `pre-commit install` uma vez após clonar o repositório.
+- O CI (`.github/workflows/linter.yml`) executa pre-commit, semgrep e pip-audit nos pull requests.
