@@ -4,7 +4,6 @@ import frappe
 from frappe.model.rename_doc import rename_doc
 from frappe.query_builder import builder
 
-
 RENAMES = (
 	("Protocolo Nível", "Protocolo Nivel"),
 	("Unidade Protocolo Vigência", "Unidade Protocolo Vigencia"),

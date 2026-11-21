@@ -88,7 +88,7 @@ class TestAtendimentoMedicoDiario(FrappeTestCase):
 			atendimento = frappe.get_doc(
 				{"doctype": "Atendimento Medico Diario", "unidade": unidade, "data": data}
 			).insert()
-			for linha, quantidade in zip(atendimento.especialidades, quantidades):
+			for linha, quantidade in zip(atendimento.especialidades, quantidades, strict=True):
 				linha.quantidade = quantidade
 			atendimento.save()
 			atendimento.submit()
@@ -98,7 +98,7 @@ class TestAtendimentoMedicoDiario(FrappeTestCase):
 		).insert()
 
 		filtros = {"unidade": unidade, "data_inicio": "2097-03-01", "data_fim": "2097-03-31"}
-		colunas, linhas, _msg, grafico, resumo = executar_relatorio(filtros)
+		_colunas, linhas, _msg, grafico, resumo = executar_relatorio(filtros)
 		por_especialidade = {linha.especialidade: linha for linha in linhas}
 		primeira, segunda = (por_especialidade[e.name] for e in especialidades)
 		self.assertEqual((primeira.quantidade, segunda.quantidade), (30, 5))
