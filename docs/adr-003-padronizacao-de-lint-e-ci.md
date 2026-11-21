@@ -58,13 +58,13 @@ o Frappe 15 não oferece hook para isso. Aprovado pelo responsável do repositó
 
 ### Achados `frappe-sql-format-injection` em patches
 
-`patches/v0_2_6_remove_triagem_fields.py` e `patches/v0_9_0_remove_metas_e_setor_especialidades.py` montavam
+`patches/v0_2_6_remove_triagem_fields.py` e `patches/v0_9_0_remove_metas_e_setor_especialidades.py` montam
 `ALTER TABLE ... DROP COLUMN` com f-string e `frappe.db.sql`. Os nomes de tabela e coluna são constantes do próprio
-patch (sem entrada externa) e identificadores SQL não aceitam parâmetros. Em vez de `nosemgrep`, a chamada passou
-a `frappe.db.sql_ddl`, API do Frappe própria para DDL (faz commit e executa a query); o SQL emitido é idêntico e a
-guarda `has_column` mantém a idempotência. Semgrep com `frappe/semgrep-rules`: 2 achados antes, 0 depois. Risco:
-baixo; patches já aplicados não reexecutam (Patch Log), e em instalações novas o commit explícito antes do DDL é
-inócuo, pois o DDL já causa commit implícito no MariaDB.
+patch (sem entrada externa) e identificadores SQL não aceitam parâmetros, então o achado é falso positivo. Decisão:
+manter `frappe.db.sql` como em `main` e suprimir com `# nosemgrep: frappe-sql-format-injection` na linha imediatamente
+anterior à chamada, acompanhado de comentário com a justificativa. A troca por `frappe.db.sql_ddl` foi descartada:
+apenas contornaria a regra, sem reduzir risco, e acrescentaria commit explícito ao patch. A guarda `has_column`
+mantém a idempotência. Semgrep com `frappe/semgrep-rules`: 2 achados sem a supressão, 0 com ela.
 
 ## Pendências
 
