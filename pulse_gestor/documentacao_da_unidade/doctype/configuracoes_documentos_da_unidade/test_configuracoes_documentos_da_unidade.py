@@ -49,7 +49,7 @@ class TestConfiguracoesDocumentosdaUnidade(FrappeTestCase):
 			patch("pulse_gestor.tasks.frappe.get_doc", side_effect=[template, document]),
 			patch("pulse_gestor.tasks.frappe.db.exists", return_value=False),
 			patch(
-				"pulse_gestor.tasks.corpo_email_vencimento",
+				"pulse_gestor.tasks.build_expiry_email_body",
 				side_effect=lambda formatted, doc: formatted["message"],
 			),
 			patch("pulse_gestor.tasks.frappe.sendmail") as sendmail,
