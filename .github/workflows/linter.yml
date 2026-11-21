@@ -19,10 +19,10 @@ jobs:
     if: github.event_name == 'pull_request'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 200
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 20
 
@@ -34,15 +34,28 @@ jobs:
   linter:
     name: 'Frappe Linter'
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
         with:
-          python-version: '3.11'
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
           cache: pip
-      - uses: pre-commit/action@v3.0.0
+      # Passos de pre-commit/action@v3.0.1 (composite que usa actions/cache@v4 em Node 20 deprecado),
+      # reescritos aqui para usar actions/cache@v6.
+      - name: Install pre-commit
+        run: python -m pip install pre-commit
+
+      - name: Cache pre-commit
+        uses: actions/cache@v6
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-3|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
+
+      - name: Run pre-commit
+        run: pre-commit run --show-diff-on-failure --color=always --all-files
 
       - name: Download Semgrep rules
         run: git clone --depth 1 https://github.com/frappe/semgrep-rules.git frappe-semgrep-rules
@@ -50,21 +63,30 @@ jobs:
       - name: Run Semgrep rules
         run: |
           pip install semgrep
-          semgrep ci --config ./frappe-semgrep-rules/rules --config r/python.lang.correctness
+          # Em pull request o semgrep ci já é diff-aware. No disparo manual, compara com a main para manter o
+          # mesmo escopo (achados antigos fora do diff não entram) em vez de varrer o repositório inteiro.
+          baseline=()
+          if [ "$GITHUB_EVENT_NAME" != "pull_request" ]; then
+            baseline=(--baseline-commit "$(git merge-base origin/main HEAD)")
+          fi
+          semgrep ci --config ./frappe-semgrep-rules/rules --config r/python.lang.correctness "${baseline[@]}"
 
   deps-vulnerable-check:
-    name: 'Vulnerable Dependency Check'
+    # Informativo: não bloqueia o gate. Audita o pyproject do app e as dependências de frappe, erpnext e hrms
+    # nas versões usadas pelo CI (branch version-15). Ver docs/adr-003-padronizacao-de-lint-e-ci.md.
+    name: 'Vulnerable Dependency Check (informativo)'
     runs-on: ubuntu-latest
+    continue-on-error: true
 
     steps:
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
-          python-version: '3.11'
+          python-version: '3.12'
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Cache pip
-        uses: actions/cache@v3
+        uses: actions/cache@v6
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/*requirements.txt', '**/pyproject.toml', '**/setup.py') }}
@@ -72,8 +94,21 @@ jobs:
             ${{ runner.os }}-pip-
             ${{ runner.os }}-
 
-      - name: Install and run pip-audit
+      - name: Install pip-audit and build headers
         run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libmariadb-dev
           pip install pip-audit
-          cd ${GITHUB_WORKSPACE}
-          pip-audit --desc on .
+
+      - name: Audit app and Frappe stack (version-15)
+        run: |
+          status=0
+          pip-audit --desc on . || status=1
+          for app in frappe/frappe frappe/erpnext frappe/hrms; do
+            name="${app#*/}"
+            git clone --depth 1 --branch version-15 "https://github.com/${app}.git" "audit-${name}"
+            echo "::group::pip-audit ${app}@version-15"
+            pip-audit --desc on "./audit-${name}" || status=1
+            echo "::endgroup::"
+          done
+          exit "$status"

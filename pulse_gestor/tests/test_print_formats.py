@@ -46,6 +46,27 @@ def visible_text(html):
 
 
 class TestComissoesPrintFormats(FrappeTestCase):
+	def setUp(self):
+		super().setUp()
+		company = frappe.db.get_value("Company", {}, "name")
+		gender = frappe.db.get_value("Gender", {}, "name") or "Other"
+		self.employees = [
+			frappe.get_doc(
+				{
+					"doctype": "Employee",
+					"first_name": f"Custodiante {letra}",
+					"gender": gender,
+					"date_of_birth": "1990-01-01",
+					"date_of_joining": "2020-01-01",
+					"company": company,
+					"status": "Active",
+				}
+			)
+			.insert(ignore_permissions=True)
+			.name
+			for letra in ("A", "B")
+		]
+
 	def test_every_format_follows_the_institutional_standard(self):
 		for name in FORMATS + ASSET_FORMATS + TERMO_FORMATS:
 			with self.subTest(print_format=name):
@@ -136,9 +157,7 @@ class TestComissoesPrintFormats(FrappeTestCase):
 				self.assertTrue(generate_pdf(name, html, pdf_generator="weasyprint").startswith(b"%PDF"))
 
 	def test_movement_term_groups_assets_by_custodian(self):
-		employees = frappe.get_all("Employee", pluck="name", limit=2)
-		if len(employees) < 2:
-			self.skipTest("Sem colaboradores suficientes")
+		employees = self.employees
 		doc = new_doc("Asset Movement", purpose="Transfer")
 		for asset_name, employee in (("Mesa", employees[0]), ("Cadeira", employees[1]), ("Monitor", None)):
 			doc.append("assets", {"asset_name": asset_name, "to_employee": employee})

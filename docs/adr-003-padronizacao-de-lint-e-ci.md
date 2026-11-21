@@ -18,7 +18,8 @@ padrão adotado, sem alterar lógica nem comportamento em runtime.
    produção. Produção e homologação estão confirmadas em **Python 3.12**; o `ci.yml` passou a rodar 3.12 para
    refletir a produção (o 3.14 anterior é incompatível com o Frappe v15: `freezegun`, usado pelos testes do
    ERPNext, quebra na coleta com `AttributeError: module 'uuid' has no attribute '_load_system_functions'`, o que
-   deixava o Run Tests vermelho em `main`). O `linter.yml` continua em 3.11 (o piso). O alvo de migração ao
+   deixava o Run Tests vermelho em `main`). O `linter.yml` também roda em **3.12** (alinhado à produção e ao
+   `ci.yml`); 3.11 permanece só como piso de compatibilidade do código (`requires-python`, `target-version`). O alvo de migração ao
    Frappe v16 é `>=3.13` (`target-version = "py313"`, `requires-python = ">=3.13"`, com `linter.yml` e `ci.yml`
    coerentes), a executar na migração, não antes.
 2. **ruff fixado em v0.16.10** via `ruff-pre-commit`, regras `F, E, W, I, UP, B, RUF` e lista de `ignore`
@@ -36,17 +37,27 @@ padrão adotado, sem alterar lógica nem comportamento em runtime.
    Nenhum global de namespace do app foi necessário.
 8. **Arquivos JS com Jinja** são excluídos de prettier/eslint por caminho exato. Neste repo: nenhum.
 9. **JS formatado pelo prettier em commit exclusivo de estilo.** Neste repo: 5 arquivos.
-10. **pip-audit roda só no CI e audita apenas o `pyproject`**; as dependências `erpnext`/`hrms` ficam comentadas,
-    então a cobertura é pequena (ver Pendências).
+10. **pip-audit é um job separado e informativo** (`continue-on-error: true`, não bloqueia o gate). Audita o
+    `pyproject` do app e, clonando a branch `version-15`, o `pyproject` de `frappe`, `erpnext` e `hrms`, as versões
+    usadas pelo CI. Achados são lidos nos logs do job e tratados à parte, sem deixar o gate obrigatório vermelho.
 11. **commitlint mantido** e `pre-commit install` documentado no `AGENTS.md`.
 12. **Sem tag nem mudança de `__version__`** nesta padronização.
+13. **Actions alinhadas em todos os apps:** `actions/checkout@v7`, `actions/setup-python@v7`,
+    `actions/setup-node@v7` e `actions/cache@v6`. `pre-commit/action` foi trocado por três passos (instalar
+    `pre-commit`, `actions/cache@v6` de `~/.cache/pre-commit`, `pre-commit run --all-files`). Os dois workflows têm
+    `workflow_dispatch` para validar a branch sem abrir PR. No disparo manual o semgrep compara com a `main`
+    (`--baseline-commit`), mantendo o escopo diff-aware do pull request em vez de varrer achados antigos.
+14. **Dependências declaradas explicitamente.** Externas no `pyproject` (`PyQRCode`, `pypng`, usadas em
+    `print_formats.py`); apps obrigatórios em `required_apps` (`frappe`, `erpnext`, `clm`). Opcionais, sempre com
+    guarda e **de propósito fora** de `required_apps`: `assinatura_eletronica` e `integracoes_customizadas`
+    (listados em comentário no `pyproject`). `hrms` não é importado: `Employee` e `Asset` vêm do ERPNext v15.
 
 ## Consequências
 
 - Lint, formatação e CI passam a ter o mesmo comportamento entre os apps, facilitando a unificação.
 - Imports mortos não são mais tolerados; reexportações precisam de justificativa explícita no `noqa`.
 - Atualizações de prettier/eslint exigem uma rodada própria, com possível reformatação de JS.
-- O pip-audit atual dá falsa sensação de cobertura, pois não audita as dependências Frappe/ERPNext/HRMS.
+- O pip-audit cobre também Frappe/ERPNext/HRMS, mas é informativo e não barra o merge.
 
 ## Exceção de semgrep
 
@@ -70,13 +81,16 @@ mantém a idempotência. Semgrep com `frappe/semgrep-rules`: 2 achados sem a sup
 
 `install-app` não executa `after_migrate`; o `after_install` agora também chama `ensure_print_formats`, o que define
 o formato padrão de `Asset` e `Asset Movement` em sites novos. Os Custom Fields de Patrimônio (`custom_empresa` em
-`Location` e quatro campos em `Asset`) existem só em produção, criados à mão; o `ci.yml` os cria no site de teste
-por `pulse_gestor.tests.site_setup`, sem mudar o comportamento em produção.
+`Location` e quatro campos em `Asset`) foram criados à mão em produção e agora estão versionados em
+`pulse_gestor/fixtures/custom_field.json` (definições copiadas de produção, sem `owner`, `creation`, `modified`,
+`modified_by`, `idx` e `docstatus`). O CI depende dessas fixtures reais (o setup de teste que criava os campos como
+`Data` foi removido). Efeito no `migrate` em produção: a sincronização de fixtures sobrescreve esses cinco campos
+com a definição versionada; ajustes feitos depois pela interface devem ser exportados de novo para o arquivo.
 
 ## Pendências
 
 - Migrar para Python `>=3.13` junto com o v16 e revisar as versões de prettier/eslint na preparação para v16/v17.
-- Ampliar o pip-audit para cobrir as dependências efetivamente instaladas (hoje comentadas no `pyproject`).
+- Avaliar tornar o pip-audit bloqueante quando os achados do job informativo estiverem tratados.
 
 ## Estado deste repositório
 

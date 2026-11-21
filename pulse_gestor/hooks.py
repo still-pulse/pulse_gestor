@@ -61,8 +61,8 @@ fixtures = [
 			]
 		],
 	},
-	# Campos de Patrimônio criados à mão em produção. O arquivo fixtures/custom_field.json só passa a existir
-	# depois de `bench export-fixtures` no site de produção (ver tests/test_fixtures_patrimonio.py).
+	# Campos de Patrimônio criados à mão em produção, agora versionados em fixtures/custom_field.json (definições
+	# copiadas do site de produção, sem owner/creation/modified/idx). Ver tests/test_fixtures_patrimonio.py.
 	{
 		"dt": "Custom Field",
 		"filters": [
