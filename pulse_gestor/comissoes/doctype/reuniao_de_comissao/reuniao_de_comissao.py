@@ -28,7 +28,10 @@ def send_convocation(name, channel=None):
 	doc.check_permission("write")
 	if channel and channel not in ("WhatsApp", "E-mail", "Ambos"):
 		frappe.throw(_("Canal inválido."))
-	if not frappe.db.exists("DocType", "Modelo WhatsApp"):
+	# Weak dependency (not in required_apps): guard before importing; see docs/dependencies.md.
+	if "integracoes_customizadas" not in frappe.get_installed_apps() or not frappe.db.exists(
+		"DocType", "Modelo WhatsApp"
+	):
 		frappe.throw(_("O app integracoes_customizadas é necessário para enviar convocações."))
 	from integracoes_customizadas.whatsapp.modelos import enviar_modelo
 
