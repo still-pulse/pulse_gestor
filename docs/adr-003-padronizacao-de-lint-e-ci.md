@@ -66,6 +66,13 @@ anterior à chamada, acompanhado de comentário com a justificativa. A troca por
 apenas contornaria a regra, sem reduzir risco, e acrescentaria commit explícito ao patch. A guarda `has_column`
 mantém a idempotência. Semgrep com `frappe/semgrep-rules`: 2 achados sem a supressão, 0 com ela.
 
+### Testes de Patrimônio no CI
+
+`install-app` não executa `after_migrate`; o `after_install` agora também chama `ensure_print_formats`, o que define
+o formato padrão de `Asset` e `Asset Movement` em sites novos. Os Custom Fields de Patrimônio (`custom_empresa` em
+`Location` e quatro campos em `Asset`) existem só em produção, criados à mão; o `ci.yml` os cria no site de teste
+por `pulse_gestor.tests.site_setup`, sem mudar o comportamento em produção.
+
 ## Pendências
 
 - Migrar para Python `>=3.13` junto com o v16 e revisar as versões de prettier/eslint na preparação para v16/v17.
