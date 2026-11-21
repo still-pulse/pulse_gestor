@@ -14,7 +14,13 @@ padrão adotado, sem alterar lógica nem comportamento em runtime.
 
 ## Decisão
 
-1. **Python 3.11** no CI, `target-version = "py311"` e `requires-python = ">=3.11"` (alvo a revisar para o v16).
+1. **Piso de Python 3.11** (`target-version = "py311"`, `requires-python = ">=3.11"`), mantido por restrição de
+   produção. Produção e homologação estão confirmadas em **Python 3.12**; o `ci.yml` passou a rodar 3.12 para
+   refletir a produção (o 3.14 anterior é incompatível com o Frappe v15: `freezegun`, usado pelos testes do
+   ERPNext, quebra na coleta com `AttributeError: module 'uuid' has no attribute '_load_system_functions'`, o que
+   deixava o Run Tests vermelho em `main`). O `linter.yml` continua em 3.11 (o piso). O alvo de migração ao
+   Frappe v16 é `>=3.13` (`target-version = "py313"`, `requires-python = ">=3.13"`, com `linter.yml` e `ci.yml`
+   coerentes), a executar na migração, não antes.
 2. **ruff fixado em v0.16.10** via `ruff-pre-commit`, regras `F, E, W, I, UP, B, RUF` e lista de `ignore`
    idêntica à do CLM.
 3. **pyupgrade coberto pela regra `UP` do ruff**, sem hook separado.
@@ -42,9 +48,34 @@ padrão adotado, sem alterar lógica nem comportamento em runtime.
 - Atualizações de prettier/eslint exigem uma rodada própria, com possível reformatação de JS.
 - O pip-audit atual dá falsa sensação de cobertura, pois não audita as dependências Frappe/ERPNext/HRMS.
 
+## Exceção de semgrep
+
+`pulse_gestor/patches/v0_2_6_rename_indicadores_doctypes.py` recebe `# nosemgrep: frappe-monkey-patching-not-allowed`
+na linha do `import` (o semgrep reporta o match desde o import até a atribuição). É um patch único e histórico que
+troca temporariamente `builder.TABLE_NAME_PATTERN` para renomear DocTypes com acento e restaura o valor em `finally`;
+o Frappe 15 não oferece hook para isso. Aprovado pelo responsável do repositório. O achado só apareceu porque o
+`semgrep ci` é diff-aware e o `ruff --fix`/`format` reescreveu o arquivo.
+
+### Achados `frappe-sql-format-injection` em patches
+
+`patches/v0_2_6_remove_triagem_fields.py` e `patches/v0_9_0_remove_metas_e_setor_especialidades.py` montam
+`ALTER TABLE ... DROP COLUMN` com f-string e `frappe.db.sql`. Os nomes de tabela e coluna são constantes do próprio
+patch (sem entrada externa) e identificadores SQL não aceitam parâmetros, então o achado é falso positivo. Decisão:
+manter `frappe.db.sql` como em `main` e suprimir com `# nosemgrep: frappe-sql-format-injection` na linha imediatamente
+anterior à chamada, acompanhado de comentário com a justificativa. A troca por `frappe.db.sql_ddl` foi descartada:
+apenas contornaria a regra, sem reduzir risco, e acrescentaria commit explícito ao patch. A guarda `has_column`
+mantém a idempotência. Semgrep com `frappe/semgrep-rules`: 2 achados sem a supressão, 0 com ela.
+
+### Testes de Patrimônio no CI
+
+`install-app` não executa `after_migrate`; o `after_install` agora também chama `ensure_print_formats`, o que define
+o formato padrão de `Asset` e `Asset Movement` em sites novos. Os Custom Fields de Patrimônio (`custom_empresa` em
+`Location` e quatro campos em `Asset`) existem só em produção, criados à mão; o `ci.yml` os cria no site de teste
+por `pulse_gestor.tests.site_setup`, sem mudar o comportamento em produção.
+
 ## Pendências
 
-- Revisar o alvo Python (`py311`) e as versões de prettier/eslint na preparação para v16/v17.
+- Migrar para Python `>=3.13` junto com o v16 e revisar as versões de prettier/eslint na preparação para v16/v17.
 - Ampliar o pip-audit para cobrir as dependências efetivamente instaladas (hoje comentadas no `pyproject`).
 
 ## Estado deste repositório

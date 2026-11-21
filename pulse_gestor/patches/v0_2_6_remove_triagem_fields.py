@@ -8,4 +8,6 @@ def execute():
 		("Classificacao Diaria Nivel", "qtd_atendidos_dentro_do_tempo"),
 	):
 		if frappe.db.has_column(doctype, column):
+			# Tabela e coluna são constantes deste patch (sem entrada externa); DDL não aceita parâmetros.
+			# nosemgrep: frappe-sql-format-injection
 			frappe.db.sql(f"ALTER TABLE `tab{doctype}` DROP COLUMN `{column}`")
