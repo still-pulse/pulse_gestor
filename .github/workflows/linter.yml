@@ -2,6 +2,8 @@
 name: Linters
 
 on:
+  push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -37,8 +39,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
       - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
@@ -63,20 +63,11 @@ jobs:
       - name: Run Semgrep rules
         run: |
           pip install semgrep
-          # Em pull request o semgrep ci já é diff-aware. No disparo manual, compara com a main para manter o
-          # mesmo escopo (achados antigos fora do diff não entram) em vez de varrer o repositório inteiro.
-          baseline=()
-          if [ "$GITHUB_EVENT_NAME" != "pull_request" ]; then
-            baseline=(--baseline-commit "$(git merge-base origin/main HEAD)")
-          fi
-          semgrep ci --config ./frappe-semgrep-rules/rules --config r/python.lang.correctness "${baseline[@]}"
+          semgrep ci --config ./frappe-semgrep-rules/rules --config r/python.lang.correctness
 
   deps-vulnerable-check:
-    # Informativo: não bloqueia o gate. Audita o pyproject do app e as dependências de frappe, erpnext e hrms
-    # nas versões usadas pelo CI (branch version-15). Ver docs/adr-003-padronizacao-de-lint-e-ci.md.
-    name: 'Vulnerable Dependency Check (informativo)'
+    name: 'Vulnerable Dependency Check'
     runs-on: ubuntu-latest
-    continue-on-error: true
 
     steps:
       - uses: actions/setup-python@v7
@@ -94,21 +85,38 @@ jobs:
             ${{ runner.os }}-pip-
             ${{ runner.os }}-
 
+      - name: Install and run pip-audit
+        run: |
+          pip install pip-audit
+          cd ${GITHUB_WORKSPACE}
+          pip-audit --desc on .
+
+  pip-audit-framework:
+    # Informativo: audita as dependências do Frappe, ERPNext e HRMS (version-15), que o pip-audit do
+    # pyproject não cobre. Não bloqueia o merge (continue-on-error); serve para acompanhar vulnerabilidades.
+    name: 'Vulnerable Dependency Check (Frappe, ERPNext, HRMS)'
+    runs-on: ubuntu-latest
+    continue-on-error: true
+
+    steps:
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
       - name: Install pip-audit and build headers
         run: |
           sudo apt-get update
           sudo apt-get install -y pkg-config libmariadb-dev
           pip install pip-audit
 
-      - name: Audit app and Frappe stack (version-15)
+      - name: Audit frappe, erpnext and hrms
         run: |
           status=0
-          pip-audit --desc on . || status=1
           for app in frappe/frappe frappe/erpnext frappe/hrms; do
             name="${app#*/}"
-            git clone --depth 1 --branch version-15 "https://github.com/${app}.git" "audit-${name}"
-            echo "::group::pip-audit ${app}@version-15"
-            pip-audit --desc on "./audit-${name}" || status=1
+            git clone --depth 1 --branch version-15 "https://github.com/${app}.git" "/tmp/${name}"
+            echo "::group::pip-audit ${name}"
+            pip-audit --desc on "/tmp/${name}" || status=1
             echo "::endgroup::"
           done
           exit "$status"
