@@ -46,11 +46,13 @@ def visible_text(html):
 
 
 class TestComissoesPrintFormats(FrappeTestCase):
-	def setUp(self):
-		super().setUp()
+	@classmethod
+	def setUpClass(cls):
+		# Criados uma vez por classe: o FrappeTestCase só desfaz o banco no fim da classe.
+		super().setUpClass()
 		company = frappe.db.get_value("Company", {}, "name")
 		gender = frappe.db.get_value("Gender", {}, "name") or "Other"
-		self.employees = [
+		cls.employees = [
 			frappe.get_doc(
 				{
 					"doctype": "Employee",
