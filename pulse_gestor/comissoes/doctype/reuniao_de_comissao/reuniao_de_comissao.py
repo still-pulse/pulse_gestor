@@ -10,7 +10,7 @@ MODELO_CONVOCACAO = "Convocação de Reunião de Comissão"
 
 
 @frappe.whitelist()
-def buscar_membros(membros_comissao):
+def buscar_membros(membros_comissao: str):
 	if not frappe.has_permission("Reuniao de Comissao", "create"):
 		frappe.throw(_("Sem permissão para criar reuniões de comissão."), frappe.PermissionError)
 	return frappe.get_all(
@@ -22,7 +22,7 @@ def buscar_membros(membros_comissao):
 
 
 @frappe.whitelist()
-def convocar(name, canal=None):
+def convocar(name: str, canal: str | None = None):
 	"""Convoca os participantes pelo Modelo WhatsApp; `canal` força WhatsApp/E-mail/Ambos para todos."""
 	doc = frappe.get_doc("Reuniao de Comissao", name)
 	doc.check_permission("write")

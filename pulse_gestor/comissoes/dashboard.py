@@ -75,7 +75,7 @@ def _rota_reunioes(filtros: dict | None = None) -> dict:
 
 
 @frappe.whitelist()
-def cartao_reunioes_proximas(filters=None):
+def cartao_reunioes_proximas(filters: str | dict | None = None):
 	_exigir_leitura()
 	agora = now_datetime()
 	fim = get_datetime(add_days(nowdate(), 8))  # 00:00 do 8º dia = fim do 7º dia
@@ -88,7 +88,7 @@ def cartao_reunioes_proximas(filters=None):
 
 
 @frappe.whitelist()
-def cartao_mandatos_a_vencer(filters=None):
+def cartao_mandatos_a_vencer(filters: str | dict | None = None):
 	_exigir_leitura(MANDATO)
 	return {
 		"value": len(_mandatos_a_vencer()),
@@ -102,13 +102,13 @@ def cartao_mandatos_a_vencer(filters=None):
 
 
 @frappe.whitelist()
-def cartao_comissoes_sem_reuniao(filters=None):
+def cartao_comissoes_sem_reuniao(filters: str | dict | None = None):
 	_exigir_leitura()
 	return {"value": len(_comissoes_sem_reuniao()), "fieldtype": "Int", "route": ["List", MANDATO]}
 
 
 @frappe.whitelist()
-def cartao_presenca_media(filters=None):
+def cartao_presenca_media(filters: str | dict | None = None):
 	"""Percentual de presentes nas reuniões dos últimos 90 dias."""
 	_exigir_leitura()
 	inicio = add_days(nowdate(), -DIAS_PRESENCA)
@@ -136,7 +136,7 @@ def cartao_presenca_media(filters=None):
 
 
 @frappe.whitelist()
-def proximas_reunioes(limite=8):
+def proximas_reunioes(limite: int | str = 8):
 	"""Próximas reuniões (a partir de agora), da mais próxima para a mais distante."""
 	_exigir_leitura()
 	reunioes = frappe.get_list(

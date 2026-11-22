@@ -35,7 +35,7 @@ def obter_vigencia_e_especialidades(unidade, data):
 
 
 @frappe.whitelist()
-def buscar_vigencia_e_especialidades(unidade, data):
+def buscar_vigencia_e_especialidades(unidade: str, data: str):
 	if not frappe.has_permission("Atendimento Medico Diario", "create"):
 		frappe.throw(_("Sem permissão para criar atendimentos médicos diários."), frappe.PermissionError)
 	return obter_vigencia_e_especialidades(unidade, data)
