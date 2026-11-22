@@ -60,10 +60,12 @@ jobs:
       - name: Download Semgrep rules
         run: git clone --depth 1 https://github.com/frappe/semgrep-rules.git frappe-semgrep-rules
 
+      # Varredura completa do repositório (PR, push na main e dispatch), sem modo diff do `semgrep ci`;
+      # qualquer achado reprova o job (--error).
       - name: Run Semgrep rules
         run: |
           pip install semgrep
-          semgrep ci --config ./frappe-semgrep-rules/rules --config r/python.lang.correctness
+          semgrep scan --error --metrics=off --config ./frappe-semgrep-rules/rules --config r/python.lang.correctness .
 
   deps-vulnerable-check:
     name: 'Vulnerable Dependency Check'
@@ -91,32 +93,37 @@ jobs:
           cd ${GITHUB_WORKSPACE}
           pip-audit --desc on .
 
-  pip-audit-framework:
-    # Informativo: audita as dependências do Frappe, ERPNext e HRMS (version-15), que o pip-audit do
-    # pyproject não cobre. Não bloqueia o merge (continue-on-error); serve para acompanhar vulnerabilidades.
-    name: 'Vulnerable Dependency Check (Frappe, ERPNext, HRMS)'
+  deps-vulnerable-check-environment:
+    name: 'Vulnerable Dependency Check (ambiente Frappe, informativo)'
     runs-on: ubuntu-latest
+    # Informativo: audita o ambiente real (frappe, erpnext e hrms v15 + este app) e não bloqueia o gate.
     continue-on-error: true
 
     steps:
+      - uses: actions/checkout@v7
+
       - uses: actions/setup-python@v7
         with:
           python-version: '3.12'
+          cache: pip
 
-      - name: Install pip-audit and build headers
+      - name: Install bench
         run: |
-          sudo apt-get update
-          sudo apt-get install -y pkg-config libmariadb-dev
+          pip install frappe-bench
+          bench init --skip-redis-config-generation --skip-assets --frappe-branch version-15 --python "$(which python)" ~/frappe-bench
+
+      - name: Install apps
+        working-directory: /home/runner/frappe-bench
+        run: |
+          bench get-app erpnext --branch version-15
+          bench get-app hrms --branch version-15
+          # clm é um repositório privado e está em required_apps: precisa do segredo CLM_REPO_TOKEN
+          bench get-app clm "https://x-access-token:${{ secrets.CLM_REPO_TOKEN }}@github.com/still-pulse/clm.git"
+          bench get-app pulse_gestor "$GITHUB_WORKSPACE"
+
+      - name: Run pip-audit on the bench environment
+        working-directory: /home/runner/frappe-bench
+        run: |
+          # pip-audit fica fora da bench para não alterar as versões que serão auditadas
           pip install pip-audit
-
-      - name: Audit frappe, erpnext and hrms
-        run: |
-          status=0
-          for app in frappe/frappe frappe/erpnext frappe/hrms; do
-            name="${app#*/}"
-            git clone --depth 1 --branch version-15 "https://github.com/${app}.git" "/tmp/${name}"
-            echo "::group::pip-audit ${name}"
-            pip-audit --desc on "/tmp/${name}" || status=1
-            echo "::endgroup::"
-          done
-          exit "$status"
+          pip-audit --desc on --path "$(./env/bin/python -c 'import sysconfig; print(sysconfig.get_paths()["purelib"])')"
