@@ -5,6 +5,14 @@ from pulse_gestor.patrimonio.report.ativos_por_localizacao.ativos_por_localizaca
 	execute as ativos_por_localizacao,
 )
 from pulse_gestor.patrimonio.report.relacao_de_ativos.relacao_de_ativos import execute as relacao_de_ativos
+from pulse_gestor.patrimonio.report.utils import (
+	CONSERVACAO,
+	CONTROLE_BHCL,
+	PATRIMONIO_PREFEITURA,
+	SQL_ATIVOS,
+	UTILIZACAO,
+	buscar_ativos,
+)
 
 EMPRESA_A = "Empresa A de Teste"
 EMPRESA_B = "Empresa B de Teste"
@@ -70,3 +78,50 @@ class TestRelatoriosDePatrimonio(FrappeTestCase):
 			sum(g["quantidade"] for g in grupos.values()),
 			sum(1 for r in dados if r["indent"] == 1),
 		)
+
+
+class TestConsultaDeAtivosEstatica(FrappeTestCase):
+	@classmethod
+	def setUpClass(cls):
+		super().setUpClass()
+		local = criar_localizacao("Local Filtros de Teste", EMPRESA_A).name
+		for nome, categoria, status, utilizacao, conservacao in (
+			("PAT-FILTRO-1", "Cat Teste 1", "Submitted", "Em uso", "Bom"),
+			("PAT-FILTRO-2", "Cat Teste 2", "In Location", "Ocioso", "Ruim"),
+		):
+			ativo = frappe.get_doc(
+				{
+					"doctype": "Asset",
+					"name": nome,
+					"asset_name": nome,
+					"company": EMPRESA_A,
+					"location": local,
+					"asset_category": categoria,
+					"status": status,
+					"docstatus": 1,
+					"gross_purchase_amount": 100,
+					UTILIZACAO: utilizacao,
+					CONSERVACAO: conservacao,
+				}
+			)
+			ativo.set_user_and_timestamp()
+			ativo.db_insert()
+
+	def nomes(self, **filtros):
+		return sorted(r.ativo for r in buscar_ativos({"empresa": EMPRESA_A, **filtros}))
+
+	def test_cada_filtro_restringe_o_resultado(self):
+		self.assertEqual(self.nomes(), ["PAT-FILTRO-1", "PAT-FILTRO-2"])
+		self.assertEqual(self.nomes(categoria="Cat Teste 2"), ["PAT-FILTRO-2"])
+		self.assertEqual(self.nomes(status="Submitted"), ["PAT-FILTRO-1"])
+		self.assertEqual(self.nomes(utilizacao="Ocioso"), ["PAT-FILTRO-2"])
+		self.assertEqual(self.nomes(conservacao="Bom"), ["PAT-FILTRO-1"])
+
+	def test_filtros_combinados_e_vazios(self):
+		self.assertEqual(self.nomes(categoria="Cat Teste 1", conservacao="Ruim"), [])
+		self.assertEqual(self.nomes(categoria="", status="", utilizacao="", conservacao=""), self.nomes())
+
+	def test_constantes_dos_campos_estao_na_consulta(self):
+		for nome in (CONTROLE_BHCL, PATRIMONIO_PREFEITURA, UTILIZACAO, CONSERVACAO):
+			self.assertIn(f"`{nome}`", SQL_ATIVOS)
+		self.assertNotIn("{", SQL_ATIVOS)
