@@ -19,8 +19,8 @@ levantados nos metadados do app:
 Os dois papéis próprios do app (`pulse_gestor/fixtures/role.json`) são `Pulse Gestor Manager` — o papel de
 operação do dia a dia, com `create`/`write`/`submit` nos DocTypes do app — e `Pulse Gestor Viewer`, só leitura.
 Nenhum dos dois tem permissão própria registrada em fixture sobre `Company`, `User` ou `Email Template`: o
-app não declara `Custom DocPerm` nenhum (`pulse_gestor/fixtures/` só tem `role.json`, `notification.json` e
-`number_card.json`; `hooks.py` não lista `Custom DocPerm` em `fixtures`). O acesso de hoje depende inteiramente
+app não declara `Custom DocPerm` nenhum (`pulse_gestor/fixtures/` só tem `role.json`, `notification.json`,
+`number_card.json` e `custom_field.json` (os cinco Custom Fields de Patrimônio, sem permissões); `hooks.py` não lista `Custom DocPerm` em `fixtures`). O acesso de hoje depende inteiramente
 de permissão concedida por outro módulo (Contabilidade/RH para `Company`, o papel padrão do Frappe para
 `User`) — exatamente o padrão que o CLM identificou e corrigiu no
 [ADR-006 do `clm`](../../clm/docs/adr-006-leitura-minima-em-doctypes-vinculados.md): se esse outro módulo não

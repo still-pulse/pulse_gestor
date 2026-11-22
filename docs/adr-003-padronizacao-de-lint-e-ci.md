@@ -69,8 +69,9 @@ padrão adotado, sem alterar lógica nem comportamento em runtime.
 `pulse_gestor/patches/v0_2_6_rename_indicadores_doctypes.py` recebe `# nosemgrep: frappe-monkey-patching-not-allowed`
 na linha do `import` (o semgrep reporta o match desde o import até a atribuição). É um patch único e histórico que
 troca temporariamente `builder.TABLE_NAME_PATTERN` para renomear DocTypes com acento e restaura o valor em `finally`;
-o Frappe 15 não oferece hook para isso. Aprovado pelo responsável do repositório. O achado só apareceu porque o
-`semgrep ci` é diff-aware e o `ruff --fix`/`format` reescreveu o arquivo.
+o Frappe 15 não oferece hook para isso. Supressão pré-existente, **não tocada** nesta rodada e **ainda sem
+aprovação nominal do usuário**: pendente de decisão. O achado só apareceu porque o `semgrep ci` era diff-aware e o
+`ruff --fix`/`format` reescreveu o arquivo; com a varredura completa ele segue suprimido.
 
 ### Achados `frappe-sql-format-injection` em patches
 
@@ -108,7 +109,7 @@ exercitado em produção/homologação.
 Com a varredura completa, 18 achados legados (que o modo diff-aware de PR nunca mostrava) foram corrigidos no
 código, cada um com teste e sem `nosemgrep` novo:
 
-- `missing-argument-type-hint` (13): type hints nos métodos whitelisted (`filters: str | dict | None`,
+- `missing-argument-type-hint` (12): type hints nos métodos whitelisted (`filters: str | dict | None`,
   `limite: int | str`, demais `str`). O Frappe valida esses tipos em requisição/teste.
 - `frappe-sql-format-injection` (2): `relacao_de_ativos`/`ativos_por_localizacao` (`patrimonio/report/utils.py`) e
   `atividades_de_comissao` passaram a usar SQL estático com filtros parametrizados (`%(x)s IS NULL OR ...`).
@@ -121,7 +122,8 @@ código, cada um com teste e sem `nosemgrep` novo:
 ## Pendências
 
 - Migrar para Python `>=3.13` junto com o v16 e revisar as versões de prettier/eslint na preparação para v16/v17.
-- Avaliar tornar o pip-audit bloqueante quando os achados do job informativo estiverem tratados.
+- Tratar os achados do pip-audit do ambiente Frappe (job informativo, ex.: `pdfkit` do frappe v15) e, quando
+  estiverem resolvidos, avaliar torná-lo bloqueante. O pip-audit do `pyproject` já bloqueia.
 
 ## Estado deste repositório
 

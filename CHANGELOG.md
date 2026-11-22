@@ -37,6 +37,10 @@ git permite:
   fixtures reais. O teste de formatos de impressão cria seus próprios Employees em vez de pular.
 - CI: Python 3.12 e actions alinhadas, `workflow_dispatch`, pip-audit do `pyproject` bloqueante e o do Frappe
   informativo (ver ADR-003).
+- Semgrep em varredura completa (`semgrep scan --error`), como no `pulse_finance`; os 18 achados legados foram
+  corrigidos sem novo `nosemgrep`: type hints nos 9 métodos whitelisted, SQL estático e parametrizado nos
+  relatórios de Patrimônio e de atividades de comissão (mesmo resultado) e remoção dos 4 `frappe.db.commit()`
+  manuais (`before_migrate`, `after_install`, `after_migrate` e o job de status), já cobertos pelo Frappe.
 
 ## v1.0.2 — WhatsApp habilitado por padrão nas assinaturas · 2026-11-20
 
