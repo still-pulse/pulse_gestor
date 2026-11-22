@@ -40,7 +40,6 @@ def atualizar_status_documentos():
 		atualizados += 1
 
 	if atualizados:
-		frappe.db.commit()
 		frappe.logger("pulse_gestor").info("Status atualizado em %s documento(s).", atualizados)
 
 

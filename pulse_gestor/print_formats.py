@@ -46,7 +46,6 @@ def preserve_accented_legacy_print_formats():
 		if row and row.standard == "No" and not frappe.db.exists("Print Format", new):
 			frappe.rename_doc("Print Format", old, new, force=True, show_alert=False, rebuild_search=False)
 			frappe.db.set_value("Print Format", new, "disabled", 1)
-	frappe.db.commit()
 
 
 def ensure_default_print_formats():

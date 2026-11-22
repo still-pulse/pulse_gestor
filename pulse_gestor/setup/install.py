@@ -30,7 +30,6 @@ def after_install():
 	ensure_settings()
 	ensure_pulse_gestor_workspace()
 	ensure_print_formats()
-	frappe.db.commit()
 
 
 def after_migrate():
@@ -47,7 +46,6 @@ def after_migrate():
 
 	semear_comunicacao()
 	ensure_print_formats()
-	frappe.db.commit()
 
 
 WORKSPACE = "Gestor"
