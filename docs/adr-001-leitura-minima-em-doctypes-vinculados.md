@@ -50,9 +50,9 @@ tempo de execução):
   favor de `Pulse Gestor Manager`/`Pulse Gestor Viewer`. Falta confirmar, num site rodando, se esses dois
   papéis já conseguem abrir/selecionar `Company`, `User` e `Email Template` por herança de outro papel (ex.:
   `User` costuma ter leitura ampla por padrão do Frappe; `Company` e `Email Template` não necessariamente).
-- O módulo Patrimônio depende de `custom_empresa` em `Location`, um Custom Field criado direto no site e fora
-  das fixtures do app (ver `README.md`); qualquer decisão de leitura mínima sobre `Location` também passa por
-  essa particularidade e não foi avaliada aqui.
+- O módulo Patrimônio depende de `custom_empresa` em `Location`, um Custom Field que agora está versionado em
+  `fixtures/custom_field.json` (ver `README.md`); qualquer decisão de leitura mínima sobre `Location` ainda
+  não foi avaliada aqui.
 - Recomendação: antes ou junto da próxima mudança que toque um desses fluxos, validar no site `dev`
   (`bench --site dev console` ou pela UI, logado como um usuário só com `Pulse Gestor Manager`/`Pulse Gestor
   Viewer`) se os Links acima abrem normalmente; se não abrirem, criar as fixtures `Custom DocPerm`
