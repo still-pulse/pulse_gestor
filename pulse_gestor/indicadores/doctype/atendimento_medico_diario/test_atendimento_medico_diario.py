@@ -4,8 +4,8 @@ import frappe
 from frappe.tests.utils import FrappeTestCase
 
 from pulse_gestor.indicadores.doctype.atendimento_medico_diario.atendimento_medico_diario import (
-	buscar_vigencia_e_especialidades,
-	obter_vigencia_e_especialidades,
+	fetch_validity_and_specialties,
+	resolve_validity_and_specialties,
 )
 from pulse_gestor.indicadores.report.relatorio_de_atendimentos_por_periodo.relatorio_de_atendimentos_por_periodo import (
 	execute as executar_relatorio,
@@ -37,14 +37,14 @@ class TestAtendimentoMedicoDiario(FrappeTestCase):
 	def test_vigencia_resolucao_lancamento_e_envio(self):
 		unidade, especialidades = self.preparar_cadastros()
 		vigencia = self.criar_vigencia(unidade, especialidades, "2098-01-01", "2098-01-31")
-		resolvido = obter_vigencia_e_especialidades(unidade, "2098-01-31")
+		resolvido = resolve_validity_and_specialties(unidade, "2098-01-31")
 		self.assertEqual(resolvido["vigencia"], vigencia.name)
 		self.assertEqual(
 			[item["especialidade"] for item in resolvido["especialidades"]],
 			[item.name for item in especialidades],
 		)
 		with self.assertRaises(frappe.ValidationError):
-			obter_vigencia_e_especialidades(unidade, "2098-02-01")
+			resolve_validity_and_specialties(unidade, "2098-02-01")
 		with self.assertRaises(frappe.ValidationError):
 			self.criar_vigencia(unidade, especialidades[:1], "2098-01-31")
 		with self.assertRaises(frappe.ValidationError):
@@ -92,7 +92,7 @@ class TestAtendimentoMedicoDiario(FrappeTestCase):
 				linha.quantidade = quantidade
 			atendimento.save()
 			atendimento.submit()
-		# Rascunho no período não entra na apuração.
+		# A draft in the period is not counted.
 		frappe.get_doc(
 			{"doctype": "Atendimento Medico Diario", "unidade": unidade, "data": "2097-03-03"}
 		).insert()
@@ -131,6 +131,6 @@ class TestAtendimentoMedicoDiario(FrappeTestCase):
 			frappe.set_user(usuario.name)
 			self.assertFalse(frappe.has_permission("Atendimento Medico Diario", "create"))
 			with self.assertRaises(frappe.PermissionError):
-				buscar_vigencia_e_especialidades(unidade, "2098-01-01")
+				fetch_validity_and_specialties(unidade, "2098-01-01")
 		finally:
 			frappe.set_user(anterior)

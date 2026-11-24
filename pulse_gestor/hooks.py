@@ -1,11 +1,9 @@
 app_name = "pulse_gestor"
 app_title = "Pulse Gestor"
-app_publisher = "Still Pulse"
-app_description = (
-	"Documentação da Unidade — cadastro de documentos por empresa/unidade com validade e alerta de vencimento"
-)
+app_publisher = "StillPulse Tecnologia LTDA"
+app_description = "Unit management: unit documentation with expiry alerts, clinical indicators, committees and asset records"
 app_email = "dev@stillpulse.com.br"
-app_license = "mit"
+app_license = "Proprietary"
 app_version = "1.0.2"
 
 required_apps = ["frappe/frappe@version-15", "frappe/erpnext@version-15", "still-pulse/clm@main"]
@@ -18,7 +16,7 @@ jinja = {"methods": ["pulse_gestor.print_formats.qr_data_uri"]}
 
 doctype_js = {"Asset": "public/js/asset.js"}
 
-doc_events = {"Asset": {"validate": "pulse_gestor.patrimonio.asset.validar_custodiante"}}
+doc_events = {"Asset": {"validate": "pulse_gestor.patrimonio.asset.validate_custodian"}}
 
 add_to_apps_screen = [
 	{
@@ -28,18 +26,18 @@ add_to_apps_screen = [
 	}
 ]
 
-# Assinatura eletrônica (app assinatura_eletronica, OPCIONAL)
+# E-signature (app assinatura_eletronica, OPTIONAL; the profile API names are defined by that app)
 assinatura_eletronica_perfis = {
-	"Reuniao de Comissao": "pulse_gestor.assinatura.PerfilReuniaoDeComissao",
-	"Asset": "pulse_gestor.assinatura.PerfilTermoDoAtivo",
-	"Asset Movement": "pulse_gestor.assinatura.PerfilTermoDeMovimentacao",
+	"Reuniao de Comissao": "pulse_gestor.signature_profiles.CommitteeMeetingProfile",
+	"Asset": "pulse_gestor.signature_profiles.AssetTermProfile",
+	"Asset Movement": "pulse_gestor.signature_profiles.AssetMovementTermProfile",
 }
-assinatura_eletronica_destinatarios = {"Comissao Membro": "pulse_gestor.assinatura.destinatario_membro"}
+assinatura_eletronica_destinatarios = {"Comissao Membro": "pulse_gestor.signature_profiles.member_recipient"}
 
 scheduler_events = {
 	"daily": [
-		"pulse_gestor.tasks.atualizar_status_documentos",
-		"pulse_gestor.tasks.enviar_avisos_vencimento_documentos",
+		"pulse_gestor.tasks.update_document_statuses",
+		"pulse_gestor.tasks.send_expiry_notices",
 	]
 }
 

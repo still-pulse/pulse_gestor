@@ -1,348 +1,369 @@
-# Histórico de alterações
+# Changelog
 
-Reconstruído a partir de `git tag` e `git log` (somente leitura) e conferido com os arquivos do app. Limites do que o
-git permite:
+Reconstructed from `git tag` and `git log` (read-only) and checked against the app files. Limits of what git allows:
 
-- **Início do histórico:** o primeiro commit é de 2026-08-17 (v0.1.0). O repositório tem **duas raízes**: a do ramo
-  antigo (`e1d6111`) e a do commit `2fa98f2` ("Merge pull request #3", 2026-09-28, sem pai), um instantâneo que
-  recriou a `main`. A linha do instantâneo (`f17bb23` em diante) só se uniu ao ramo antigo (v0.10.0) pelo merge
-  `f515085` (v0.10.2). Por isso `git merge-base` entre as duas linhas não existe.
-- **Tags fora do histórico:** nenhuma. Todas as tags estão contidas no HEAD (`git tag --no-merged HEAD` vazio). A v0.10.0
-  está no ramo antigo, anterior ao merge.
-- **Tags fora de ordem:** a v0.1.5 (2026-09-21) foi criada depois da v0.2.9, em outra linha de trabalho
-  (Documentação da Unidade). A v0.9.2 aponta para o mesmo commit da v0.9.1.
-- **Versões sem tag:** v0.2.4 e v0.2.5 (a numeração salta da v0.2.3 para a v0.2.6); suas entradas vêm do texto do
-  CHANGELOG antigo, entregue no commit da v0.2.6. Commits sem tag ficam na entrada da primeira tag seguinte.
-- **Datas:** as das tags (ou do commit, quando a tag é leve). As entradas já existentes no CHANGELOG anterior foram
-  mantidas, com o cabeçalho trocado do formato antigo (`## [data] — versão`) para o atual; as da v0.1.5, v0.2.8,
-  v0.2.9, v0.9.2, v0.9.4 e v0.9.5, que faltavam, foram acrescentadas só pelo assunto e pelo diff dos commits.
-- **Incoerências de numeração:**
-  - `__version__` (em `pulse_gestor/__init__.py`) diverge de `app_version` (em `hooks.py`) em quatro tags: v0.1.5
-    (0.1.4), v0.9.4 e v0.9.5 (0.9.3) e v0.10.1 (0.9.3, `chore: versão 0.10.1` só mexeu no `hooks.py`). A v0.10.2 e a
-    v0.11.0 trazem as duas iguais à tag. Na linha v0.11: v0.11.1 e v0.11.2 (ambas 0.10.0); v0.11.3 (`__version__` 0.11.3, hooks
-    0.10.0); v0.11.4 a v0.11.6 (`__version__` igual à tag, hooks 0.11.0). Só a v0.11.7 alinha as duas.
-  - Os patches usam o prefixo `vX_Y_Z_` apenas em parte (`v0_2_6_*`, `v0_4_0_*`, `v0_9_0_*`, `v0_9_2_*`; o
-    `rename_configuracoes_documentos_da_unidade` não tem versão), **não acompanham a versão do app** e não foram
-    renumerados.
-  - Não há patches da linha v0.10 e v0.11: os ajustes de Workspace, formatos de impressão e Modelos são feitos no
-    `after_migrate` (`setup/install.py`).
-- Não há tags `rc/*` neste repositório.
+- **Start of history:** the first commit is from 2026-08-17 (v0.1.0). The repository has **two roots**: the old
+  branch's (`e1d6111`) and that of commit `2fa98f2` ("Merge pull request #3", 2026-09-28, no parent), a snapshot that
+  recreated `main`. The snapshot line (`f17bb23` onwards) only joined the old branch (v0.10.0) through merge `f515085`
+  (v0.10.2). Therefore `git merge-base` between the two lines does not exist.
+- **Tags outside the history:** none. All tags are contained in HEAD (`git tag --no-merged HEAD` is empty). v0.10.0 is
+  on the old branch, before the merge.
+- **Out-of-order tags:** v0.1.5 (2026-09-21) was created after v0.2.9, on another line of work (Unit Documentation).
+  v0.9.2 points to the same commit as v0.9.1.
+- **Versions without a tag:** v0.2.4 and v0.2.5 (numbering jumps from v0.2.3 to v0.2.6); their entries come from the
+  text of the old CHANGELOG, delivered in the v0.2.6 commit. Commits without a tag go in the entry of the next tag.
+- **Dates:** those of the tags (or of the commit, when the tag is lightweight). Entries already in the previous
+  CHANGELOG were kept, with the heading changed from the old format (`## [date] — version`) to the current one; those of
+  v0.1.5, v0.2.8, v0.2.9, v0.9.2, v0.9.4 and v0.9.5, which were missing, were added from the subject and diff of the
+  commits only.
+- **Numbering inconsistencies:**
+  - `__version__` (in `pulse_gestor/__init__.py`) differs from `app_version` (in `hooks.py`) in four tags: v0.1.5
+    (0.1.4), v0.9.4 and v0.9.5 (0.9.3) and v0.10.1 (0.9.3, `chore: versão 0.10.1` only touched `hooks.py`). v0.10.2 and
+    v0.11.0 carry both equal to the tag. On the v0.11 line: v0.11.1 and v0.11.2 (both 0.10.0); v0.11.3 (`__version__`
+    0.11.3, hooks 0.10.0); v0.11.4 to v0.11.6 (`__version__` equal to the tag, hooks 0.11.0). Only v0.11.7 aligns both.
+  - Patches use the `vX_Y_Z_` prefix only in part (`v0_2_6_*`, `v0_4_0_*`, `v0_9_0_*`, `v0_9_2_*`; the
+    `rename_configuracoes_documentos_da_unidade` has no version), **do not follow the app version** and were not
+    renumbered. New patches follow `sNN_<action_in_snake_case>`.
+  - There are no patches for the v0.10 and v0.11 lines: the Workspace, print format and Template adjustments are done
+    in `after_migrate` (`setup/install.py`).
+- There are no `rc/*` tags in this repository.
 
-## v1.0.2 — WhatsApp habilitado por padrão nas assinaturas · 2026-11-20
+## Unreleased
 
-- Acompanha o `assinatura_eletronica` v0.3.9: o membro de comissão deixa de informar `aceita_whatsapp` (o padrão do motor é
-  habilitado; sem telefone o motor pula o canal) e o Modelo de Assinatura semeado nasce com
-  `exigir_aceite_whatsapp = 1` ("Respeitar a desabilitação do envio por WhatsApp"). Modelos já criados são ajustados pelo
-  patch do motor.
+### Changed
+- Naming and language standardization (Phase 1): identifiers, comments, docstrings and documentation in English. Python
+  modules `telefone.py` and `assinatura.py` became `phone.py` and `signature_profiles.py`; functions, constants and
+  profile classes were renamed (e.g. `PerfilReuniaoDeComissao` → `CommitteeMeetingProfile`, `PerfilTermoDoAtivo` →
+  `AssetTermProfile`, `PerfilTermoDeMovimentacao` → `AssetMovementTermProfile`); the whitelisted methods
+  `buscar_membros`, `convocar`, `buscar_protocolo_e_niveis`, `buscar_vigencia_e_especialidades` and the committee
+  dashboard methods now have English names (JS callers and Number Cards updated). DocType names, fieldnames, roles,
+  stored strings and user-facing texts are unchanged.
+- Metadata: publisher `StillPulse Tecnologia LTDA`, proprietary license (`license.txt`, `app_license = "Proprietary"`),
+  copyright headers without the client brand.
+- ADR files renamed to English slugs (numbering kept).
+- Fixed orphan internal calls left by the renames (`self._validate_unique_entry()`, `validate_duplicate()`, `record_bylaws_change()`, the Unit Documentation `_validate_*`/`_update_status`, `_present_participants()`) and the `classificacao_de_risco_diaria.js` method path; added `tests/test_static_references.py` and `tests/test_validate_flows.py`.
+- New ADR-004 recording the language and naming standardization; `tests/site_setup.py` function renamed to `create_asset_custom_fields` (and its `ci.yml` call).
 
-## v1.0.1 — frappe fixado em required_apps · 2026-11-02
+### Added
+- `docs/dependencies.md` mapping the strong and weak dependencies; the `integracoes_customizadas` use in the meeting
+  convocation is now guarded by `get_installed_apps()`.
 
-- `required_apps` passa a `frappe/frappe@version-15`: o `"frappe"` solto resolvia para o app local e fazia o `bench get-app --resolve-deps` falhar ("Invalid frappe path").
+## v1.0.2 — WhatsApp enabled by default in signatures · 2026-11-20
 
-## v1.0.0 — Dependências fixadas · 2026-11-02
+- Follows `assinatura_eletronica` v0.3.9: the committee member no longer provides `aceita_whatsapp` (the engine default
+  is enabled; without a phone the engine skips the channel) and the seeded Signature Template is born with
+  `exigir_aceite_whatsapp = 1` ("Respect the disabling of WhatsApp sending"). Templates already created are adjusted by
+  the engine's patch.
 
-- `required_apps` passa a `["frappe", "frappe/erpnext@version-15", "still-pulse/clm@main"]` (o `clm` sem org era procurado em `frappe/clm`).
-- README: ordem de instalação com ERPNext no `version-15` e `clm` antes do app.
+## v1.0.1 — frappe pinned in required_apps · 2026-11-02
 
-## v0.11.7 — alinhamento de versão · 2026-10-29
+- `required_apps` becomes `frappe/frappe@version-15`: the bare `"frappe"` resolved to the local app and made `bench
+  get-app --resolve-deps` fail ("Invalid frappe path").
 
-Merge `d02b9d8` de `feature/configuracoes-documentos-unidade` em `main`, com o commit `d63d20f`: `app_version` dos hooks
-alinhado a `__version__` (0.11.7) após o merge da feature de configurações de documentos da unidade.
+## v1.0.0 — Pinned dependencies · 2026-11-02
 
-## v0.11.6 — ferramentas de checagem do Frappe · 2026-10-28
+- `required_apps` becomes `["frappe", "frappe/erpnext@version-15", "still-pulse/clm@main"]` (`clm` without an org was
+  looked up in `frappe/clm`).
+- README: installation order with ERPNext on `version-15` and `clm` before the app.
 
-Commit `e2d1488`: commitlint, linter e CI (`ci: ferramentas de checagem do Frappe`). Sem mudança funcional.
+## v0.11.7 — version alignment · 2026-10-29
 
-## v0.11.5 — merge dos indicadores e do aviso de vencimento · 2026-10-28
+Merge `d02b9d8` of `feature/configuracoes-documentos-unidade` into `main`, with commit `d63d20f`: the hooks'
+`app_version` aligned with `__version__` (0.11.7) after the merge of the unit-document settings feature.
 
-Commit `3d6d5dd` ("merge das features de indicadores e aviso de vencimento em main"), que segue o merge `9f090ea` de
-`feature/indicadores-protocolos-triagem` e o commit `c90856d` (teste do aviso de vencimento ajustado ao layout
-institucional do e-mail).
+## v0.11.6 — Frappe check tools · 2026-10-28
 
-## v0.11.4 — `__version__` e versão do aviso de vencimento · 2026-10-28
+Commit `e2d1488`: commitlint, linter and CI (`ci: ferramentas de checagem do Frappe`). No functional change.
 
-Commit `2f0eac8` ("alinha `__version__` com a tag v0.11.3 e versiona o aviso de vencimento por e-mail"), precedido de
-`1591510` ("app_version 0.1.5 no hooks da Documentação da Unidade"), e merge `876224c` do ramo
-`feature/bump-versao-0-11-4`.
+## v0.11.5 — merge of the indicators and the expiry notice · 2026-10-28
 
-## v0.11.3 — aviso de vencimento por e-mail no layout do clm · 2026-10-28
+Commit `3d6d5dd` ("merge das features de indicadores e aviso de vencimento em main"), which follows merge `9f090ea` of
+`feature/indicadores-protocolos-triagem` and commit `c90856d` (expiry notice test adjusted to the institutional e-mail
+layout).
 
-Commit `3b2a354` ("alinha `__version__` com a tag v0.11.2"). A faixa inclui os commits `5e02f94` e `4d9e2e7`
-(2026-10-24, "aviso de vencimento por e-mail no layout institucional do clm"): mudança em `tasks.py` e teste novo
+## v0.11.4 — `__version__` and expiry notice version · 2026-10-28
+
+Commit `2f0eac8` ("aligns `__version__` with tag v0.11.3 and versions the e-mail expiry notice"), preceded by `1591510`
+("app_version 0.1.5 in the Unit Documentation hooks"), and merge `876224c` of branch `feature/bump-versao-0-11-4`.
+
+## v0.11.3 — expiry e-mail notice in the clm layout · 2026-10-28
+
+Commit `3b2a354` ("aligns `__version__` with tag v0.11.2"). The range includes commits `5e02f94` and `4d9e2e7`
+(2026-10-24, "expiry e-mail notice in the clm institutional layout"): change in `tasks.py` and new test
 `tests/test_email_vencimento.py`.
 
-## v0.11.2 — limpa o cache do Desk ao injetar o card · 2026-10-20
+## v0.11.2 — clears the Desk cache when injecting the card · 2026-10-20
 
-Commit `93da1d4`: `setup/settings_workspace.py` limpa o cache do Desk ao injetar o card no ERPNext Settings.
+Commit `93da1d4`: `setup/settings_workspace.py` clears the Desk cache when injecting the card into ERPNext Settings.
 
-## v0.11.1 — atalho das configurações de documentos no ERPNext Settings · 2026-10-20
+## v0.11.1 — shortcut to the document settings in ERPNext Settings · 2026-10-20
 
-Commit `ab6823d`: novo `setup/settings_workspace.py` e chamada em `setup/install.py` para o atalho das configurações
-de documentos no ERPNext Settings.
+Commit `ab6823d`: new `setup/settings_workspace.py` and call in `setup/install.py` for the shortcut to the document
+settings in ERPNext Settings.
 
-## v0.11.0 — Relatórios de Patrimônio e Termo de Responsabilidade · 2026-10-17
+## v0.11.0 — Asset Reports and Responsibility Term · 2026-10-17
 
-### Adicionado
-- Relatórios "Relação de Ativos" e "Ativos por Localização" (Script Reports do módulo Patrimonio, card "Relatórios de Patrimônio" no Workspace Gestor). Filtros por empresa e por localização vinculada à empresa (`Location.custom_empresa`), incluindo sublocais, além de categoria, situação, utilização e estado de conservação. O relatório por localização agrupa os bens em árvore, com quantidade, valores e gráfico das localizações com mais bens
-- "Termo de Responsabilidade do Ativo" (Asset, assinado pelo custodiante na custódia inicial) e "Termo de Responsabilidade de Movimentacao" (Asset Movement, assinado por cada colaborador em "Para Funcionário", que vê só os seus bens), no padrão BHCL e com o registro das evidências da assinatura
-- Perfis `PerfilTermoDoAtivo` e `PerfilTermoDeMovimentacao` no motor `assinatura_eletronica` e Modelos de Assinatura semeados para Asset e Asset Movement (paralelo, após o submit, aceite eletrônico, comprovante no formato do Termo). O recebimento automático (Receipt) é recusado na movimentação: a custódia inicial se assina no próprio Ativo
-- Custodiante do Ativo filtrado por colaboradores ativos da empresa do bem, com validação no servidor
+### Added
+- "Relação de Ativos" and "Ativos por Localização" reports (Script Reports of the Patrimonio module, "Relatórios de Patrimônio" card in the Gestor Workspace). Filters by company and by location linked to the company (`Location.custom_empresa`), including sublocations, plus category, status, usage and condition. The by-location report groups the assets in a tree, with count, amounts and a chart of the locations with the most assets
+- "Termo de Responsabilidade do Ativo" (Asset, signed by the custodian at initial custody) and "Termo de Responsabilidade de Movimentacao" (Asset Movement, signed by each employee in "Para Funcionário", who sees only their own assets), in the institutional standard and with the record of the signature evidence
+- Profiles `PerfilTermoDoAtivo` and `PerfilTermoDeMovimentacao` in the `assinatura_eletronica` engine and Signature Templates seeded for Asset and Asset Movement (parallel, after submit, electronic acceptance, receipt in the Term format). The automatic receipt (Receipt) is refused on movement: initial custody is signed on the Asset itself
+- Asset custodian filtered by active employees of the asset's company, with server-side validation
 
-### Alterado
-- A "Data do termo" do Termo do Ativo e a data de emissão usam a data de criação do Ativo
-- `registro_assinaturas` usa o próprio rótulo de data no cartão do processo encerrado (era fixo em "Data da reunião")
-- `ensure_modelo_assinatura` virou `ensure_modelos_assinatura`, com os modelos em `MODELOS`
+### Changed
+- The "Term date" of the Asset Term and the issue date use the Asset's creation date
+- `registro_assinaturas` uses its own date label in the finished-process card (it was fixed as "Data da reunião")
+- `ensure_modelo_assinatura` became `ensure_modelos_assinatura`, with the templates in `MODELOS`
 
-## v0.10.2 — Integração da linha v0.10.0 à main · 2026-10-16
+## v0.10.2 — Integration of the v0.10.0 line into main · 2026-10-16
 
-### Alterado
-- Integra a linha v0.10.0 (módulo Patrimonio e formatos de impressão) à `main`, que havia sido recriada a partir de um snapshot sem histórico em comum. Ata e Convocação ficam com as macros da v0.10.0 (`commission_name`, `meeting_card`, `agenda_card`, `participants_card`), acrescidas do registro da assinatura eletrônica da ata (`registro_assinaturas`: evidências quando há Processo de Assinatura encerrado; caso contrário, o cartão padrão com a data da reunião)
+### Changed
+- Integrates the v0.10.0 line (Patrimonio module and print formats) into `main`, which had been recreated from a snapshot with no shared history. Minutes and Convocation keep the v0.10.0 macros (`commission_name`, `meeting_card`, `agenda_card`, `participants_card`), plus the electronic signature record of the minutes (`registro_assinaturas`: evidence when a finished Signature Process exists; otherwise, the standard card with the meeting date)
 
-## v0.10.1 — Print Formats de Comissões no padrão BHCL · 2026-10-16
+## v0.10.1 — Committee Print Formats in the institutional standard · 2026-10-16
 
-### Alterado
-- `Ata de Reuniao de Comissao` e `Convocacao para Reuniao de Comissao` passam a estender `clm_base.html` (manifesto `apps/clm/docs/brand-manifesto.md`): cartões, tabelas com cabeçalho `teal_dark`, selos de presença, referência "Comissão · Reunião de dd/mm/aaaa" e rodapé com ID
-- Assinatura da ata: com Processo de Assinatura encerrado, imprime o registro das evidências (OTP, IP, localização, integridade e QR); caso contrário, o cartão padrão `signature_block` com a caixa "Data da reunião". A convocação usa o cartão padrão com a "Data da convocação"
-- Macros próprias em `templates/print/comissoes_macros.html`; pastas dos formatos renomeadas para `scrub(nome)` (exigência do Frappe)
-- `required_apps` inclui `clm`
+### Changed
+- `Ata de Reuniao de Comissao` and `Convocacao para Reuniao de Comissao` now extend `clm_base.html` (manifesto `apps/clm/docs/brand-manifesto.md`): cards, tables with a `teal_dark` header, attendance tags, reference "Committee · Meeting of dd/mm/yyyy" and footer with ID
+- Minutes signature: with a finished Signature Process, prints the evidence record (OTP, IP, location, integrity and QR); otherwise, the standard `signature_block` card with the "Meeting date" box. The convocation uses the standard card with the "Convocation date"
+- Own macros in `templates/print/comissoes_macros.html`; format folders renamed to `scrub(name)` (a Frappe requirement)
+- `required_apps` includes `clm`
 
-### Adicionado (mesmo commit, f17bb23)
-- Ata assinável: perfil `PerfilReuniaoDeComissao` no motor `assinatura_eletronica` (assinam os participantes presentes) e `Comissao Membro` como destinatário; Modelo de Assinatura semeado no `after_migrate`. Dependência opcional: `assinatura.py` importa o app dentro de `try`
-- Convocação dos participantes pelo botão *Convocar membros* da Reuniao de Comissao (WhatsApp, e-mail ou ambos, com Modelo WhatsApp semeado), via `integracoes_customizadas`; `telefone.py` aplica máscara e valida os telefones das linhas de membros e participantes
+### Added (same commit, f17bb23)
+- Signable minutes: profile `PerfilReuniaoDeComissao` in the `assinatura_eletronica` engine (the present participants sign) and `Comissao Membro` as recipient; Signature Template seeded in `after_migrate`. Optional dependency: `assinatura.py` imports the app inside `try`
+- Convocation of participants through the *Convocar membros* button of the Reuniao de Comissao (WhatsApp, e-mail or both, with a seeded WhatsApp Template), via `integracoes_customizadas`; `telefone.py` applies the mask and validates the phones of member and participant rows
 
-### Alterado (mesmo commit, f17bb23): tudo no Workspace Gestor
-- Os Workspaces Indicadores, Comissoes, Documentacao da Unidade e Pulse Gestor foram removidos; seus cards (Documentação da Unidade, Triagem, Atendimentos, Relatórios de Indicadores, Comissões, Configurações de Comissões, Relatórios de Comissões) e o painel de gestão agora ficam no Workspace Gestor
-- Links do app versionados em `setup/gestor_links.json`; `ensure_pulse_gestor_workspace` (after_migrate) os aplica ao Gestor sem alterar o restante do conteúdo e apaga os Workspaces antigos
+### Changed (same commit, f17bb23): everything in the Gestor Workspace
+- The Indicadores, Comissoes, Documentacao da Unidade and Pulse Gestor Workspaces were removed; their cards (Unit Documentation, Triage, Visits, Indicator Reports, Committees, Committee Settings, Committee Reports) and the management panel now live in the Gestor Workspace
+- App links versioned in `setup/gestor_links.json`; `ensure_pulse_gestor_workspace` (after_migrate) applies them to Gestor without changing the rest of the content and deletes the old Workspaces
 
-## v0.10.0 — Patrimônio e formatos de impressão no padrão BHCL · 2026-10-14
+## v0.10.0 — Assets and print formats in the institutional standard · 2026-10-14
 
-> Tag fora da linha da `main` até a v0.10.2: o commit pertence ao ramo antigo, que só foi unido à `main` pelo merge `f515085`.
+> Tag outside the `main` line until v0.10.2: the commit belongs to the old branch, which was only joined to `main` by merge `f515085`.
 
-### Adicionado
-- Módulo Patrimonio com Print Formats no padrão institucional BHCL (`clm_base.html`, motor WeasyPrint): "Ficha do Ativo Imobilizado" (Asset) e "Ficha de Movimentacao de Ativos" (Asset Movement), definidos como padrão dos DocTypes via Property Setter no after_migrate; QR Code do registro gerado localmente (método Jinja `qr_data_uri`), sem serviço externo
-- Testes de padrão e de render dos Print Formats (`tests/test_print_formats.py`)
+### Added
+- Patrimonio module with Print Formats in the institutional standard (`clm_base.html`, WeasyPrint engine): "Ficha do Ativo Imobilizado" (Asset) and "Ficha de Movimentacao de Ativos" (Asset Movement), set as the DocTypes' default through a Property Setter in after_migrate; the record's QR Code generated locally (Jinja method `qr_data_uri`), with no external service
+- Standard and render tests of the Print Formats (`tests/test_print_formats.py`)
 
-### Alterado
-- "Ata de Reuniao de Comissao" e "Convocacao para Reuniao de Comissao" reescritos sobre `clm_base.html` e as macros do CLM (cabeçalho, rodapé, cartões, tabelas, selos de presença e cartão de assinatura padrão); a Ata passa a ser o formato padrão de Reuniao de Comissao
-- O app passa a exigir o `clm` (`required_apps`), que fornece a base de impressão e o motor de PDF (clm v0.1.95 ou superior)
-- As fichas antigas de ativos, que existiam só no banco ("Ficha de Ativo Imobilizado" e "Ficha de Movimentação de Ativos"), são desabilitadas sem ser apagadas; a acentuada é renomeada para "Ficha de Movimentacao de Ativos (antiga)" no before_migrate, porque a collation do banco a confundiria com o novo formato
+### Changed
+- "Ata de Reuniao de Comissao" and "Convocacao para Reuniao de Comissao" rewritten on top of `clm_base.html` and the CLM macros (header, footer, cards, tables, attendance tags and standard signature card); the Minutes become the default format of Reuniao de Comissao
+- The app now requires `clm` (`required_apps`), which provides the print base and the PDF engine (clm v0.1.95 or later)
+- The old asset sheets, which existed only in the database ("Ficha de Ativo Imobilizado" and "Ficha de Movimentação de Ativos"), are disabled without being deleted; the accented one is renamed to "Ficha de Movimentacao de Ativos (antiga)" in before_migrate, because the database collation would confuse it with the new format
 
-## v0.9.5 — Reescrita do README · 2026-10-13
+## v0.9.5 — README rewrite · 2026-10-13
 
-### Alterado
-- Só documentação: `README.md` reescrito (commit `ec05776`). `__version__` continuou em 0.9.3.
+### Changed
+- Documentation only: `README.md` rewritten (commit `ec05776`). `__version__` stayed at 0.9.3.
 
-## v0.9.4 — Faixas de versão em `pyproject.toml` · 2026-10-08
+## v0.9.4 — Version ranges in `pyproject.toml` · 2026-10-08
 
-### Alterado
-- `[tool.bench.frappe-dependencies]` limita `frappe` e `erpnext` a `>=15.0.0,<16.0.0` e o `pyproject.toml` ganha comentários sobre as dependências gerenciadas pelo bench (commit `dd071d3`; tag leve, sem anotação). `__version__` continuou em 0.9.3.
+### Changed
+- `[tool.bench.frappe-dependencies]` limits `frappe` and `erpnext` to `>=15.0.0,<16.0.0` and `pyproject.toml` gains comments about the bench-managed dependencies (commit `dd071d3`; lightweight tag, no annotation). `__version__` stayed at 0.9.3.
 
-## v0.9.3 — Relatório de atendimentos renomeado · 2026-09-28
+## v0.9.3 — Visits report renamed · 2026-09-28
 
-### Alterado
-- Relatório "Atendimentos Medicos por Periodo" renomeado para "Relatorio de Atendimentos por Periodo" (título "Relatório de Atendimentos por Período" via pt-BR.csv); o registro antigo é removido por patch
-- Workspace Indicadores ganha o card "Relatórios", com a Apuração de Classificação de Risco e o Relatório de Atendimentos por Período, que saem dos cards Triagem e Atendimentos (ajuste idempotente no after_migrate)
+### Changed
+- Report "Atendimentos Medicos por Periodo" renamed to "Relatorio de Atendimentos por Periodo" (title "Relatório de Atendimentos por Período" via pt-BR.csv); the old record is removed by a patch
+- The Indicadores Workspace gets the "Relatórios" card, with the Risk Classification Tally and the Visits Report by Period, which leave the Triage and Visits cards (idempotent adjustment in after_migrate)
 
-### Corrigido
-- Classificacao de Risco Diaria: `atualizar_total` usava a variável inexistente `line`, gerando ReferenceError ao editar uma quantidade
+### Fixed
+- Classificacao de Risco Diaria: `atualizar_total` used the non-existent variable `line`, causing a ReferenceError when editing a quantity
 
 ## v0.9.2 · 2026-09-28
 
-A tag aponta para o mesmo commit da v0.9.1 (`ef699ce`, `__version__` 0.9.1); não traz alteração própria. O patch `v0_9_2_renomeia_relatorio_de_atendimentos` saiu junto da v0.9.3.
+The tag points to the same commit as v0.9.1 (`ef699ce`, `__version__` 0.9.1); it carries no change of its own. Patch `v0_9_2_renomeia_relatorio_de_atendimentos` came out with v0.9.3.
 
-## v0.9.1 — Grade de especialidades alinhada · 2026-09-28
+## v0.9.1 — Specialties grid aligned · 2026-09-28
 
-### Corrigido
-- Grade de especialidades do Atendimento Medico Diario desalinhada em relação ao cabeçalho: a célula final de ação da linha agora é mantida vazia, como nas demais grades de Indicadores
+### Fixed
+- The specialties grid of Atendimento Medico Diario was misaligned with the header: the final row-action cell is now kept empty, as in the other Indicators grids
 
-## v0.9.0 — Atendimento médico diário por vigência · 2026-09-28
+## v0.9.0 — Daily medical visits by validity period · 2026-09-28
 
-### Adicionado
-- Relatório "Atendimentos Medicos por Periodo": atendimentos enviados por especialidade em um período, com percentual, dias com atendimento, média por dia lançado, resumo e gráfico; link no card Atendimentos do workspace Indicadores
+### Added
+- Report "Atendimentos Medicos por Periodo": submitted visits per specialty in a period, with percentage, days with visits, daily average per entered day, summary and chart; link in the Visits card of the Indicadores Workspace
 
-### Alterado
-- "Atendimento Diario" (e sua tabela filha) renomeado para "Atendimento Medico Diario" por patch pré-sincronização
-- A vigência de especialidades passa a mapear as especialidades atendidas pela unidade em um período, como a vigência do protocolo de triagem: o campo Setor saiu da vigência e do atendimento, e a busca e a unicidade do lançamento usam apenas unidade e data
+### Changed
+- "Atendimento Diario" (and its child table) renamed to "Atendimento Medico Diario" by a pre-sync patch
+- The specialties validity period now maps the specialties served by the unit in a period, like the triage protocol validity: the Sector field left the validity and the visit, and the lookup and entry uniqueness use only unit and date
 
-### Removido
-- Definição de metas por especialidade (quantidade e periodicidade) na vigência e no atendimento; as colunas antigas, inclusive Setor, são removidas do banco no migrate
+### Removed
+- Definition of goals per specialty (quantity and periodicity) in the validity and the visit; the old columns, including Sector, are removed from the database on migrate
 
-## v0.8.1 — Painel de Comissões sem gráficos · 2026-09-28
+## v0.8.1 — Committees panel without charts · 2026-09-28
 
-### Removido
-- Gráficos "Reuniões por mês", "Mandatos por status" e "Reuniões por unidade" do painel de Comissões (removidos também do banco no migrate)
+### Removed
+- Charts "Reuniões por mês", "Mandatos por status" and "Reuniões por unidade" of the Committees panel (also removed from the database on migrate)
 
-## v0.8.0 — Painel de gestão de Comissões · 2026-09-28
+## v0.8.0 — Committees management panel · 2026-09-28
 
-### Adicionado
-- Painel de gestão no topo do workspace Comissoes: cartões (reuniões nos próximos 7 dias, mandatos a vencer em 60 dias, comissões sem reunião há mais de 90 dias, mandatos vigentes, reuniões no mês e presença média dos últimos 90 dias) e dois blocos: "Próximas reuniões" e "Comissões que exigem atenção"
-- Number Cards e Dashboard Charts standard em comissoes/number_card e comissoes/dashboard_chart; dados calculados em comissoes/dashboard.py
-- Custom HTML Blocks criados/atualizados de forma idempotente no after_migrate (fonte em comissoes/custom_blocks)
+### Added
+- Management panel at the top of the Comissoes Workspace: cards (meetings in the next 7 days, terms expiring in 60 days, committees without a meeting for more than 90 days, terms in force, meetings in the month and average attendance of the last 90 days) and two blocks: "Próximas reuniões" and "Comissões que exigem atenção"
+- Standard Number Cards and Dashboard Charts in comissoes/number_card and comissoes/dashboard_chart; data computed in comissoes/dashboard.py
+- Custom HTML Blocks created/updated idempotently in after_migrate (source in comissoes/custom_blocks)
 
-## v0.7.0 — Data, hora e local da reunião · 2026-09-28
+## v0.7.0 — Meeting date, time and place · 2026-09-28
 
-### Adicionado
-- Campo "Local da reunião" na Reuniao de Comissao
+### Added
+- "Meeting place" field in the Reuniao de Comissao
 
-### Alterado
-- "Data da reunião" passa a "Data e hora da reunião" (Datetime); reuniões já cadastradas ficam com 00:00
-- Convocação e ata imprimem horário e local (o horário é omitido quando 00:00)
-- Relatório "Atividades de Comissão" mostra data e hora e o local, e o filtro de período considera o dia inteiro da data final
+### Changed
+- "Meeting date" becomes "Meeting date and time" (Datetime); already registered meetings stay at 00:00
+- Convocation and minutes print the time and place (the time is omitted when 00:00)
+- The "Atividades de Comissão" report shows date and time and the place, and the period filter considers the whole day of the end date
 
-## v0.6.0 — Convocação e ata de reunião · 2026-09-28
+## v0.6.0 — Meeting convocation and minutes · 2026-09-28
 
-### Adicionado
-- Formatos de impressão da Reuniao de Comissao: "Convocacao para Reuniao de Comissao" (data, horário e local para preencher, pauta e convocados) e "Ata de Reuniao de Comissao" (participantes com presença, pauta, deliberações, encaminhamentos e assinaturas dos presentes)
+### Added
+- Print formats of the Reuniao de Comissao: "Convocacao para Reuniao de Comissao" (date, time and place to fill in, agenda and summoned members) and "Ata de Reuniao de Comissao" (participants with attendance, agenda, resolutions, referrals and signatures of those present)
 
-## v0.5.1 — Nomes amigáveis no relatório de Comissões · 2026-09-28
+## v0.5.1 — Friendly names in the Committees report · 2026-09-28
 
-### Alterado
-- Relatório "Atividades de Comissão" mostra o nome da categoria, o nome da comissão e o mandato (início e status) no lugar dos IDs
-- Com a pauta incluída, os dados da reunião aparecem só na primeira linha; os demais itens mostram apenas o assunto
+### Changed
+- The "Atividades de Comissão" report shows the category name, the committee name and the term (start and status) instead of IDs
+- With the agenda included, the meeting data appears only on the first row; the other items show only the subject
 
-## v0.5.0 — Relatório Atividades de Comissão · 2026-09-28
+## v0.5.0 — Atividades de Comissão report · 2026-09-28
 
-### Adicionado
-- Relatório "Atividades de Comissão" (Comissoes): reuniões por período, com filtros de empresa e comissão, presentes/participantes por reunião e opção de incluir a pauta (uma linha por item)
-- Card "Relatórios" no workspace Comissoes
+### Added
+- "Atividades de Comissão" report (Comissoes): meetings per period, with company and committee filters, present/participants per meeting and the option to include the agenda (one row per item)
+- "Relatórios" card in the Comissoes Workspace
 
-## v0.4.0 — Categoria, empresa e regimento da comissão · 2026-09-28
+## v0.4.0 — Committee category, company and bylaws · 2026-09-28
 
-### Adicionado
-- Categoria de Comissao (Conselho, Comitê, Núcleo, Grupo de Trabalho etc.), vinculada ao Tipo de Comissao
-- Texto do regimento no Tipo de Comissao, com histórico de alterações (versão, data, responsável, motivo e texto anterior); o motivo é obrigatório ao alterar um regimento já salvo
+### Added
+- Categoria de Comissao (Council, Committee, Nucleus, Working Group etc.), linked to the Tipo de Comissao
+- Bylaws text in the Tipo de Comissao, with change history (version, date, person responsible, reason and previous text); the reason is mandatory when changing an already saved bylaw
 
-### Alterado
-- A empresa passa a ser cadastrada no Tipo de Comissao; o Mandato de Comissao a recebe do tipo, somente leitura
-- Categoria e Tipo de Comissao nomeados por ID (CATCOM-/TPCOM-), exibindo o nome amigável nos campos de vínculo; a unicidade do tipo passa a ser por nome e empresa
-- Migração copia a empresa dos mandatos para o tipo quando a origem é única
+### Changed
+- The company is now registered on the Tipo de Comissao; the Mandato de Comissao receives it from the type, read-only
+- Categoria and Tipo de Comissao named by ID (CATCOM-/TPCOM-), showing the friendly name in link fields; type uniqueness becomes by name and company
+- Migration copies the company from the terms to the type when the origin is unique
 
-## v0.3.0 — Módulo Comissões · 2026-09-28
+## v0.3.0 — Committees module · 2026-09-28
 
-### Adicionado
-- Módulo Comissões como subworkspace de Gestor: Tipo de Comissao, Mandato de Comissao, Membros de Comissao e Reuniao de Comissao (pauta, participantes com presença, deliberações e encaminhamentos)
-- Cópia dos membros da comissão para a lista de participantes da reunião
-- Tradução pt-BR do título do workspace, mantendo a rota em ASCII
+### Added
+- Committees module as a subworkspace of Gestor: Tipo de Comissao, Mandato de Comissao, Membros de Comissao and Reuniao de Comissao (agenda, participants with attendance, resolutions and referrals)
+- Copy of the committee members into the meeting's participant list
+- pt-BR translation of the Workspace title, keeping the route in ASCII
 
-### Alterado (commits sem tag desde a v0.2.9)
-- Workspace Indicadores organizado como subworkspace de Gestor (commit `0c086f7`)
+### Changed (commits without a tag since v0.2.9)
+- Indicadores Workspace organized as a subworkspace of Gestor (commit `0c086f7`)
 
-## v0.1.5 — Configurações Documentos da Unidade · 2026-09-21
+## v0.1.5 — Configuracoes Documentos da Unidade · 2026-09-21
 
-> Tag fora da ordem numérica (criada depois da v0.2.9), no commit `e8c70c6`; `app_version` do `hooks.py` é 0.1.5, mas `__version__` continuou em 0.1.4.
+> Tag out of numeric order (created after v0.2.9), on commit `e8c70c6`; `app_version` in `hooks.py` is 0.1.5, but `__version__` stayed at 0.1.4.
 
-### Adicionado
-- DocType único `Configuracoes Documentos da Unidade` (renomeado de `Configuracoes Pulse Gestor` pelo patch `rename_configuracoes_documentos_da_unidade`) com dias de alerta, modelo de e-mail e tabela filha `Destinatarios Vencimento Documento` (e-mails por empresa)
-- Validação: dias de alerta não negativos, empresa sem repetição, e-mails válidos e modelo obrigatório quando há destinatários
+### Added
+- Single DocType `Configuracoes Documentos da Unidade` (renamed from `Configuracoes Pulse Gestor` by patch `rename_configuracoes_documentos_da_unidade`) with alert days, e-mail template and child table `Destinatarios Vencimento Documento` (e-mails per company)
+- Validation: non-negative alert days, no repeated company, valid e-mails and mandatory template when there are recipients
 
-## v0.2.9 — Gráfico por nível na apuração de risco · 2026-09-21
+## v0.2.9 — Chart per level in the risk tally · 2026-09-21
 
-### Adicionado
-- O relatório de apuração da classificação de risco passa a devolver um gráfico (rosca) por nível
+### Added
+- The risk classification tally report now returns a chart (donut) per level
 
-## v0.2.8 — Especialidades e atendimentos diários · 2026-09-18
+## v0.2.8 — Specialties and daily visits · 2026-09-18
 
-### Adicionado
-- DocTypes `Especialidade`, `Unidade Especialidade Vigencia` (e a tabela filha de vigência), `Atendimento Diario` e `Atendimento Diario Especialidade` (renomeado para Atendimento Medico Diario na v0.9.0), com testes e seção no README
-- Nesta versão a vigência e o lançamento ainda tinham setor e metas por especialidade, removidos na v0.9.0
+### Added
+- DocTypes `Especialidade`, `Unidade Especialidade Vigencia` (and the validity child table), `Atendimento Diario` and `Atendimento Diario Especialidade` (renamed to Atendimento Medico Diario in v0.9.0), with tests and a README section
+- In this version the validity and the entry still had a sector and goals per specialty, removed in v0.9.0
 
-## v0.2.7 — Apuração da classificação de risco · 2026-09-18
+## v0.2.7 — Risk classification tally · 2026-09-18
 
-### Adicionado
-- Relatório de apuração da classificação de risco por unidade e período, com escalas separadas por protocolo e tempo-alvo
-- Card com o total de pacientes classificados no período
+### Added
+- Risk classification tally report per unit and period, with separate scales per protocol and target time
+- Card with the total of patients classified in the period
 
-### Alterado
-- Tempo máximo de espera preservado nas linhas diárias; migração preenche os lançamentos anteriores com o valor disponível no protocolo
+### Changed
+- Maximum waiting time preserved on the daily rows; migration fills the previous entries with the value available in the protocol
 
-### Corrigido
-- Identificador e rota do relatório em ASCII, com atualização do link no Workspace e migração do nome legado
+### Fixed
+- Report identifier and route in ASCII, with the link updated in the Workspace and migration of the legacy name
 
-## v0.2.6 — DocTypes de indicadores sem acentos · 2026-09-18
+## v0.2.6 — Indicator DocTypes without accents · 2026-09-18
 
-### Alterado
-- Nomes dos DocTypes de indicadores sem acentos
-- Classificação diária registra apenas a quantidade classificada por nível
-- Níveis do protocolo mantêm cor e tempo máximo de espera
+### Changed
+- Names of the indicator DocTypes without accents
+- Daily classification records only the quantity classified per level
+- Protocol levels keep color and maximum waiting time
 
-## v0.2.5 — Edição direta nos grids de indicadores · 2026-09-18
+## v0.2.5 — Direct editing in the indicator grids · 2026-09-18
 
-> Sem tag e sem commit próprio: o texto entrou junto do commit da v0.2.6 (`67ecb49`).
+> No tag and no commit of its own: the text came together with the v0.2.6 commit (`67ecb49`).
 
-### Alterado
-- Edição direta dos níveis no protocolo e das quantidades na classificação diária, sem abrir a linha sobreposta
-- Destaque das linhas pela cor do protocolo, com fundo suave e faixa lateral
-- Cor dos níveis preservada nos lançamentos diários e preenchida nos registros anteriores durante a migração
-- Alinhamento das linhas com o cabeçalho do grid ao ocultar a ação de expansão
+### Changed
+- Direct editing of the levels in the protocol and of the quantities in the daily classification, without opening the overlay row
+- Row highlighting by the protocol color, with a soft background and a side strip
+- Level color preserved in the daily entries and filled in the previous records during migration
+- Alignment of the rows with the grid header when hiding the expand action
 
-## v0.2.4 — Lançamento diário da classificação de risco · 2026-09-18
+## v0.2.4 — Daily risk classification entry · 2026-09-18
 
-> Sem tag e sem commit próprio: o texto entrou junto do commit da v0.2.6 (`67ecb49`).
+> No tag and no commit of its own: the text came together with the v0.2.6 commit (`67ecb49`).
 
-### Adicionado
-- Lançamento diário da classificação de risco, com protocolo e níveis preenchidos pela vigência da unidade
-- Total calculado, validação das quantidades e envio que bloqueia a edição
-- Link para o lançamento no quadro **Triagem** do Workspace **Indicadores**
+### Added
+- Daily risk classification entry, with protocol and levels filled in from the unit's validity period
+- Calculated total, quantity validation and a submit that blocks editing
+- Link to the entry in the **Triagem** card of the **Indicadores** Workspace
 
-### Corrigido
-- Compatibilidade de leitura e gravação dos DocTypes de indicadores no Query Builder deste bench
-- Ordenação da consulta de sobreposição de vigências
+### Fixed
+- Read and write compatibility of the indicator DocTypes in this bench's Query Builder
+- Ordering of the validity-overlap query
 
-## v0.2.3 — Quadro de links de Triagem · 2026-09-18
+## v0.2.3 — Triage link card · 2026-09-18
 
-### Adicionado
-- Quadro de links para os cadastros de triagem no Workspace **Indicadores**
-- Sincronização idempotente do quadro em Workspaces já instalados
-- Memória das convenções do app em `AGENTS.md`
+### Added
+- Link card for the triage registries in the **Indicadores** Workspace
+- Idempotent synchronization of the card in already installed Workspaces
+- Memory of the app conventions in `AGENTS.md`
 
-## v0.2.2 — Ordenação da lista de vigências · 2026-09-18
+## v0.2.2 — Validity list ordering · 2026-09-18
 
-### Corrigido
-- Listagem de vigências por unidade com ordenação compatível com o validador SQL do Frappe 15
+### Fixed
+- Listing of validity periods per unit with ordering compatible with Frappe 15's SQL validator
 
-## v0.2.1 — Visibilidade do Workspace Indicadores · 2026-09-18
+## v0.2.1 — Indicadores Workspace visibility · 2026-09-18
 
-### Corrigido
-- Visibilidade do Workspace **Indicadores** após instalação ou migração
-- Permissões completas de `System Manager` e `Administrator` nos cadastros de indicadores
-- Acesso explícito desses papéis ao Workspace **Indicadores**
+### Fixed
+- Visibility of the **Indicadores** Workspace after installation or migration
+- Full `System Manager` and `Administrator` permissions on the indicator registries
+- Explicit access of these roles to the **Indicadores** Workspace
 
-## v0.2.0 — Indicadores e protocolos de triagem · 2026-09-18
+## v0.2.0 — Indicators and triage protocols · 2026-09-18
 
-### Adicionado
-- Workspace **Indicadores** com protocolos de triagem e vigências por unidade
-- Níveis configuráveis com cor e tempo máximo de espera
-- Validação de períodos sobrepostos para cada unidade (`Company`)
+### Added
+- **Indicadores** Workspace with triage protocols and validity periods per unit
+- Configurable levels with color and maximum waiting time
+- Validation of overlapping periods for each unit (`Company`)
 
-## v0.1.4 — Card da Documentação da Unidade separado · 2026-08-17
+## v0.1.4 — Unit Documentation card separated · 2026-08-17
 
-### Corrigido
-- Links da documentação saem do card Patrimônio e vão para o card **Documentação da Unidade**
+### Fixed
+- Documentation links leave the Patrimônio card and go to the **Documentação da Unidade** card
 
-## v0.1.3 — Card na seção Módulos · 2026-08-17
+## v0.1.3 — Card in the Modules section · 2026-08-17
 
-### Alterado
-- Card **Documentação da Unidade** na seção Módulos do Workspace Gestor
+### Changed
+- **Documentação da Unidade** card in the Modules section of the Gestor Workspace
 
-## v0.1.2 — Atalhos no Workspace Gestor · 2026-08-17
+## v0.1.2 — Shortcuts in the Gestor Workspace · 2026-08-17
 
-### Alterado
-- Atalhos da Documentação da Unidade passam a ficar no Workspace **Gestor**
-- Workspace Pulse Gestor oculto no menu lateral
+### Changed
+- Unit Documentation shortcuts now live in the **Gestor** Workspace
+- Pulse Gestor Workspace hidden in the sidebar
 
-## v0.1.1 — Correção do nome do Workspace · 2026-08-17
+## v0.1.1 — Workspace name fix · 2026-08-17
 
-### Corrigido
-- Workspace deixou de usar o mesmo nome do DocType (o botão Novo abria um Espaço de Trabalho)
+### Fixed
+- The Workspace stopped using the same name as the DocType (the New button opened a Workspace)
 
-## v0.1.0 — Documentação da Unidade · 2026-08-17
+## v0.1.0 — Unit Documentation · 2026-08-17
 
-### Adicionado
+### Added
 
-- App `pulse_gestor` com o módulo Documentação da Unidade
-- DocType `Tipo de Documento da Unidade` para cadastro dos tipos de PDF
-- DocType `Documentacao da Unidade` vinculado à unidade (`Company`)
-- Vigência opcional, anexo PDF e badge de status (Válido / Vencido / Sem validade)
-- Notificação de vencimento próximo e no dia do vencimento
-- Job diário para atualizar o status
-- Workspace e papéis Pulse Gestor Manager / Viewer
+- `pulse_gestor` app with the Unit Documentation module
+- `Tipo de Documento da Unidade` DocType for registering the PDF types
+- `Documentacao da Unidade` DocType linked to the unit (`Company`)
+- Optional validity, PDF attachment and status badge (Válido / Vencido / Sem validade)
+- Notification for upcoming expiry and on the expiry day
+- Daily job to update the status
+- Workspace and roles Pulse Gestor Manager / Viewer

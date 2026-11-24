@@ -4,7 +4,7 @@ from frappe.model.document import Document
 from frappe.utils import getdate
 
 from pulse_gestor.indicadores.doctype.unidade_protocolo_vigencia.unidade_protocolo_vigencia import (
-	periodos_se_sobrepoem,
+	periods_overlap,
 )
 
 
@@ -17,29 +17,29 @@ class UnidadeEspecialidadeVigencia(Document):
 		if not self.especialidades:
 			frappe.throw(_("Inclua pelo menos uma especialidade."))
 
-		vistas = set()
-		for linha in self.especialidades:
-			if not linha.especialidade:
+		seen = set()
+		for row in self.especialidades:
+			if not row.especialidade:
 				frappe.throw(_("Informe a especialidade em todas as linhas."))
-			if linha.especialidade in vistas:
+			if row.especialidade in seen:
 				frappe.throw(
-					_("A especialidade {0} foi informada mais de uma vez.").format(linha.especialidade)
+					_("A especialidade {0} foi informada mais de uma vez.").format(row.especialidade)
 				)
-			vistas.add(linha.especialidade)
+			seen.add(row.especialidade)
 
-		for periodo in frappe.get_all(
+		for period in frappe.get_all(
 			"Unidade Especialidade Vigencia",
 			filters={"unidade": self.unidade, "name": ["!=", self.name or ""]},
 			fields=["name", "data_inicio_vigencia", "data_fim_vigencia"],
 		):
-			if periodos_se_sobrepoem(
+			if periods_overlap(
 				self.data_inicio_vigencia,
 				self.data_fim_vigencia,
-				periodo.data_inicio_vigencia,
-				periodo.data_fim_vigencia,
+				period.data_inicio_vigencia,
+				period.data_fim_vigencia,
 			):
 				frappe.throw(
 					_("A unidade já possui uma vigência de especialidades nesse período ({0}).").format(
-						periodo.name
+						period.name
 					)
 				)

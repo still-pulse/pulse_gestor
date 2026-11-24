@@ -1,79 +1,83 @@
-"""Integração opcional com os apps `assinatura_eletronica` e `integracoes_customizadas`.
+"""Optional integration with the `assinatura_eletronica` and `integracoes_customizadas` apps.
 
-- Comissao Membro como signatário (nome, telefone e e-mail da linha do cadastro).
-- Perfil de assinatura da ata de Reuniao de Comissao: assinam os participantes presentes.
-- Termo de Responsabilidade do custodiante: no Asset (custódia inicial, assina o `custodian`) e na Asset Movement
-  (assina cada `to_employee`; o Receipt criado pelo ERPNext ao submeter o Asset fica de fora para não duplicar).
-- Semeadura idempotente dos Modelos de Assinatura e do Modelo WhatsApp de convocação (after_migrate).
+- Comissao Membro as signatory (name, phone and e-mail from the registry row).
+- Signature profile of the Reuniao de Comissao minutes: the present participants sign.
+- Custodian responsibility term: on the Asset (initial custody, signed by `custodian`) and on the Asset Movement
+  (signed by each `to_employee`; the Receipt created by ERPNext when submitting the Asset is left out to avoid duplicates).
+- Idempotent seeding of the Signature Templates and the WhatsApp convocation Template (after_migrate).
+
+The profile base class and its Portuguese method/attribute names (`conteudo`, `signatarios`, ...) are the API of
+`assinatura_eletronica`; they are kept as is. The import is guarded, so this module loads without that app.
 """
 
 import frappe
 from frappe import _
 from frappe.utils import cstr, format_datetime, strip_html
 
-REUNIAO = "Reuniao de Comissao"
-ATIVO = "Asset"
-MOVIMENTACAO = "Asset Movement"
-CONTROLE_BHCL = "custom_número_de_controle_bhcl"
-PATRIMONIO_PREFEITURA = "custom_número_patrimônio_prefeitura"
-MODELO_CONVOCACAO = "Convocação de Reunião de Comissão"
+MEETING = "Reuniao de Comissao"
+ASSET = "Asset"
+ASSET_MOVEMENT = "Asset Movement"
+CONTROL_NUMBER_FIELD = "custom_número_de_controle_bhcl"
+MUNICIPAL_ASSET_NUMBER_FIELD = "custom_número_patrimônio_prefeitura"
+CONVOCATION_TEMPLATE = "Convocação de Reunião de Comissão"
 
 try:
 	from assinatura_eletronica.destinatarios import Destinatario
 	from assinatura_eletronica.perfil import PerfilAssinatura, Signatario
-except ImportError:  # app opcional: o módulo continua importável sem ele
+except ImportError:  # optional app: the module stays importable without it
 	Destinatario = PerfilAssinatura = Signatario = None
 
 
-def nome_comissao(doc):
+def get_committee_name(doc):
 	return frappe.db.get_value("Tipo de Comissao", doc.tipo_comissao, "nome_tipo") or doc.tipo_comissao
 
 
-def destinatario_membro(name):
-	linha = frappe.db.get_value("Comissao Membro", name, ["nome", "telefone", "email"], as_dict=True)
-	if not linha:
+def member_recipient(name):
+	row = frappe.db.get_value("Comissao Membro", name, ["nome", "telefone", "email"], as_dict=True)
+	if not row:
 		return None
-	# O WhatsApp vale para todos (padrão do motor); sem telefone o motor pula o canal. O aceite formal vem no link (OTP + declaração).
-	return Destinatario(linha.nome, linha.telefone, linha.email, aceita_eletronica=True)
+	# WhatsApp applies to everyone (engine default); without a phone the engine skips the channel. The formal
+	# acceptance happens on the link (OTP + declaration).
+	return Destinatario(row.nome, row.telefone, row.email, aceita_eletronica=True)
 
 
 if PerfilAssinatura:
 
-	class PerfilReuniaoDeComissao(PerfilAssinatura):
+	class CommitteeMeetingProfile(PerfilAssinatura):
 		prefixo_arquivo = "Ata-Comissao"
 		situacoes = {"Concluído": "assinatura", "Recusado": "recusa"}  # noqa: RUF012
 
-		def _presentes(self, doc):
+		def _present_participants(self, doc):
 			return [p for p in doc.participantes if p.membro_origem and p.status_presenca == "Presente"]
 
 		def conteudo(self, doc) -> dict:
 			return {
-				"comissao": cstr(nome_comissao(doc)),
+				"comissao": cstr(get_committee_name(doc)),
 				"mandato": cstr(doc.mandato_comissao),
 				"data_reuniao": cstr(doc.data_reuniao),
 				"local": cstr(doc.local_reuniao),
 				"pauta": [cstr(p.assunto) for p in doc.pauta],
 				"deliberacoes": strip_html(doc.deliberacoes or ""),
 				"encaminhamentos": strip_html(doc.encaminhamentos_conclusoes or ""),
-				"presentes": sorted(p.membro_origem for p in self._presentes(doc)),
+				"presentes": sorted(p.membro_origem for p in self._present_participants(doc)),
 			}
 
 		def signatarios(self, doc):
 			return [
 				Signatario("Comissao Membro", p.membro_origem, p.funcao or "Membro", 1)
-				for p in self._presentes(doc)
+				for p in self._present_participants(doc)
 			]
 
 		def validar_solicitacao(self, doc):
 			super().validar_solicitacao(doc)
-			if not self._presentes(doc):
+			if not self._present_participants(doc):
 				frappe.throw(_("A reunião não tem participantes presentes vindos do cadastro de membros."))
 
 		def resumo_publico(self, doc, signatario) -> dict:
 			return {
 				"secao": _("Ata de reunião"),
 				"fatos": [
-					(_("Comissão"), nome_comissao(doc)),
+					(_("Comissão"), get_committee_name(doc)),
 					(_("Reunião"), format_datetime(doc.data_reuniao)),
 					(_("Local"), doc.local_reuniao),
 					(_("Deliberações"), strip_html(doc.deliberacoes or "")[:400]),
@@ -82,32 +86,32 @@ if PerfilAssinatura:
 			}
 
 		def dados_verificacao(self, doc) -> list[tuple]:
-			return [(_("Comissão"), nome_comissao(doc)), (_("Empresa"), doc.empresa)]
+			return [(_("Comissão"), get_committee_name(doc)), (_("Empresa"), doc.empresa)]
 
 
-def nome_colaborador(employee):
+def get_employee_name(employee):
 	return (frappe.db.get_value("Employee", employee, "employee_name") or employee) if employee else ""
 
 
-def linhas_recebidas(doc, employee=None):
-	"""Linhas da movimentação com custodiante de destino (de um colaborador, se informado)."""
+def received_rows(doc, employee=None):
+	"""Movement rows with a destination custodian (of one employee, if given)."""
 	return [r for r in doc.assets if r.to_employee and (employee is None or r.to_employee == employee)]
 
 
 if PerfilAssinatura:
 
-	class PerfilTermoDoAtivo(PerfilAssinatura):
+	class AssetTermProfile(PerfilAssinatura):
 		prefixo_arquivo = "Termo-Responsabilidade-Ativo"
 
 		def conteudo(self, doc) -> dict:
-			# Só a identificação e a custódia: depreciação e status mudam sem mudar o termo.
+			# Only identification and custody: depreciation and status change without changing the term.
 			return {
 				"ativo": doc.name,
 				"nome": cstr(doc.asset_name),
 				"item": cstr(doc.item_code),
 				"categoria": cstr(doc.asset_category),
-				"controle_bhcl": cstr(doc.get(CONTROLE_BHCL)),
-				"patrimonio_prefeitura": cstr(doc.get(PATRIMONIO_PREFEITURA)),
+				"controle_bhcl": cstr(doc.get(CONTROL_NUMBER_FIELD)),
+				"patrimonio_prefeitura": cstr(doc.get(MUNICIPAL_ASSET_NUMBER_FIELD)),
 				"empresa": cstr(doc.company),
 				"localizacao": cstr(doc.location),
 				"custodiante": cstr(doc.custodian),
@@ -126,8 +130,8 @@ if PerfilAssinatura:
 				"secao": _("Termo de responsabilidade"),
 				"fatos": [
 					(_("Bem"), doc.asset_name),
-					(_("Controle BHCL"), doc.get(CONTROLE_BHCL)),
-					(_("Patrimônio Prefeitura"), doc.get(PATRIMONIO_PREFEITURA)),
+					(_("Controle BHCL"), doc.get(CONTROL_NUMBER_FIELD)),
+					(_("Patrimônio Prefeitura"), doc.get(MUNICIPAL_ASSET_NUMBER_FIELD)),
 					(_("Categoria"), doc.asset_category),
 					(_("Localização"), doc.location),
 					(_("Empresa"), doc.company),
@@ -136,12 +140,12 @@ if PerfilAssinatura:
 			}
 
 		def dados_verificacao(self, doc) -> list[tuple]:
-			return [(_("Empresa"), doc.company), (_("Controle BHCL"), doc.get(CONTROLE_BHCL))]
+			return [(_("Empresa"), doc.company), (_("Controle BHCL"), doc.get(CONTROL_NUMBER_FIELD))]
 
 		def contexto_mensagem(self, doc) -> dict:
 			return {"bem": cstr(doc.asset_name)}
 
-	class PerfilTermoDeMovimentacao(PerfilAssinatura):
+	class AssetMovementTermProfile(PerfilAssinatura):
 		prefixo_arquivo = "Termo-Responsabilidade-Movimentacao"
 
 		def conteudo(self, doc) -> dict:
@@ -162,8 +166,8 @@ if PerfilAssinatura:
 			}
 
 		def signatarios(self, doc):
-			custodiantes = dict.fromkeys(r.to_employee for r in linhas_recebidas(doc))
-			return [Signatario("Employee", emp, "Custodiante", 1) for emp in custodiantes]
+			custodians = dict.fromkeys(r.to_employee for r in received_rows(doc))
+			return [Signatario("Employee", emp, "Custodiante", 1) for emp in custodians]
 
 		def validar_solicitacao(self, doc):
 			super().validar_solicitacao(doc)
@@ -173,35 +177,35 @@ if PerfilAssinatura:
 						"O recebimento inicial é assinado no próprio ativo. Solicite o termo no cadastro do ativo."
 					)
 				)
-			if not linhas_recebidas(doc):
+			if not received_rows(doc):
 				frappe.throw(
 					_("Nenhum bem desta movimentação foi entregue a um custodiante (Para Funcionário).")
 				)
 
 		def resumo_publico(self, doc, signatario) -> dict:
-			# Só os bens do próprio signatário.
-			linhas = [
+			# Only the signatory's own assets.
+			rows = [
 				[
 					{
 						"texto": r.asset_name or r.asset,
-						"detalhe": cstr(frappe.db.get_value(ATIVO, r.asset, CONTROLE_BHCL)),
+						"detalhe": cstr(frappe.db.get_value(ASSET, r.asset, CONTROL_NUMBER_FIELD)),
 					},
-					{"texto": r.source_location or "—", "detalhe": nome_colaborador(r.from_employee)},
+					{"texto": r.source_location or "—", "detalhe": get_employee_name(r.from_employee)},
 					r.target_location or "—",
 				]
-				for r in linhas_recebidas(doc, signatario.parte)
+				for r in received_rows(doc, signatario.parte)
 			]
 			return {
 				"secao": _("Termo de responsabilidade"),
 				"fatos": [
-					(_("Custodiante"), nome_colaborador(signatario.parte)),
+					(_("Custodiante"), get_employee_name(signatario.parte)),
 					(_("Empresa"), doc.company),
 					(_("Data da movimentação"), format_datetime(doc.transaction_date)),
 				],
 				"tabela": {
 					"titulo": _("Bens sob sua responsabilidade"),
 					"colunas": [_("Bem"), _("Origem"), _("Destino")],
-					"linhas": linhas,
+					"linhas": rows,
 				},
 			}
 
@@ -213,25 +217,25 @@ if PerfilAssinatura:
 			]
 
 
-def _msg_link(documento):
+def _link_message(document):
 	return (
-		f"Olá, {{{{ nome }}}}! {documento} está disponível para a sua assinatura. "
+		f"Olá, {{{{ nome }}}}! {document} está disponível para a sua assinatura. "
 		"Acesse o link abaixo (válido por {{ validade_horas }} horas):\n{{ link }}"
 	)
 
 
-def _msg_comprovante(documento):
+def _receipt_message(document):
 	return (
-		f"Olá, {{{{ nome }}}}! Segue o comprovante da {{{{ situacao }}}} {documento}.\n"
+		f"Olá, {{{{ nome }}}}! Segue o comprovante da {{{{ situacao }}}} {document}.\n"
 		"Código de verificação: *{{ codigo }}*\nConfira a autenticidade em:\n{{ link_verificacao }}"
 	)
 
 
-COMUM = {
+COMMON = {
 	"ativo": 1,
 	"modo": "Paralelo",
 	"exigir_aceite_eletronico": 1,
-	"exigir_aceite_whatsapp": 1,  # respeita a desabilitação do WhatsApp; o padrão é habilitado
+	"exigir_aceite_whatsapp": 1,  # respects WhatsApp being disabled; enabled by default
 	"validade_link_horas": 72,
 	"emitir_comprovante": 1,
 	"enviar_comprovante": 1,
@@ -239,15 +243,15 @@ COMUM = {
 	"texto_consentimento": "Li e concordo com a declaração acima.",
 }
 
-DECLARACAO_RESPONSABILIDADE = (
+RESPONSIBILITY_DECLARATION = (
 	"<p>Declaro que recebi {bens} em condições de uso e assumo a responsabilidade pela sua guarda, conservação e "
 	"uso adequado, exclusivamente no interesse da instituição.</p>"
 	"<p>Comprometo-me a comunicar imediatamente ao setor de Patrimônio qualquer dano, defeito, extravio, furto ou "
 	"necessidade de transferência, e a devolvê-{pronome} quando solicitado ou no meu desligamento.</p>"
 )
 
-MODELOS = {
-	REUNIAO: {
+TEMPLATES = {
+	MEETING: {
 		"print_format": "Ata de Reuniao de Comissao",
 		"exigir_submissao": 0,
 		"titulo": "Ata de reunião de comissão",
@@ -261,10 +265,10 @@ MODELOS = {
 			"das deliberações na ata.</p>"
 		),
 		"msg_otp": "Seu código para assinar a ata é {{ codigo }}. Ele vale por {{ validade_minutos }} minutos. Não o compartilhe.",
-		"msg_link": _msg_link("A ata da reunião da comissão"),
-		"msg_comprovante": _msg_comprovante("da ata"),
+		"msg_link": _link_message("A ata da reunião da comissão"),
+		"msg_comprovante": _receipt_message("da ata"),
 	},
-	ATIVO: {
+	ASSET: {
 		"print_format": "Termo de Responsabilidade do Ativo",
 		"exigir_submissao": 1,
 		"titulo": "Termo de responsabilidade",
@@ -273,12 +277,12 @@ MODELOS = {
 		"assunto_email": "Termo de responsabilidade de bem patrimonial",
 		"setor": "Patrimônio",
 		"texto_suporte": "Em caso de dúvida, procure o setor de Patrimônio da sua unidade.",
-		"texto_declaracao": DECLARACAO_RESPONSABILIDADE.format(bens="o bem acima identificado", pronome="lo"),
+		"texto_declaracao": RESPONSIBILITY_DECLARATION.format(bens="o bem acima identificado", pronome="lo"),
 		"msg_otp": "Seu código para assinar o termo de responsabilidade é {{ codigo }}. Ele vale por {{ validade_minutos }} minutos. Não o compartilhe.",
-		"msg_link": _msg_link("O termo de responsabilidade do bem {{ bem }}"),
-		"msg_comprovante": _msg_comprovante("do termo de responsabilidade"),
+		"msg_link": _link_message("O termo de responsabilidade do bem {{ bem }}"),
+		"msg_comprovante": _receipt_message("do termo de responsabilidade"),
 	},
-	MOVIMENTACAO: {
+	ASSET_MOVEMENT: {
 		"print_format": "Termo de Responsabilidade de Movimentacao",
 		"exigir_submissao": 1,
 		"titulo": "Termo de responsabilidade",
@@ -287,40 +291,42 @@ MODELOS = {
 		"assunto_email": "Termo de responsabilidade de bens patrimoniais",
 		"setor": "Patrimônio",
 		"texto_suporte": "Em caso de dúvida, procure o setor de Patrimônio da sua unidade.",
-		"texto_declaracao": DECLARACAO_RESPONSABILIDADE.format(
+		"texto_declaracao": RESPONSIBILITY_DECLARATION.format(
 			bens="os bens acima relacionados", pronome="los"
 		),
 		"msg_otp": "Seu código para assinar o termo de responsabilidade é {{ codigo }}. Ele vale por {{ validade_minutos }} minutos. Não o compartilhe.",
-		"msg_link": _msg_link("O termo de responsabilidade dos bens recebidos"),
-		"msg_comprovante": _msg_comprovante("do termo de responsabilidade"),
+		"msg_link": _link_message("O termo de responsabilidade dos bens recebidos"),
+		"msg_comprovante": _receipt_message("do termo de responsabilidade"),
 	},
 }
 
 
-def ensure_modelos_assinatura():
-	"""Cria os Modelos de Assinatura que faltam (só para DocTypes existentes no site); nunca sobrescreve."""
+def ensure_signature_templates():
+	"""Create the missing Signature Templates (only for DocTypes present on the site); never overwrites."""
 	if not frappe.db.exists("DocType", "Modelo de Assinatura"):
 		return
-	for doctype, valores in MODELOS.items():
+	for doctype, values in TEMPLATES.items():
 		if not frappe.db.exists("DocType", doctype) or frappe.db.exists("Modelo de Assinatura", doctype):
 			continue
-		if not frappe.db.exists("Print Format", valores["print_format"]):
-			valores = {k: v for k, v in valores.items() if k != "print_format"}
-		modelo = frappe.get_doc({"doctype": "Modelo de Assinatura", "documento": doctype, **COMUM, **valores})
-		modelo.flags.ignore_permissions = True
-		modelo.insert()
+		if not frappe.db.exists("Print Format", values["print_format"]):
+			values = {k: v for k, v in values.items() if k != "print_format"}
+		template = frappe.get_doc(
+			{"doctype": "Modelo de Assinatura", "documento": doctype, **COMMON, **values}
+		)
+		template.flags.ignore_permissions = True
+		template.insert()
 
 
-def ensure_modelo_convocacao():
+def ensure_convocation_template():
 	if not frappe.db.exists("DocType", "Modelo WhatsApp") or frappe.db.exists(
-		"Modelo WhatsApp", MODELO_CONVOCACAO
+		"Modelo WhatsApp", CONVOCATION_TEMPLATE
 	):
 		return
 	frappe.get_doc(
 		{
 			"doctype": "Modelo WhatsApp",
-			"titulo": MODELO_CONVOCACAO,
-			"documento": REUNIAO,
+			"titulo": CONVOCATION_TEMPLATE,
+			"documento": MEETING,
 			"ativo": 1,
 			"assunto_email": "Convocação para reunião – {{ extra.comissao }}",  # noqa: RUF001
 			"mensagem": (
@@ -337,5 +343,5 @@ def ensure_modelo_convocacao():
 
 
 def after_migrate():
-	ensure_modelos_assinatura()
-	ensure_modelo_convocacao()
+	ensure_signature_templates()
+	ensure_convocation_template()

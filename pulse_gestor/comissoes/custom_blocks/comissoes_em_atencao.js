@@ -1,14 +1,14 @@
-const alvo = root_element.querySelector(".pg-conteudo");
+const target = root_element.querySelector(".pg-conteudo");
 const esc = (v) => frappe.utils.escape_html(v || "");
 
-frappe.xcall("pulse_gestor.comissoes.dashboard.comissoes_em_atencao").then((itens) => {
-	if (!itens.length) {
-		alvo.innerHTML = '<div class="pg-vazio">Nenhuma pendência. Tudo em dia.</div>';
+frappe.xcall("pulse_gestor.comissoes.dashboard.committees_needing_attention").then((items) => {
+	if (!items.length) {
+		target.innerHTML = '<div class="pg-vazio">Nenhuma pendência. Tudo em dia.</div>';
 		return;
 	}
-	alvo.innerHTML =
+	target.innerHTML =
 		'<ul class="pg-lista">' +
-		itens
+		items
 			.slice(0, 10)
 			.map(
 				(i) => `<li class="pg-item">

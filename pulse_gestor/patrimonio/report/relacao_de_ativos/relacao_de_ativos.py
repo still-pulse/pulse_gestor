@@ -1,11 +1,11 @@
 from frappe import _
 
-from pulse_gestor.patrimonio.report.utils import buscar_ativos, colunas_do_ativo, resumo
+from pulse_gestor.patrimonio.report.utils import asset_columns, build_summary, fetch_assets
 
 
 def execute(filters=None):
-	ativos = buscar_ativos(filters)
-	return get_columns(), ativos, None, None, resumo(ativos)
+	assets = fetch_assets(filters)
+	return get_columns(), assets, None, None, build_summary(assets)
 
 
 def get_columns():
@@ -26,5 +26,5 @@ def get_columns():
 			"options": "Location",
 			"width": 220,
 		},
-		*colunas_do_ativo(),
+		*asset_columns(),
 	]

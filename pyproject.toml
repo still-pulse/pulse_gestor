@@ -1,11 +1,12 @@
 [project]
 name = "pulse_gestor"
 authors = [
-	{ name = "Still Pulse", email = "dev@stillpulse.com.br" }
+	{ name = "StillPulse Tecnologia LTDA", email = "dev@stillpulse.com.br" }
 ]
-description = "Documentação da Unidade — cadastro de documentos por empresa/unidade com validade e alerta de vencimento"
+description = "Unit management: unit documentation with expiry alerts, clinical indicators, committees and asset records"
 requires-python = ">=3.11"
 readme = "README.md"
+license = { file = "license.txt" }
 dynamic = ["version"]
 dependencies = [
 	# "frappe~=15.0.0" # Installed and managed by bench.

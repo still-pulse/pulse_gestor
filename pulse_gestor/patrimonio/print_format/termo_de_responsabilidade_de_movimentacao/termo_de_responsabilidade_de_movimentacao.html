@@ -2,8 +2,8 @@
 {% from "clm/templates/print/clm_macros.html" import card, field_row, textbox, date, datetime, or_dash with context %}
 {% from "pulse_gestor/templates/print/patrimonio_macros.html" import purpose_label, control_number, employee_name, place, with_qr with context %}
 {% from "pulse_gestor/templates/print/comissoes_macros.html" import registro_assinaturas with context %}
-{#- Termo assinado por quem recebe os bens (to_employee) no motor assinatura_eletronica
-    (perfil pulse_gestor.assinatura.PerfilTermoDeMovimentacao): um quadro e uma assinatura por custodiante. -#}
+{#- Term signed by whoever receives the assets (to_employee) in the assinatura_eletronica engine
+    (perfil pulse_gestor.signature_profiles.AssetMovementTermProfile): one box and one signature per custodian. -#}
 {% set texto_declaracao = frappe.db.get_value("Modelo de Assinatura", "Asset Movement", "texto_declaracao") %}
 {%- set ns = namespace(custodiantes=[]) %}
 {%- for d in (doc.assets or []) if d.to_employee and d.to_employee not in ns.custodiantes %}{% set ns.custodiantes = ns.custodiantes + [d.to_employee] %}{% endfor %}

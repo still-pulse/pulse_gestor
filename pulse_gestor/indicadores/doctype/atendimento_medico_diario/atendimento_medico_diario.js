@@ -1,86 +1,84 @@
 frappe.ui.form.on("Atendimento Medico Diario", {
 	onload(frm) {
 		if (frm.is_new() && frm.doc.unidade && frm.doc.data) {
-			carregar_especialidades(frm);
+			load_specialties(frm);
 		}
 	},
 	refresh(frm) {
-		configurar_grade(frm);
+		configure_grid(frm);
 	},
 	unidade(frm) {
-		carregar_especialidades(frm);
+		load_specialties(frm);
 	},
 	data(frm) {
-		carregar_especialidades(frm);
+		load_specialties(frm);
 	},
 });
 
 frappe.ui.form.on("Atendimento Medico Diario Especialidade", {
 	quantidade(frm) {
-		atualizar_total(frm);
+		update_total(frm);
 	},
 });
 
-function atualizar_total(frm) {
+function update_total(frm) {
 	const total = (frm.doc.especialidades || []).reduce(
-		(soma, linha) => soma + (Number(linha.quantidade) || 0),
+		(sum, row) => sum + (Number(row.quantidade) || 0),
 		0
 	);
 	frm.set_value("total_dia", total);
 }
 
-async function carregar_especialidades(frm) {
+async function load_specialties(frm) {
 	if (!frm.is_new() && frm.doc.docstatus !== 0) return;
-	const { unidade, data } = frm.doc;
-	const requisicao = (frm._atendimento_requisicao || 0) + 1;
-	frm._atendimento_requisicao = requisicao;
+	const { unidade: unit, data: date } = frm.doc;
+	const request_id = (frm._entry_request_id || 0) + 1;
+	frm._entry_request_id = request_id;
 	frm.set_value("vigencia", null);
 	frm.clear_table("especialidades");
 	frm.refresh_field("especialidades");
-	atualizar_total(frm);
-	if (!unidade || !data) return;
+	update_total(frm);
+	if (!unit || !date) return;
 	try {
-		const resposta = await frappe.call({
-			method: "pulse_gestor.indicadores.doctype.atendimento_medico_diario.atendimento_medico_diario.buscar_vigencia_e_especialidades",
-			args: { unidade, data },
+		const response = await frappe.call({
+			method: "pulse_gestor.indicadores.doctype.atendimento_medico_diario.atendimento_medico_diario.fetch_validity_and_specialties",
+			args: { unit, date },
 		});
-		if (requisicao !== frm._atendimento_requisicao) return;
-		frm.set_value("vigencia", resposta.message.vigencia);
-		for (const especialidade of resposta.message.especialidades) {
-			frm.add_child("especialidades", especialidade);
+		if (request_id !== frm._entry_request_id) return;
+		frm.set_value("vigencia", response.message.vigencia);
+		for (const specialty of response.message.especialidades) {
+			frm.add_child("especialidades", specialty);
 		}
 		frm.refresh_field("especialidades");
-	} catch (erro) {
-		// A chamada mostra a mensagem do servidor e o formulário permanece sem especialidades.
+	} catch (error) {
+		// The call shows the server message and the form stays without specialties.
 	}
 }
 
-function configurar_grade(frm) {
-	const grade = frm.fields_dict.especialidades.grid;
-	grade.df.in_place_edit = 1;
-	grade.df.cannot_add_rows = 1;
-	grade.df.cannot_delete_rows = 1;
+function configure_grid(frm) {
+	const grid = frm.fields_dict.especialidades.grid;
+	grid.df.in_place_edit = 1;
+	grid.df.cannot_add_rows = 1;
+	grid.df.cannot_delete_rows = 1;
 	$(frm.wrapper)
 		.off("grid-row-render.pulse-atendimento")
-		.on("grid-row-render.pulse-atendimento", (_evento, linha) => {
-			if (linha.grid !== grade) return;
-			manter_espaco_acao(linha);
-			linha.open_form_button = null;
-			linha.row.off("click");
-			linha.row_index?.off("click");
+		.on("grid-row-render.pulse-atendimento", (_event, row) => {
+			if (row.grid !== grid) return;
+			keep_action_spacer(row);
+			row.open_form_button = null;
+			row.row.off("click");
+			row.row_index?.off("click");
 		});
-	grade.refresh();
+	grid.refresh();
 }
 
-// O cabeçalho reserva uma célula final para a ação da linha; mantê-la vazia preserva o alinhamento.
-function manter_espaco_acao(linha) {
-	let celula = linha.row.children(".pulse-grid-action-spacer");
-	if (!celula.length) {
-		celula =
-			linha.open_form_button?.parent() || $('<div class="col"></div>').appendTo(linha.row);
+// The header reserves a final cell for the row action; keeping it empty preserves the alignment.
+function keep_action_spacer(row) {
+	let cell = row.row.children(".pulse-grid-action-spacer");
+	if (!cell.length) {
+		cell = row.open_form_button?.parent() || $('<div class="col"></div>').appendTo(row.row);
 	}
-	celula
-		.addClass("pulse-grid-action-spacer")
+	cell.addClass("pulse-grid-action-spacer")
 		.off("click keydown")
 		.empty()
 		.attr("aria-hidden", "true");
