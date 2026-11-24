@@ -41,6 +41,7 @@ Reconstructed from `git tag` and `git log` (read-only) and checked against the a
 - Metadata: publisher `StillPulse Tecnologia LTDA`, proprietary license (`license.txt`, `app_license = "Proprietary"`),
   copyright headers without the client brand.
 - ADR files renamed to English slugs (numbering kept).
+- Fixed orphan internal calls left by the renames (`self._validate_unique_entry()`, `validate_duplicate()`, `record_bylaws_change()`, the Unit Documentation `_validate_*`/`_update_status`, `_present_participants()`) and the `classificacao_de_risco_diaria.js` method path; added `tests/test_static_references.py` and `tests/test_validate_flows.py`.
 - New ADR-004 recording the language and naming standardization; `tests/site_setup.py` function renamed to `create_asset_custom_fields` (and its `ci.yml` call).
 
 ### Added

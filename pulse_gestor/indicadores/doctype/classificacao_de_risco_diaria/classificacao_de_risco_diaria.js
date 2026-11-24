@@ -46,7 +46,7 @@ async function load_levels(frm) {
 	}
 	try {
 		const response = await frappe.call({
-			method: "pulse_gestor.indicadores.doctype.classificacao_de_risco_diaria.classificacao_de_risco_diaria.buscar_protocolo_e_niveis",
+			method: "pulse_gestor.indicadores.doctype.classificacao_de_risco_diaria.classificacao_de_risco_diaria.fetch_protocol_and_levels",
 			args: { unit, date },
 		});
 		if (request_id !== frm._classification_request_id) {

@@ -11,10 +11,10 @@ from pulse_gestor.utils import calculate_days_to_expiry, calculate_status, is_pd
 
 class DocumentacaodaUnidade(Document):
 	def validate(self):
-		self._validar_tipo_ativo()
-		self._validar_vigencia()
-		self._validar_pdf()
-		self._atualizar_status()
+		self._validate_type_active()
+		self._validate_validity()
+		self._validate_pdf()
+		self._update_status()
 
 	def _validate_type_active(self):
 		if not self.tipo_documento:

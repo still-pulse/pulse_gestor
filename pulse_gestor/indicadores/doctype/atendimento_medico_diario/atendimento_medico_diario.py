@@ -53,7 +53,7 @@ class AtendimentoMedicoDiario(Document):
 		if previous:
 			self.lancado_por = previous.lancado_por
 			self.criado_em = previous.criado_em
-		self._validar_lancamento_unico()
+		self._validate_unique_entry()
 		resolved = resolve_validity_and_specialties(self.unidade, self.data)
 		self.vigencia = resolved["vigencia"]
 		specialties = resolved["especialidades"]

@@ -59,18 +59,18 @@ if PerfilAssinatura:
 				"pauta": [cstr(p.assunto) for p in doc.pauta],
 				"deliberacoes": strip_html(doc.deliberacoes or ""),
 				"encaminhamentos": strip_html(doc.encaminhamentos_conclusoes or ""),
-				"presentes": sorted(p.membro_origem for p in self._presentes(doc)),
+				"presentes": sorted(p.membro_origem for p in self._present_participants(doc)),
 			}
 
 		def signatarios(self, doc):
 			return [
 				Signatario("Comissao Membro", p.membro_origem, p.funcao or "Membro", 1)
-				for p in self._presentes(doc)
+				for p in self._present_participants(doc)
 			]
 
 		def validar_solicitacao(self, doc):
 			super().validar_solicitacao(doc)
-			if not self._presentes(doc):
+			if not self._present_participants(doc):
 				frappe.throw(_("A reunião não tem participantes presentes vindos do cadastro de membros."))
 
 		def resumo_publico(self, doc, signatario) -> dict:

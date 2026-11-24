@@ -68,7 +68,7 @@ class ClassificacaodeRiscoDiaria(Document):
 			self.lancado_por = previous.lancado_por
 			self.criado_em = previous.criado_em
 
-		self._validar_lancamento_unico()
+		self._validate_unique_entry()
 		resolved = resolve_protocol_and_levels(self.unidade, self.data)
 		self.protocolo = resolved["protocolo"]
 		levels = resolved["niveis"]
