@@ -187,6 +187,7 @@ Semgrep, on PRs only), `.pre-commit-config.yaml`, `.eslintrc` and `commitlint.co
   log standard for external integrations (structured context, no secrets in clear text, error classification,
   grouping per run).
 - [docs/adr-003-lint-and-ci-standardization.md](docs/adr-003-lint-and-ci-standardization.md): lint and CI decisions.
+- [docs/adr-004-language-and-naming-standardization.md](docs/adr-004-language-and-naming-standardization.md): language and naming standard (Phase 1) and what is left for Phase 2.
 
 ## License
 

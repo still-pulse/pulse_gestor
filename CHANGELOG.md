@@ -41,6 +41,7 @@ Reconstructed from `git tag` and `git log` (read-only) and checked against the a
 - Metadata: publisher `StillPulse Tecnologia LTDA`, proprietary license (`license.txt`, `app_license = "Proprietary"`),
   copyright headers without the client brand.
 - ADR files renamed to English slugs (numbering kept).
+- New ADR-004 recording the language and naming standardization; `tests/site_setup.py` function renamed to `create_asset_custom_fields` (and its `ci.yml` call).
 
 ### Added
 - `docs/dependencies.md` mapping the strong and weak dependencies; the `integracoes_customizadas` use in the meeting

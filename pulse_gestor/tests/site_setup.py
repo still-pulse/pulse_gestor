@@ -1,9 +1,9 @@
-# Copyright (c) 2026, Still Pulse and contributors
+# Copyright (c) 2026, StillPulse Tecnologia LTDA and contributors
 # For license information, please see license.txt
 
-"""Prepara um site novo (CI) com os Custom Fields de Patrimônio, que em produção foram criados à mão.
+"""Prepare a fresh (CI) site with the Asset Custom Fields, which were created by hand in production.
 
-Não é chamado por hook: o app não cria esses campos em sites de produção. Idempotente.
+Not called by any hook: the app does not create these fields on production sites. Idempotent.
 """
 
 from __future__ import annotations
@@ -11,7 +11,7 @@ from __future__ import annotations
 import frappe
 from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
 
-CAMPOS = {
+FIELDS = {
 	"Asset": [
 		{"fieldname": "custom_número_de_controle_bhcl", "label": "Número de Controle BHCL"},
 		{"fieldname": "custom_número_patrimônio_prefeitura", "label": "Número Patrimônio Prefeitura"},
@@ -24,9 +24,7 @@ CAMPOS = {
 }
 
 
-def criar_campos_de_patrimonio():
-	campos = {
-		doctype: [{"fieldtype": "Data", **campo} for campo in lista] for doctype, lista in CAMPOS.items()
-	}
-	create_custom_fields(campos, update=False)
+def create_asset_custom_fields():
+	fields = {doctype: [{"fieldtype": "Data", **field} for field in rows] for doctype, rows in FIELDS.items()}
+	create_custom_fields(fields, update=False)
 	frappe.db.commit()
