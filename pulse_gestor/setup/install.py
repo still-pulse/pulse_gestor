@@ -29,6 +29,7 @@ def after_install():
 	ensure_classification_import_permissions()
 	ensure_settings()
 	ensure_pulse_gestor_workspace()
+	ensure_print_formats()
 	frappe.db.commit()
 
 
