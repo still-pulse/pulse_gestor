@@ -120,9 +120,13 @@ These change only in a coordinated change with the owning app.
 ## Risks
 
 - **Bench not run.** No bench was available while doing this work. Validation was static: `ruff check`,
-  `ruff format --check`, `compileall`, prettier on the JS, and a script that resolves every
-  `from pulse_gestor... import` and every dotted path in `hooks.py` and the Number Card JSONs. The test suite and
-  `bench migrate` were **not** executed.
+  `ruff format --check`, `compileall`, prettier on the JS, and `tests/test_static_references.py` (plain unittest: `self.x()`
+  calls resolve to class members, every dotted `pulse_gestor...` string in hooks, Number Card JSON, JS and Python
+  resolves, keyword arguments match in-repo signatures). The first pass only checked imports and hooks and missed
+  internal method calls; a Graphify review found the orphan calls (`self._validar_lancamento_unico()` and similar),
+  fixed afterwards together with this test. `tests/test_validate_flows.py` (validate() smoke tests of four
+  controllers and the minutes signature content) was written but **not executed**, like the rest of the suite and
+  `bench migrate`.
 - **Number Card methods in the database.** The `method` of the four Committee Number Cards is stored in the database;
   the new values only reach it after `bench --site <site> migrate` (standard module files are re-synced). Until then,
   the cards call methods that no longer exist.
