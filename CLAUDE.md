@@ -16,3 +16,11 @@ Source of truth: [`clm/docs/naming-conventions.md`](https://github.com/still-pul
 - DocTypes carry the app prefix; Reports, Print Formats and Workspaces use ASCII-only names.
 - Custom Fields on `Employee`/`Designation` (and other core DocTypes) are `custom_pulse_gestor_<meaning>`.
 - New patches are `sNN_<action_in_snake_case>`, registered in `patches.txt`; roles created by the app carry the app prefix.
+
+## Git tags in cloud agent sessions
+
+Agents running in a Claude Code cloud session cannot push git tags: the egress proxy answers `HTTP 403` (verified
+2026-11-26; branch pushes work). It is a policy denial: do not retry or route around it. Commit and push the branch,
+update `__version__` only when the task asks, and report once that the tag is pending. A human creates the tag
+(`git tag vX.Y.Z && git push origin vX.Y.Z` from a normal machine, or a GitHub release). Details:
+`pulse_platform/docs/handoff-dev-data.md`.
