@@ -1,4 +1,4 @@
-# Copyright (c) 2026, StillPulse Tecnologia LTDA and contributors
+# Copyright (c) 2026, Still Pulse and contributors
 # For license information, please see license.txt
 
 import frappe
@@ -27,6 +27,6 @@ class ConfiguracoesDocumentosdaUnidade(Document):
 			frappe.throw(_("Selecione o modelo de e-mail para o aviso de vencimento."))
 
 	def on_update(self):
-		from pulse_gestor.setup.install import sync_alert_days
+		from pulse_gestor.setup.install import sincronizar_dias_alerta
 
-		sync_alert_days()
+		sincronizar_dias_alerta()

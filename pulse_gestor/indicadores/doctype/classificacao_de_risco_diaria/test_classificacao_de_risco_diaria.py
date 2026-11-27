@@ -4,11 +4,11 @@ import frappe
 from frappe.tests.utils import FrappeTestCase
 
 from pulse_gestor.indicadores.doctype.classificacao_de_risco_diaria.classificacao_de_risco_diaria import (
-	resolve_protocol_and_levels,
+	obter_protocolo_e_niveis,
 )
 from pulse_gestor.setup.install import (
-	backfill_daily_classification_colors,
-	backfill_daily_classification_times,
+	backfill_cores_classificacao_diaria,
+	backfill_tempos_classificacao_diaria,
 )
 
 
@@ -81,7 +81,7 @@ class TestClassificacaoDeRiscoDiaria(FrappeTestCase):
 			}
 		).insert()
 
-		resolvido = resolve_protocol_and_levels(unidade, "2099-01-31")
+		resolvido = obter_protocolo_e_niveis(unidade, "2099-01-31")
 		self.assertEqual(resolvido["protocolo"], protocolo.name)
 		self.assertEqual(
 			resolvido["niveis"],
@@ -91,7 +91,7 @@ class TestClassificacaoDeRiscoDiaria(FrappeTestCase):
 			],
 		)
 		with self.assertRaises(frappe.ValidationError):
-			resolve_protocol_and_levels(unidade, "2099-02-01")
+			obter_protocolo_e_niveis(unidade, "2099-02-01")
 
 		lancamento = frappe.get_doc(
 			{"doctype": "Classificacao de Risco Diaria", "unidade": unidade, "data": "2099-01-31"}
@@ -129,7 +129,7 @@ class TestClassificacaoDeRiscoDiaria(FrappeTestCase):
 			None,
 			update_modified=False,
 		)
-		backfill_daily_classification_colors()
+		backfill_cores_classificacao_diaria()
 		lancamento.reload()
 		self.assertEqual(lancamento.niveis_classificados[0].cor, "#CB2929")
 		frappe.db.set_value(
@@ -138,13 +138,13 @@ class TestClassificacaoDeRiscoDiaria(FrappeTestCase):
 			{"tempo_maximo_espera_min": 0, "tempo_snapshot_preenchido": 0},
 			update_modified=False,
 		)
-		backfill_daily_classification_times()
+		backfill_tempos_classificacao_diaria()
 		lancamento.reload()
 		self.assertEqual(lancamento.niveis_classificados[1].tempo_maximo_espera_min, 60)
 
 		protocolo.niveis[0].cor = "#4463F0"
 		protocolo.save()
-		backfill_daily_classification_colors()
+		backfill_cores_classificacao_diaria()
 		lancamento.reload()
 		self.assertEqual(lancamento.niveis_classificados[0].cor, "#CB2929")
 		lancamento.niveis_classificados[0].cor = "#000000"

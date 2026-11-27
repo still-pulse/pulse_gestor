@@ -1,4 +1,4 @@
-"""Guard for the institutional standard of the Pulse Gestor Print Formats (apps/clm/docs/brand-manifesto.md)."""
+"""Guarda do padrao institucional dos Print Formats do Pulse Gestor (apps/clm/docs/brand-manifesto.md)."""
 
 import re
 from unittest.mock import patch
@@ -13,7 +13,7 @@ from pulse_gestor.print_formats import DEFAULT_PRINT_FORMATS, LEGACY_PRINT_FORMA
 BASE_TEMPLATE = "clm/templates/print/clm_base.html"
 FORMATS = ("Ata de Reuniao de Comissao", "Convocacao para Reuniao de Comissao")
 ASSET_FORMATS = ("Ficha do Ativo Imobilizado", "Ficha de Movimentacao de Ativos")
-TERM_FORMATS = ("Termo de Responsabilidade do Ativo", "Termo de Responsabilidade de Movimentacao")
+TERMO_FORMATS = ("Termo de Responsabilidade do Ativo", "Termo de Responsabilidade de Movimentacao")
 
 
 def format_html(name):
@@ -47,7 +47,7 @@ def visible_text(html):
 
 class TestComissoesPrintFormats(FrappeTestCase):
 	def test_every_format_follows_the_institutional_standard(self):
-		for name in FORMATS + ASSET_FORMATS + TERM_FORMATS:
+		for name in FORMATS + ASSET_FORMATS + TERMO_FORMATS:
 			with self.subTest(print_format=name):
 				self.assertTrue(name.isascii())
 				doc = frappe.get_doc("Print Format", name)
@@ -75,20 +75,20 @@ class TestComissoesPrintFormats(FrappeTestCase):
 
 	def test_minutes_list_attendees_and_their_signatures(self):
 		doc = meeting(data_reuniao="2026-10-14 09:30:00", local_reuniao="Sala <1>")
-		for attendee, status in (
+		for nome, status in (
 			("Ana", "Presente"),
 			("Bruno", "Ausente"),
 			("Carla", "Presente"),
 			("Davi", "Presente"),
 		):
-			doc.append("participantes", {"nome": attendee, "funcao": "Membro", "status_presenca": status})
+			doc.append("participantes", {"nome": nome, "funcao": "Membro", "status_presenca": status})
 		html = render(FORMATS[0], doc)
 		text = visible_text(html)
 		self.assertIn("14/10/2026", text)
 		self.assertIn("às 09:30", text)
 		self.assertIn("Sala &lt;1&gt;", html)
 		self.assertIn("com a presença de 3 de 4 participantes", text)
-		# 3 attendees in rows of 2: the second row is completed by an empty cell, with no rule line.
+		# 3 presentes em linhas de 2: a segunda linha e completada por uma celula vazia, sem filete.
 		self.assertEqual(html.count('class="clm-signatures"'), 2)
 		self.assertEqual(html.count("clm-signature-line clm-signature-empty"), 1)
 		self.assertNotIn("BRUNO", text.upper().split("ASSINATURAS DOS PRESENTES")[-1])
@@ -128,7 +128,7 @@ class TestComissoesPrintFormats(FrappeTestCase):
 		self.assertIn("ID: TEST-001", html)
 
 	def test_blank_custody_terms_render_without_missing_values(self):
-		for name, doctype in zip(TERM_FORMATS, ("Asset", "Asset Movement"), strict=True):
+		for name, doctype in zip(TERMO_FORMATS, ("Asset", "Asset Movement"), strict=True):
 			with self.subTest(print_format=name):
 				html = render(name, new_doc(doctype))
 				self.assertIn("Termo de Responsabilidade", html)
@@ -142,6 +142,6 @@ class TestComissoesPrintFormats(FrappeTestCase):
 		doc = new_doc("Asset Movement", purpose="Transfer")
 		for asset_name, employee in (("Mesa", employees[0]), ("Cadeira", employees[1]), ("Monitor", None)):
 			doc.append("assets", {"asset_name": asset_name, "to_employee": employee})
-		html = render(TERM_FORMATS[1], doc)
+		html = render(TERMO_FORMATS[1], doc)
 		self.assertEqual(html.count("Bens sob responsabilidade de "), 2)
 		self.assertNotIn("Monitor", visible_text(html))

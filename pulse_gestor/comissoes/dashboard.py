@@ -1,7 +1,7 @@
-# Copyright (c) 2026, StillPulse Tecnologia LTDA and contributors
+# Copyright (c) 2026, Still Pulse and contributors
 # For license information, please see license.txt
 
-"""Data for the management panel of the Comissoes workspace (cards and blocks)."""
+"""Dados do painel de gestão do workspace Comissoes (cartões e blocos)."""
 
 from __future__ import annotations
 
@@ -9,125 +9,121 @@ import frappe
 from frappe import _
 from frappe.utils import add_days, cint, date_diff, flt, get_datetime, getdate, now_datetime, nowdate
 
-MEETING = "Reuniao de Comissao"
-COMMITTEE_TERM = "Mandato de Comissao"
-ACTIVE_STATUSES = ("Vigente", "Prorrogado")
-TERM_EXPIRY_WARNING_DAYS = 60
-NO_MEETING_DAYS = 90
-ATTENDANCE_WINDOW_DAYS = 90
+REUNIAO = "Reuniao de Comissao"
+MANDATO = "Mandato de Comissao"
+STATUS_ATIVOS = ("Vigente", "Prorrogado")
+DIAS_MANDATO_A_VENCER = 60
+DIAS_SEM_REUNIAO = 90
+DIAS_PRESENCA = 90
 
 
-def _require_read(doctype: str = MEETING) -> None:
+def _exigir_leitura(doctype: str = REUNIAO) -> None:
 	frappe.has_permission(doctype, "read", throw=True)
 
 
-def _active_terms() -> list[dict]:
+def _mandatos_ativos() -> list[dict]:
 	return frappe.get_list(
-		COMMITTEE_TERM,
-		filters={"status_mandato": ["in", ACTIVE_STATUSES]},
+		MANDATO,
+		filters={"status_mandato": ["in", STATUS_ATIVOS]},
 		fields=["name", "tipo_comissao", "empresa", "data_inicio_mandato", "data_encerramento_mandato"],
 		limit_page_length=0,
 	)
 
 
-def _type_names() -> dict[str, str]:
+def _nomes_tipos() -> dict[str, str]:
 	return {t.name: t.nome_tipo for t in frappe.get_all("Tipo de Comissao", fields=["name", "nome_tipo"])}
 
 
-def _last_meeting_by_type() -> dict[str, object]:
-	"""Latest meeting already held (data_reuniao <= now) of each committee type."""
-	rows = frappe.get_list(
-		MEETING,
+def _ultima_reuniao_por_tipo() -> dict[str, object]:
+	"""Última reunião já realizada (data_reuniao <= agora) de cada tipo de comissão."""
+	linhas = frappe.get_list(
+		REUNIAO,
 		filters={"data_reuniao": ["<=", now_datetime()]},
 		fields=["tipo_comissao", "max(data_reuniao) as ultima"],
 		group_by="tipo_comissao",
 		order_by=None,
 		limit_page_length=0,
 	)
-	return {row.tipo_comissao: row.ultima for row in rows if row.tipo_comissao}
+	return {linha.tipo_comissao: linha.ultima for linha in linhas if linha.tipo_comissao}
 
 
-def _committees_without_meeting() -> list[dict]:
-	"""Committees with an active term and no meeting held in the last NO_MEETING_DAYS days."""
-	latest_by_type = _last_meeting_by_type()
-	today = getdate(nowdate())
-	result = []
-	for term in _active_terms():
-		latest = latest_by_type.get(term.tipo_comissao)
-		days = date_diff(today, getdate(latest)) if latest else None
-		if days is None or days > NO_MEETING_DAYS:
-			result.append(frappe._dict(term, dias_sem_reuniao=days))
-	return result
+def _comissoes_sem_reuniao() -> list[dict]:
+	"""Comissões com mandato ativo sem reunião realizada nos últimos DIAS_SEM_REUNIAO dias."""
+	ultimas = _ultima_reuniao_por_tipo()
+	hoje = getdate(nowdate())
+	resultado = []
+	for mandato in _mandatos_ativos():
+		ultima = ultimas.get(mandato.tipo_comissao)
+		dias = date_diff(hoje, getdate(ultima)) if ultima else None
+		if dias is None or dias > DIAS_SEM_REUNIAO:
+			resultado.append(frappe._dict(mandato, dias_sem_reuniao=dias))
+	return resultado
 
 
-def _terms_expiring() -> list[dict]:
-	"""Active terms ending within TERM_EXPIRY_WARNING_DAYS days (or already overdue)."""
-	limit = add_days(nowdate(), TERM_EXPIRY_WARNING_DAYS)
+def _mandatos_a_vencer() -> list[dict]:
+	"""Mandatos ativos que encerram em até DIAS_MANDATO_A_VENCER dias (ou já passaram do prazo)."""
+	limite = add_days(nowdate(), DIAS_MANDATO_A_VENCER)
 	return [
 		m
-		for m in _active_terms()
-		if m.data_encerramento_mandato and getdate(m.data_encerramento_mandato) <= getdate(limit)
+		for m in _mandatos_ativos()
+		if m.data_encerramento_mandato and getdate(m.data_encerramento_mandato) <= getdate(limite)
 	]
 
 
-def _meetings_route(route_filters: dict | None = None) -> dict:
-	return {"route": ["List", MEETING], "route_options": route_filters or {}}
+def _rota_reunioes(filtros: dict | None = None) -> dict:
+	return {"route": ["List", REUNIAO], "route_options": filtros or {}}
 
 
 @frappe.whitelist()
-def card_upcoming_meetings(filters=None):
-	_require_read()
-	now = now_datetime()
-	end = get_datetime(add_days(nowdate(), 8))  # 00:00 of day 8 = end of day 7
-	value = frappe.db.count(MEETING, {"data_reuniao": ["between", [now, end]]})
+def cartao_reunioes_proximas(filters=None):
+	_exigir_leitura()
+	agora = now_datetime()
+	fim = get_datetime(add_days(nowdate(), 8))  # 00:00 do 8º dia = fim do 7º dia
+	valor = frappe.db.count(REUNIAO, {"data_reuniao": ["between", [agora, fim]]})
 	return {
-		"value": value,
+		"value": valor,
 		"fieldtype": "Int",
-		**_meetings_route({"data_reuniao": ["between", [str(now), str(end)]]}),
+		**_rota_reunioes({"data_reuniao": ["between", [str(agora), str(fim)]]}),
 	}
 
 
 @frappe.whitelist()
-def card_expiring_terms(filters=None):
-	_require_read(COMMITTEE_TERM)
+def cartao_mandatos_a_vencer(filters=None):
+	_exigir_leitura(MANDATO)
 	return {
-		"value": len(_terms_expiring()),
+		"value": len(_mandatos_a_vencer()),
 		"fieldtype": "Int",
-		"route": ["List", COMMITTEE_TERM],
+		"route": ["List", MANDATO],
 		"route_options": {
-			"status_mandato": ["in", list(ACTIVE_STATUSES)],
-			"data_encerramento_mandato": ["<=", add_days(nowdate(), TERM_EXPIRY_WARNING_DAYS)],
+			"status_mandato": ["in", list(STATUS_ATIVOS)],
+			"data_encerramento_mandato": ["<=", add_days(nowdate(), DIAS_MANDATO_A_VENCER)],
 		},
 	}
 
 
 @frappe.whitelist()
-def card_committees_without_meeting(filters=None):
-	_require_read()
-	return {
-		"value": len(_committees_without_meeting()),
-		"fieldtype": "Int",
-		"route": ["List", COMMITTEE_TERM],
-	}
+def cartao_comissoes_sem_reuniao(filters=None):
+	_exigir_leitura()
+	return {"value": len(_comissoes_sem_reuniao()), "fieldtype": "Int", "route": ["List", MANDATO]}
 
 
 @frappe.whitelist()
-def card_average_attendance(filters=None):
-	"""Percentage of attendees in meetings of the last 90 days."""
-	_require_read()
-	start = add_days(nowdate(), -ATTENDANCE_WINDOW_DAYS)
-	rows = frappe.get_list(
-		MEETING,
-		filters={"data_reuniao": ["between", [get_datetime(start), now_datetime()]]},
+def cartao_presenca_media(filters=None):
+	"""Percentual de presentes nas reuniões dos últimos 90 dias."""
+	_exigir_leitura()
+	inicio = add_days(nowdate(), -DIAS_PRESENCA)
+	linhas = frappe.get_list(
+		REUNIAO,
+		filters={"data_reuniao": ["between", [get_datetime(inicio), now_datetime()]]},
 		fields=["name"],
 		limit_page_length=0,
 		pluck="name",
 	)
 	total = presentes = 0
-	if rows:
+	if linhas:
 		status = frappe.get_all(
 			"Comissao Reuniao Participante",
-			filters={"parenttype": MEETING, "parent": ["in", rows]},
+			filters={"parenttype": REUNIAO, "parent": ["in", linhas]},
 			pluck="status_presenca",
 		)
 		total = len(status)
@@ -135,66 +131,66 @@ def card_average_attendance(filters=None):
 	return {
 		"value": flt(presentes * 100 / total, 1) if total else 0,
 		"fieldtype": "Percent",
-		**_meetings_route(),
+		**_rota_reunioes(),
 	}
 
 
 @frappe.whitelist()
-def upcoming_meetings(limit=8):
-	"""Upcoming meetings (from now on), nearest first."""
-	_require_read()
-	meetings = frappe.get_list(
-		MEETING,
+def proximas_reunioes(limite=8):
+	"""Próximas reuniões (a partir de agora), da mais próxima para a mais distante."""
+	_exigir_leitura()
+	reunioes = frappe.get_list(
+		REUNIAO,
 		filters={"data_reuniao": [">=", now_datetime()]},
 		fields=["name", "tipo_comissao", "empresa", "data_reuniao", "local_reuniao"],
 		order_by="data_reuniao asc",
-		limit_page_length=cint(limit) or 8,
+		limit_page_length=cint(limite) or 8,
 	)
-	names = _type_names()
-	today = getdate(nowdate())
-	for r in meetings:
-		r["comissao"] = names.get(r.tipo_comissao) or r.tipo_comissao
-		r["dias"] = date_diff(getdate(r.data_reuniao), today)
+	nomes = _nomes_tipos()
+	hoje = getdate(nowdate())
+	for r in reunioes:
+		r["comissao"] = nomes.get(r.tipo_comissao) or r.tipo_comissao
+		r["dias"] = date_diff(getdate(r.data_reuniao), hoje)
 		r["data_reuniao"] = str(r.data_reuniao)
-	return meetings
+	return reunioes
 
 
 @frappe.whitelist()
-def committees_needing_attention():
-	"""Management pending items: expiring/expired terms and committees without a recent meeting."""
-	_require_read()
-	names = _type_names()
-	today = getdate(nowdate())
-	items = []
-	for m in _terms_expiring():
-		days = date_diff(getdate(m.data_encerramento_mandato), today)
-		items.append(
+def comissoes_em_atencao():
+	"""Pendências de gestão: mandatos a vencer/vencidos e comissões sem reunião recente."""
+	_exigir_leitura()
+	nomes = _nomes_tipos()
+	hoje = getdate(nowdate())
+	itens = []
+	for m in _mandatos_a_vencer():
+		dias = date_diff(getdate(m.data_encerramento_mandato), hoje)
+		itens.append(
 			{
-				"doctype": COMMITTEE_TERM,
+				"doctype": MANDATO,
 				"name": m.name,
-				"comissao": names.get(m.tipo_comissao) or m.tipo_comissao,
+				"comissao": nomes.get(m.tipo_comissao) or m.tipo_comissao,
 				"empresa": m.empresa,
-				"motivo": _("Mandato vencido há {0} dia(s)").format(-days)
-				if days < 0
-				else _("Mandato encerra em {0} dia(s)").format(days),
-				"gravidade": "vermelho" if days < 0 else "amarelo",
-				"ordem": days,
+				"motivo": _("Mandato vencido há {0} dia(s)").format(-dias)
+				if dias < 0
+				else _("Mandato encerra em {0} dia(s)").format(dias),
+				"gravidade": "vermelho" if dias < 0 else "amarelo",
+				"ordem": dias,
 			}
 		)
-	for m in _committees_without_meeting():
-		days = m.dias_sem_reuniao
-		items.append(
+	for m in _comissoes_sem_reuniao():
+		dias = m.dias_sem_reuniao
+		itens.append(
 			{
-				"doctype": COMMITTEE_TERM,
+				"doctype": MANDATO,
 				"name": m.name,
-				"comissao": names.get(m.tipo_comissao) or m.tipo_comissao,
+				"comissao": nomes.get(m.tipo_comissao) or m.tipo_comissao,
 				"empresa": m.empresa,
 				"motivo": _("Nenhuma reunião realizada")
-				if days is None
-				else _("Sem reunião há {0} dias").format(days),
-				"gravidade": "vermelho" if days is None else "amarelo",
-				"ordem": 10000 if days is None else -days,
+				if dias is None
+				else _("Sem reunião há {0} dias").format(dias),
+				"gravidade": "vermelho" if dias is None else "amarelo",
+				"ordem": 10000 if dias is None else -dias,
 			}
 		)
-	items.sort(key=lambda i: (i["gravidade"] != "vermelho", i["ordem"]))
-	return items
+	itens.sort(key=lambda i: (i["gravidade"] != "vermelho", i["ordem"]))
+	return itens

@@ -16,7 +16,7 @@ def execute(filters=None):
 		"data_fim": filters.data_fim,
 		"especialidade": filters.especialidade,
 	}
-	# Only submitted entries count; the row stores the specialty in force on the entry date.
+	# Só entram lançamentos enviados; a linha guarda a especialidade vigente na data do lançamento.
 	data = frappe.db.sql(
 		"""
 		SELECT linha.especialidade,

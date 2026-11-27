@@ -1,4 +1,4 @@
-// Copyright (c) 2026, StillPulse Tecnologia LTDA and contributors
+// Copyright (c) 2026, Still Pulse and contributors
 // For license information, please see license.txt
 
 frappe.listview_settings["Documentacao da Unidade"] = {

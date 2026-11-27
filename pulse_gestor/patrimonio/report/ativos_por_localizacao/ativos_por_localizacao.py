@@ -2,48 +2,48 @@ from itertools import groupby
 
 from frappe import _
 
-from pulse_gestor.patrimonio.report.utils import asset_columns, build_summary, fetch_assets
+from pulse_gestor.patrimonio.report.utils import buscar_ativos, colunas_do_ativo, resumo
 
 
 def execute(filters=None):
-	assets = fetch_assets(filters)
-	assets.sort(key=lambda r: (r.empresa or "", r.localizacao or "", r.nome_do_bem or "", r.ativo))
+	ativos = buscar_ativos(filters)
+	ativos.sort(key=lambda r: (r.empresa or "", r.localizacao or "", r.nome_do_bem or "", r.ativo))
 
-	# One row per location (with count and amounts), followed by its assets.
-	data, totals = [], []
-	for (company, location), group in groupby(assets, key=lambda r: (r.empresa, r.localizacao)):
-		group = list(group)
-		group_key = f"{company}::{location or ''}"
-		name = location or _("Sem localização")
+	# Uma linha por localização (com quantidade e valores), seguida dos seus ativos.
+	data, totais = [], []
+	for (empresa, local), grupo in groupby(ativos, key=lambda r: (r.empresa, r.localizacao)):
+		grupo = list(grupo)
+		chave = f"{empresa}::{local or ''}"
+		nome = local or _("Sem localização")
 		data.append(
 			{
-				"id": group_key,
+				"id": chave,
 				"parent": None,
 				"indent": 0,
-				"descricao": name,
-				"empresa": company,
-				"quantidade": len(group),
-				"valor_aquisicao": sum(r.valor_aquisicao or 0 for r in group),
-				"valor_contabil": sum(r.valor_contabil or 0 for r in group),
+				"descricao": nome,
+				"empresa": empresa,
+				"quantidade": len(grupo),
+				"valor_aquisicao": sum(r.valor_aquisicao or 0 for r in grupo),
+				"valor_contabil": sum(r.valor_contabil or 0 for r in grupo),
 			}
 		)
-		totals.append((name, len(group)))
-		for row in group:
-			row.update(id=row.ativo, parent=group_key, indent=1, descricao=row.nome_do_bem, quantidade=1)
+		totais.append((nome, len(grupo)))
+		for row in grupo:
+			row.update(id=row.ativo, parent=chave, indent=1, descricao=row.nome_do_bem, quantidade=1)
 			data.append(row)
 
-	extra = [{"label": _("Localizações"), "value": len(totals), "datatype": "Int", "indicator": "Blue"}]
-	return get_columns(), data, None, get_chart(totals), build_summary(assets, extra)
+	extra = [{"label": _("Localizações"), "value": len(totais), "datatype": "Int", "indicator": "Blue"}]
+	return get_columns(), data, None, get_chart(totais), resumo(ativos, extra)
 
 
-def get_chart(totals):
-	if not totals:
+def get_chart(totais):
+	if not totais:
 		return None
-	largest = sorted(totals, key=lambda t: t[1], reverse=True)[:15]
+	maiores = sorted(totais, key=lambda t: t[1], reverse=True)[:15]
 	return {
 		"data": {
-			"labels": [name for name, _count in largest],
-			"datasets": [{"name": _("Ativos"), "values": [count for _name, count in largest]}],
+			"labels": [nome for nome, _qtd in maiores],
+			"datasets": [{"name": _("Ativos"), "values": [qtd for _nome, qtd in maiores]}],
 		},
 		"type": "bar",
 		"title": _("Localizações com mais ativos"),
@@ -62,5 +62,5 @@ def get_columns():
 			"options": "Company",
 			"width": 240,
 		},
-		*asset_columns(),
+		*colunas_do_ativo(),
 	]

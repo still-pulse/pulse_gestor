@@ -1,8 +1,8 @@
 from frappe.model.document import Document
 
-from pulse_gestor.phone import validate_and_format_rows
+from pulse_gestor.telefone import validar_e_formatar_linhas
 
 
 class MembrosdeComissao(Document):
 	def validate(self):
-		validate_and_format_rows(self.membros)
+		validar_e_formatar_linhas(self.membros)

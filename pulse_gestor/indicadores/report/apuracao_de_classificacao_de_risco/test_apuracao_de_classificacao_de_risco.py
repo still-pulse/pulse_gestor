@@ -8,9 +8,9 @@ from pulse_gestor.indicadores.report.apuracao_de_classificacao_de_risco.apuracao
 	execute,
 )
 from pulse_gestor.setup.install import (
-	INDICATORS_REPORT,
-	INDICATORS_REPORT_LEGACY,
-	ensure_ascii_indicators_report,
+	INDICADORES_RELATORIO,
+	INDICADORES_RELATORIO_ANTIGO,
+	ensure_ascii_indicadores_report,
 )
 
 
@@ -18,8 +18,8 @@ class TestApuracaoDeClassificacaoDeRisco(FrappeTestCase):
 	def test_renomeia_relatorio_legado_com_collation_sem_acentos(self):
 		temporario = f"Teste Renomear Relatorio {uuid4().hex[:10]}"
 		for origem, destino in (
-			(INDICATORS_REPORT, temporario),
-			(temporario, INDICATORS_REPORT_LEGACY),
+			(INDICADORES_RELATORIO, temporario),
+			(temporario, INDICADORES_RELATORIO_ANTIGO),
 		):
 			rename_doc(
 				"Report",
@@ -30,13 +30,13 @@ class TestApuracaoDeClassificacaoDeRisco(FrappeTestCase):
 				show_alert=False,
 				rebuild_search=False,
 			)
-		ensure_ascii_indicators_report()
+		ensure_ascii_indicadores_report()
 		self.assertEqual(
-			frappe.db.sql("SELECT name FROM `tabReport` WHERE BINARY name = %s", INDICATORS_REPORT)[0][0],
-			INDICATORS_REPORT,
+			frappe.db.sql("SELECT name FROM `tabReport` WHERE BINARY name = %s", INDICADORES_RELATORIO)[0][0],
+			INDICADORES_RELATORIO,
 		)
 		self.assertFalse(
-			frappe.db.sql("SELECT name FROM `tabReport` WHERE BINARY name = %s", INDICATORS_REPORT_LEGACY)
+			frappe.db.sql("SELECT name FROM `tabReport` WHERE BINARY name = %s", INDICADORES_RELATORIO_ANTIGO)
 		)
 
 	def test_periodo_com_duas_escalas_e_total_do_card(self):

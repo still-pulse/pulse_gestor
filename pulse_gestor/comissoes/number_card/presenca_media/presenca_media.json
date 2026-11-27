@@ -9,7 +9,7 @@
 	"is_public": 1,
 	"is_standard": 1,
 	"label": "Presenca Media",
-	"method": "pulse_gestor.comissoes.dashboard.card_average_attendance",
+	"method": "pulse_gestor.comissoes.dashboard.cartao_presenca_media",
 	"modified": "2026-09-28 21:00:00.000000",
 	"modified_by": "Administrator",
 	"module": "Comissoes",

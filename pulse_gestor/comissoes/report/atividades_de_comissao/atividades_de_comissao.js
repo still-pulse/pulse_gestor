@@ -26,8 +26,8 @@ frappe.query_reports["Atividades de Comissao"] = {
 			fieldtype: "Link",
 			options: "Tipo de Comissao",
 			get_query: () => {
-				const company = frappe.query_report.get_filter_value("empresa");
-				return company ? { filters: { empresa: company } } : {};
+				const empresa = frappe.query_report.get_filter_value("empresa");
+				return empresa ? { filters: { empresa } } : {};
 			},
 		},
 		{
