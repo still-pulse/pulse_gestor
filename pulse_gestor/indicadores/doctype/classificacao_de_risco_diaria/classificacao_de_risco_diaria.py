@@ -49,7 +49,7 @@ def obter_protocolo_e_niveis(unidade, data):
 
 
 @frappe.whitelist()
-def buscar_protocolo_e_niveis(unidade, data):
+def buscar_protocolo_e_niveis(unidade: str, data: str):
 	if not frappe.has_permission("Classificacao de Risco Diaria", "create"):
 		frappe.throw(_("Sem permissão para criar classificações diárias."), frappe.PermissionError)
 	return obter_protocolo_e_niveis(unidade, data)

@@ -16,6 +16,34 @@ CAMPOS_DA_REUNIAO = (
 )
 
 
+# Consulta estática, sem montar SQL por texto: os filtros são parâmetros e a junção com a pauta só casa quando
+# `incluir_pauta` = 1. Com a pauta, o relatório traz uma linha por item; reuniões sem pauta aparecem uma vez,
+# com o assunto vazio. Sem a pauta, é uma linha por reunião (a coluna `assunto` é descartada em Python).
+SQL_REUNIOES = """
+	SELECT reuniao.name AS reuniao, reuniao.data_reuniao, reuniao.local_reuniao, reuniao.data_convocacao,
+		reuniao.empresa, categoria.nome_categoria AS categoria,
+		tipo.nome_tipo AS comissao, mandato.data_inicio_mandato,
+		mandato.status_mandato,
+		pauta.assunto AS assunto,
+		(SELECT COUNT(*) FROM `tabComissao Reuniao Participante` p
+			WHERE p.parent = reuniao.name AND p.parenttype = 'Reuniao de Comissao'
+			AND p.status_presenca = 'Presente') AS presentes,
+		(SELECT COUNT(*) FROM `tabComissao Reuniao Participante` p
+			WHERE p.parent = reuniao.name AND p.parenttype = 'Reuniao de Comissao') AS convocados
+	FROM `tabReuniao de Comissao` reuniao
+	LEFT JOIN `tabTipo de Comissao` tipo ON tipo.name = reuniao.tipo_comissao
+	LEFT JOIN `tabCategoria de Comissao` categoria ON categoria.name = tipo.categoria_comissao
+	LEFT JOIN `tabMandato de Comissao` mandato ON mandato.name = reuniao.mandato_comissao
+	LEFT JOIN `tabComissao Pauta Item` pauta
+		ON pauta.parent = reuniao.name AND pauta.parenttype = 'Reuniao de Comissao'
+		AND %(incluir_pauta)s = 1
+	WHERE DATE(reuniao.data_reuniao) BETWEEN %(data_inicio)s AND %(data_fim)s
+		AND (%(empresa)s IS NULL OR reuniao.empresa = %(empresa)s)
+		AND (%(tipo_comissao)s IS NULL OR reuniao.tipo_comissao = %(tipo_comissao)s)
+	ORDER BY reuniao.data_reuniao, reuniao.empresa, reuniao.tipo_comissao, reuniao.name, pauta.idx
+"""
+
+
 def execute(filters=None):
 	filters = frappe._dict(filters or {})
 	if not filters.data_inicio or not filters.data_fim:
@@ -24,47 +52,17 @@ def execute(filters=None):
 		frappe.throw(_("A data início não pode ser posterior à data fim."))
 
 	incluir_pauta = cint(filters.incluir_pauta)
-	params = {"data_inicio": filters.data_inicio, "data_fim": filters.data_fim}
-	condicoes = ["DATE(reuniao.data_reuniao) BETWEEN %(data_inicio)s AND %(data_fim)s"]
-	for campo in ("empresa", "tipo_comissao"):
-		if filters.get(campo):
-			condicoes.append(f"reuniao.{campo} = %({campo})s")
-			params[campo] = filters[campo]
-
-	# Com a pauta, o relatório traz uma linha por item; reuniões sem pauta aparecem
-	# uma vez, com o assunto vazio. Sem a pauta, é uma linha por reunião.
-	pauta_select = "pauta.assunto AS assunto," if incluir_pauta else ""
-	pauta_join = (
-		"""LEFT JOIN `tabComissao Pauta Item` pauta
-			ON pauta.parent = reuniao.name AND pauta.parenttype = 'Reuniao de Comissao'"""
-		if incluir_pauta
-		else ""
-	)
-	pauta_order = ", pauta.idx" if incluir_pauta else ""
-
-	data = frappe.db.sql(
-		f"""
-		SELECT reuniao.name AS reuniao, reuniao.data_reuniao, reuniao.local_reuniao, reuniao.data_convocacao,
-			reuniao.empresa, categoria.nome_categoria AS categoria,
-			tipo.nome_tipo AS comissao, mandato.data_inicio_mandato,
-			mandato.status_mandato,
-			{pauta_select}
-			(SELECT COUNT(*) FROM `tabComissao Reuniao Participante` p
-				WHERE p.parent = reuniao.name AND p.parenttype = 'Reuniao de Comissao'
-				AND p.status_presenca = 'Presente') AS presentes,
-			(SELECT COUNT(*) FROM `tabComissao Reuniao Participante` p
-				WHERE p.parent = reuniao.name AND p.parenttype = 'Reuniao de Comissao') AS convocados
-		FROM `tabReuniao de Comissao` reuniao
-		LEFT JOIN `tabTipo de Comissao` tipo ON tipo.name = reuniao.tipo_comissao
-		LEFT JOIN `tabCategoria de Comissao` categoria ON categoria.name = tipo.categoria_comissao
-		LEFT JOIN `tabMandato de Comissao` mandato ON mandato.name = reuniao.mandato_comissao
-		{pauta_join}
-		WHERE {" AND ".join(condicoes)}
-		ORDER BY reuniao.data_reuniao, reuniao.empresa, reuniao.tipo_comissao, reuniao.name{pauta_order}
-		""",
-		params,
-		as_dict=True,
-	)
+	params = {
+		"data_inicio": filters.data_inicio,
+		"data_fim": filters.data_fim,
+		"empresa": filters.get("empresa") or None,
+		"tipo_comissao": filters.get("tipo_comissao") or None,
+		"incluir_pauta": 1 if incluir_pauta else 0,
+	}
+	data = frappe.db.sql(SQL_REUNIOES, params, as_dict=True)
+	if not incluir_pauta:
+		for row in data:
+			row.pop("assunto", None)
 
 	reunioes = {row.reuniao for row in data}
 	vistas = set()

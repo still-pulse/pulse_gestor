@@ -68,7 +68,7 @@ O módulo **Patrimonio** não cria DocTypes: estende o `Asset` e o `Asset Moveme
 - **Relatórios** (Script Reports sobre `Asset`): *Relacao de Ativos* e *Ativos por Localizacao* (bens agrupados em
   árvore, com quantidade, valores e gráfico). Filtram por empresa, localização (incluindo sublocais), categoria,
   situação, utilização e estado de conservação. A empresa da localização vem do campo `custom_empresa` de
-  `Location`, um Custom Field criado no site, que **não** está nas fixtures do app.
+  `Location`, um Custom Field versionado em `fixtures/custom_field.json` (junto com os quatro campos de `Asset`).
 - **Custodiante**: no `Asset`, só colaboradores ativos da empresa do bem (filtro em `public/js/asset.js`), com
   validação no servidor (`validar_custodiante`, evento `validate`).
 - **Termos assinados eletronicamente**: com o app `assinatura_eletronica`, o custodiante assina o Termo na custódia

@@ -28,6 +28,20 @@ git permite:
     `after_migrate` (`setup/install.py`).
 - Não há tags `rc/*` neste repositório.
 
+## Não lançado · 2026-11-22
+
+- Patrimônio: os cinco Custom Fields criados à mão em produção (`custom_empresa` em `Location` e quatro campos em
+  `Asset`) passam a ser versionados em `fixtures/custom_field.json`, copiados das definições de produção. O
+  `migrate` sobrescreve esses campos com a definição versionada.
+- Testes: removido `pulse_gestor/tests/site_setup.py`, que criava esses campos como `Data` no CI; o CI usa as
+  fixtures reais. O teste de formatos de impressão cria seus próprios Employees em vez de pular.
+- CI: Python 3.12 e actions alinhadas, `workflow_dispatch`, pip-audit do `pyproject` bloqueante e o do Frappe
+  informativo (ver ADR-003).
+- Semgrep em varredura completa (`semgrep scan --error`), como no `pulse_finance`; os 18 achados legados foram
+  corrigidos sem novo `nosemgrep`: type hints nos 9 métodos whitelisted, SQL estático e parametrizado nos
+  relatórios de Patrimônio e de atividades de comissão (mesmo resultado) e remoção dos 4 `frappe.db.commit()`
+  manuais (`before_migrate`, `after_install`, `after_migrate` e o job de status), já cobertos pelo Frappe.
+
 ## v1.0.2 — WhatsApp habilitado por padrão nas assinaturas · 2026-11-20
 
 - Acompanha o `assinatura_eletronica` v0.3.9: o membro de comissão deixa de informar `aceita_whatsapp` (o padrão do motor é

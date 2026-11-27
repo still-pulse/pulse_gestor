@@ -19,8 +19,8 @@ levantados nos metadados do app:
 Os dois papéis próprios do app (`pulse_gestor/fixtures/role.json`) são `Pulse Gestor Manager` — o papel de
 operação do dia a dia, com `create`/`write`/`submit` nos DocTypes do app — e `Pulse Gestor Viewer`, só leitura.
 Nenhum dos dois tem permissão própria registrada em fixture sobre `Company`, `User` ou `Email Template`: o
-app não declara `Custom DocPerm` nenhum (`pulse_gestor/fixtures/` só tem `role.json`, `notification.json` e
-`number_card.json`; `hooks.py` não lista `Custom DocPerm` em `fixtures`). O acesso de hoje depende inteiramente
+app não declara `Custom DocPerm` nenhum (`pulse_gestor/fixtures/` só tem `role.json`, `notification.json`,
+`number_card.json` e `custom_field.json` (os cinco Custom Fields de Patrimônio, sem permissões); `hooks.py` não lista `Custom DocPerm` em `fixtures`). O acesso de hoje depende inteiramente
 de permissão concedida por outro módulo (Contabilidade/RH para `Company`, o papel padrão do Frappe para
 `User`) — exatamente o padrão que o CLM identificou e corrigiu no
 [ADR-006 do `clm`](../../clm/docs/adr-006-leitura-minima-em-doctypes-vinculados.md): se esse outro módulo não
@@ -50,9 +50,9 @@ tempo de execução):
   favor de `Pulse Gestor Manager`/`Pulse Gestor Viewer`. Falta confirmar, num site rodando, se esses dois
   papéis já conseguem abrir/selecionar `Company`, `User` e `Email Template` por herança de outro papel (ex.:
   `User` costuma ter leitura ampla por padrão do Frappe; `Company` e `Email Template` não necessariamente).
-- O módulo Patrimônio depende de `custom_empresa` em `Location`, um Custom Field criado direto no site e fora
-  das fixtures do app (ver `README.md`); qualquer decisão de leitura mínima sobre `Location` também passa por
-  essa particularidade e não foi avaliada aqui.
+- O módulo Patrimônio depende de `custom_empresa` em `Location`, um Custom Field que agora está versionado em
+  `fixtures/custom_field.json` (ver `README.md`); qualquer decisão de leitura mínima sobre `Location` ainda
+  não foi avaliada aqui.
 - Recomendação: antes ou junto da próxima mudança que toque um desses fluxos, validar no site `dev`
   (`bench --site dev console` ou pela UI, logado como um usuário só com `Pulse Gestor Manager`/`Pulse Gestor
   Viewer`) se os Links acima abrem normalmente; se não abrirem, criar as fixtures `Custom DocPerm`

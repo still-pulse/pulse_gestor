@@ -11,7 +11,7 @@
 - `Classificacao de Risco Diaria` resolve o protocolo pela vigência da unidade na data e exige uma linha por nível, na ordem do protocolo. O servidor recalcula o total e valida as quantidades; a tela apenas antecipa esse preenchimento.
 - `Protocolo Nivel` e `Classificacao Diaria Nivel` usam `editable_grid=1`. A cor fica guardada na linha diária ao gerar o lançamento, e a migração preenche linhas antigas sem cor usando o protocolo disponível naquele momento.
 - O grid do Frappe reserva uma célula final para a ação de cada linha, alinhada ao ícone de configuração no cabeçalho. Ao ocultar a ação de expansão, manter essa célula vazia; removê-la desalinha as colunas. Para a faixa colorida, usar sombra interna em vez de borda para não alterar a largura da linha.
-- Os relatórios de Patrimônio (`Relacao de Ativos`, `Ativos por Localizacao`) usam o campo `custom_empresa` de `Location`, um Custom Field criado no site (não está nas fixtures do app). A consulta comum fica em `patrimonio/report/utils.py`; o filtro de localização inclui os sublocais (lft/rgt).
+- Os relatórios de Patrimônio (`Relacao de Ativos`, `Ativos por Localizacao`) usam o campo `custom_empresa` de `Location`, um Custom Field versionado em `fixtures/custom_field.json` (junto com os quatro campos de `Asset`; o CI depende dessas fixtures). A consulta comum fica em `patrimonio/report/utils.py`; o filtro de localização inclui os sublocais (lft/rgt).
 - Termo de Responsabilidade do custodiante: perfis `PerfilTermoDoAtivo` (Asset, assina o `custodian`) e `PerfilTermoDeMovimentacao` (Asset Movement, assina cada `to_employee`) em `assinatura.py`, com Modelos semeados em `MODELOS`. O `Receipt` criado pelo ERPNext ao submeter o Asset é recusado na movimentação: a custódia inicial se assina no próprio Asset. As Fichas continuam como formato padrão; os Termos são o formato do comprovante.
 
 ## Dependências, versão e documentação
@@ -19,7 +19,7 @@
 - `required_apps = ["frappe", "erpnext", "clm"]`. Os formatos de Comissões e de Patrimônio estendem `clm_base.html`; os
   módulos `Comissoes` e `Patrimonio` precisam continuar em `PDF_ENGINE_MODULES` do `clm`
   (`clm/clm/services/pdf_engine.py`) e seguem o `docs/brand-manifesto.md` do `clm`.
-- Dependências **não declaradas**: `assinatura_eletronica` (opcional; `assinatura.py` importa dentro de `try`) e
+- Dependências opcionais (de propósito fora de `required_apps`): `assinatura_eletronica` (`assinatura.py` importa dentro de `try`) e
   `integracoes_customizadas` (`telefone.py` e a reunião de comissão importam dentro de funções; confira a guarda antes de
   depender deles).
 - `__version__` em `pulse_gestor/__init__.py` deve bater com a tag (hoje 0.11.0). Os patches usam o prefixo `vX_Y_Z_` e não
@@ -34,5 +34,5 @@
 ## Lint e pre-commit
 
 - Rode `pre-commit install` uma vez após clonar o repositório.
-- O CI (`.github/workflows/linter.yml`) executa pre-commit, semgrep e pip-audit nos pull requests.
+- O CI (`.github/workflows/linter.yml`) executa pre-commit e semgrep (gate) e um pip-audit separado e informativo; também roda por `workflow_dispatch`.
 - Decisões de lint e CI: [docs/adr-003-padronizacao-de-lint-e-ci.md](docs/adr-003-padronizacao-de-lint-e-ci.md).

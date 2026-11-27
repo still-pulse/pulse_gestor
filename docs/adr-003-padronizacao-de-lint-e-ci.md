@@ -18,7 +18,9 @@ padrão adotado, sem alterar lógica nem comportamento em runtime.
    produção. Produção e homologação estão confirmadas em **Python 3.12**; o `ci.yml` passou a rodar 3.12 para
    refletir a produção (o 3.14 anterior é incompatível com o Frappe v15: `freezegun`, usado pelos testes do
    ERPNext, quebra na coleta com `AttributeError: module 'uuid' has no attribute '_load_system_functions'`, o que
-   deixava o Run Tests vermelho em `main`). O `linter.yml` continua em 3.11 (o piso). O alvo de migração ao
+   deixava o Run Tests vermelho em `main`). O `linter.yml` também roda em **3.12** (alinhado à produção e ao
+   `ci.yml`); 3.11 permanece só como piso de compatibilidade do código (`requires-python`,
+   `target-version`). O alvo de migração ao
    Frappe v16 é `>=3.13` (`target-version = "py313"`, `requires-python = ">=3.13"`, com `linter.yml` e `ci.yml`
    coerentes), a executar na migração, não antes.
 2. **ruff fixado em v0.16.10** via `ruff-pre-commit`, regras `F, E, W, I, UP, B, RUF` e lista de `ignore`
@@ -36,25 +38,40 @@ padrão adotado, sem alterar lógica nem comportamento em runtime.
    Nenhum global de namespace do app foi necessário.
 8. **Arquivos JS com Jinja** são excluídos de prettier/eslint por caminho exato. Neste repo: nenhum.
 9. **JS formatado pelo prettier em commit exclusivo de estilo.** Neste repo: 5 arquivos.
-10. **pip-audit roda só no CI e audita apenas o `pyproject`**; as dependências `erpnext`/`hrms` ficam comentadas,
-    então a cobertura é pequena (ver Pendências).
+10. **pip-audit em dois jobs.** `Vulnerable Dependency Check` é **bloqueante** e audita só o `pyproject` do app
+    (`pip-audit --desc on .`). `Vulnerable Dependency Check (Frappe, ERPNext, HRMS)` é **informativo**
+    (`continue-on-error: true`): clona a branch `version-15` de `frappe`, `erpnext` e `hrms` e audita o `pyproject`
+    de cada um. Achados do informativo são tratados à parte, sem deixar o gate vermelho (mesmo desenho do `clm` e do
+    `pulse_finance`).
 11. **commitlint mantido** e `pre-commit install` documentado no `AGENTS.md`.
 12. **Sem tag nem mudança de `__version__`** nesta padronização.
+13. **Actions alinhadas em todos os apps:** `actions/checkout@v7`, `actions/setup-python@v7`,
+    `actions/setup-node@v7` e `actions/cache@v6`. `pre-commit/action` foi trocado por três passos (instalar
+    `pre-commit`, `actions/cache@v6` de `~/.cache/pre-commit`, `pre-commit run --all-files`). Os dois workflows têm
+    `workflow_dispatch` para validar a branch sem abrir PR; o `linter.yml` roda em pull request, em `push` na `main`
+    e no disparo manual. O semgrep (`semgrep ci` com as regras do Frappe e `r/python.lang.correctness`) tem o mesmo
+    comportamento em todos os apps: varredura completa, sem `--baseline-commit`.
+14. **Dependências declaradas explicitamente.** Externas no `pyproject` (`PyQRCode`, `pypng`, usadas em
+    `print_formats.py`); apps obrigatórios em `required_apps` (`frappe`, `erpnext`, `clm`). Opcionais, sempre com
+    guarda e **de propósito fora** de `required_apps`: `assinatura_eletronica` e `integracoes_customizadas`
+    (listados em comentário no `pyproject`). `hrms` não é importado: `Employee` e `Asset` vêm do ERPNext v15.
+    `pypng` é declarado como `~=0.20220715.0` porque é exigido pelo ERPNext.
 
 ## Consequências
 
 - Lint, formatação e CI passam a ter o mesmo comportamento entre os apps, facilitando a unificação.
 - Imports mortos não são mais tolerados; reexportações precisam de justificativa explícita no `noqa`.
 - Atualizações de prettier/eslint exigem uma rodada própria, com possível reformatação de JS.
-- O pip-audit atual dá falsa sensação de cobertura, pois não audita as dependências Frappe/ERPNext/HRMS.
+- O pip-audit cobre também Frappe/ERPNext/HRMS, mas é informativo e não barra o merge.
 
 ## Exceção de semgrep
 
 `pulse_gestor/patches/v0_2_6_rename_indicadores_doctypes.py` recebe `# nosemgrep: frappe-monkey-patching-not-allowed`
 na linha do `import` (o semgrep reporta o match desde o import até a atribuição). É um patch único e histórico que
 troca temporariamente `builder.TABLE_NAME_PATTERN` para renomear DocTypes com acento e restaura o valor em `finally`;
-o Frappe 15 não oferece hook para isso. Aprovado pelo responsável do repositório. O achado só apareceu porque o
-`semgrep ci` é diff-aware e o `ruff --fix`/`format` reescreveu o arquivo.
+o Frappe 15 não oferece hook para isso. Supressão pré-existente, **não tocada** nesta rodada e **ainda sem
+aprovação nominal do usuário**: pendente de decisão. O achado só apareceu porque o `semgrep ci` era diff-aware e o
+`ruff --fix`/`format` reescreveu o arquivo; com a varredura completa ele segue suprimido.
 
 ### Achados `frappe-sql-format-injection` em patches
 
@@ -70,13 +87,43 @@ mantém a idempotência. Semgrep com `frappe/semgrep-rules`: 2 achados sem a sup
 
 `install-app` não executa `after_migrate`; o `after_install` agora também chama `ensure_print_formats`, o que define
 o formato padrão de `Asset` e `Asset Movement` em sites novos. Os Custom Fields de Patrimônio (`custom_empresa` em
-`Location` e quatro campos em `Asset`) existem só em produção, criados à mão; o `ci.yml` os cria no site de teste
-por `pulse_gestor.tests.site_setup`, sem mudar o comportamento em produção.
+`Location` e quatro campos em `Asset`) foram criados à mão em produção e agora estão versionados em
+`pulse_gestor/fixtures/custom_field.json` (definições copiadas de produção, sem `owner`, `creation`, `modified`,
+`modified_by`, `idx` e `docstatus`). O CI depende dessas fixtures reais (o setup de teste que criava os campos como
+`Data` foi removido). Efeito no `migrate` em produção: a sincronização de fixtures sobrescreve esses cinco campos
+com a definição versionada; ajustes feitos depois pela interface devem ser exportados de novo para o arquivo.
+
+**Campos de layout não versionados (decisão).** Os cinco campos têm `insert_after` apontando para campos de layout
+que também existem em produção (`custom_identificação`, `custom_situação_do_bem` e duas Column Breaks). Eles
+**não** foram versionados: o escopo aprovado foi só dos cinco campos de dados. Em site novo os campos entram sem
+as seções e colunas (o `validate` do Custom Field tolera o `insert_after` ausente); em produção nada muda.
+Versionar os quatro campos de layout exige nova decisão.
+
+**Skips esperados no CI.** Os 4 testes de `TestTermoDeResponsabilidade` ficam em skip (`skipUnless`) porque o
+`assinatura_eletronica` (dependência opcional) não está instalado no CI. É esperado e não deve ser tratado como
+falha. O app **não** é instalado no CI sem decisão do responsável; enquanto isso, o código dos Termos só é
+exercitado em produção/homologação.
+
+### Achados do semgrep corrigidos (varredura completa)
+
+Com a varredura completa, 18 achados legados (que o modo diff-aware de PR nunca mostrava) foram corrigidos no
+código, cada um com teste e sem `nosemgrep` novo:
+
+- `missing-argument-type-hint` (12): type hints nos métodos whitelisted (`filters: str | dict | None`,
+  `limite: int | str`, demais `str`). O Frappe valida esses tipos em requisição/teste.
+- `frappe-sql-format-injection` (2): `relacao_de_ativos`/`ativos_por_localizacao` (`patrimonio/report/utils.py`) e
+  `atividades_de_comissao` passaram a usar SQL estático com filtros parametrizados (`%(x)s IS NULL OR ...`).
+- `frappe-manual-commit` (4): removidos os `frappe.db.commit()` de `before_migrate`, `after_install`,
+  `after_migrate` e `atualizar_status_documentos`. O `install-app`, as etapas `@atomic` da migração e o
+  `execute_job` do scheduler já confirmam a transação (conferido no Frappe version-15).
+- Os dois `nosemgrep` dos patches `v0_2_6` e `v0_9_0` (DDL com nomes constantes) seguem como aprovado antes; os
+  patches não foram alterados.
 
 ## Pendências
 
 - Migrar para Python `>=3.13` junto com o v16 e revisar as versões de prettier/eslint na preparação para v16/v17.
-- Ampliar o pip-audit para cobrir as dependências efetivamente instaladas (hoje comentadas no `pyproject`).
+- Tratar os achados do pip-audit do ambiente Frappe (job informativo, ex.: `pdfkit` do frappe v15) e, quando
+  estiverem resolvidos, avaliar torná-lo bloqueante. O pip-audit do `pyproject` já bloqueia.
 
 ## Estado deste repositório
 
