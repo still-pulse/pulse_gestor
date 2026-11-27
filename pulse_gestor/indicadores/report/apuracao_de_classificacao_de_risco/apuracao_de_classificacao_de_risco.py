@@ -15,8 +15,8 @@ def execute(filters=None):
 		"data_inicio": filters.data_inicio,
 		"data_fim": filters.data_fim,
 	}
-	# The protocol is already resolved from the validity period when each daily entry is saved.
-	# Grouping also by the time stored on the row keeps later changes of the target apart.
+	# O protocolo já é resolvido pela vigência ao gravar cada lançamento diário.
+	# Agrupar também pelo tempo guardado na linha separa mudanças posteriores do alvo.
 	data = frappe.db.sql(
 		"""
 		SELECT diario.protocolo, linha.idx AS ordem, linha.nivel,
@@ -72,7 +72,7 @@ def get_chart(data, params):
 	if not any(por_nivel.values()):
 		return None
 
-	# The color may change between protocols or entries; the most recent one in the period wins.
+	# A cor pode mudar entre protocolos ou lançamentos; vale a mais recente registrada no período.
 	cores = {}
 	for row in frappe.db.sql(
 		"""

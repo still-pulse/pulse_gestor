@@ -111,7 +111,7 @@ jobs:
           # o before_tests do ERPNext (setup wizard de teste) não roda com --app de outro app
           bench --site test_site execute erpnext.setup.utils.before_tests
           # os Custom Fields de Patrimônio existem só no site de produção (não estão em fixtures nem patches)
-          bench --site test_site execute pulse_gestor.tests.site_setup.create_asset_custom_fields
+          bench --site test_site execute pulse_gestor.tests.site_setup.criar_campos_de_patrimonio
           bench --site test_site run-tests --app pulse_gestor
         env:
           TYPE: server

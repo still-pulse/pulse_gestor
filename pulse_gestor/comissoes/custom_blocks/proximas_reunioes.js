@@ -1,35 +1,35 @@
-const target = root_element.querySelector(".pg-conteudo");
+const alvo = root_element.querySelector(".pg-conteudo");
 const esc = (v) => frappe.utils.escape_html(v || "");
 
 frappe
-	.xcall("pulse_gestor.comissoes.dashboard.upcoming_meetings", { limit: 8 })
-	.then((meetings) => {
-		if (!meetings.length) {
-			target.innerHTML = '<div class="pg-vazio">Nenhuma reunião agendada.</div>';
+	.xcall("pulse_gestor.comissoes.dashboard.proximas_reunioes", { limite: 8 })
+	.then((reunioes) => {
+		if (!reunioes.length) {
+			alvo.innerHTML = '<div class="pg-vazio">Nenhuma reunião agendada.</div>';
 			return;
 		}
-		target.innerHTML =
+		alvo.innerHTML =
 			'<ul class="pg-lista">' +
-			meetings
+			reunioes
 				.map((r) => {
-					const date = moment(r.data_reuniao);
-					const time = date.format("HH:mm") === "00:00" ? "" : date.format("HH:mm");
-					const when =
+					const data = moment(r.data_reuniao);
+					const hora = data.format("HH:mm") === "00:00" ? "" : data.format("HH:mm");
+					const quando =
 						r.dias === 0 ? "Hoje" : r.dias === 1 ? "Amanhã" : `em ${r.dias} dias`;
-					const color = r.dias <= 1 ? "vermelho" : r.dias <= 7 ? "amarelo" : "azul";
-					const sub = [time, r.local_reuniao, r.empresa]
+					const cor = r.dias <= 1 ? "vermelho" : r.dias <= 7 ? "amarelo" : "azul";
+					const sub = [hora, r.local_reuniao, r.empresa]
 						.filter(Boolean)
 						.map(esc)
 						.join(" · ");
 					return `<li class="pg-item">
-						<div class="pg-data"><div class="pg-dia">${date.format(
+						<div class="pg-data"><div class="pg-dia">${data.format(
 							"DD"
-						)}</div><div class="pg-mes">${date.format("MMM")}</div></div>
+						)}</div><div class="pg-mes">${data.format("MMM")}</div></div>
 						<div class="pg-corpo">
 							<a href="/app/reuniao-de-comissao/${encodeURIComponent(r.name)}">${esc(r.comissao)}</a>
 							<div class="pg-sub">${sub}</div>
 						</div>
-						<span class="pg-tag ${color}">${when}</span>
+						<span class="pg-tag ${cor}">${quando}</span>
 					</li>`;
 				})
 				.join("") +

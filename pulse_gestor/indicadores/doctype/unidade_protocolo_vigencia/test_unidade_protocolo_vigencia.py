@@ -1,19 +1,19 @@
 from unittest import TestCase
 
 from pulse_gestor.indicadores.doctype.unidade_protocolo_vigencia.unidade_protocolo_vigencia import (
-	periods_overlap,
+	periodos_se_sobrepoem,
 )
 
 
 class TestUnidadeProtocoloVigencia(TestCase):
 	def test_periodos_adjacentes_nao_se_sobrepoem(self):
-		self.assertFalse(periods_overlap("2026-01-01", "2026-06-30", "2026-07-01", None))
+		self.assertFalse(periodos_se_sobrepoem("2026-01-01", "2026-06-30", "2026-07-01", None))
 
 	def test_data_final_e_inclusiva(self):
-		self.assertTrue(periods_overlap("2026-01-01", "2026-06-30", "2026-06-30", None))
+		self.assertTrue(periodos_se_sobrepoem("2026-01-01", "2026-06-30", "2026-06-30", None))
 
 	def test_periodo_sem_fim_impede_nova_vigencia(self):
-		self.assertTrue(periods_overlap("2026-01-01", None, "2027-01-01", "2027-12-31"))
+		self.assertTrue(periodos_se_sobrepoem("2026-01-01", None, "2027-01-01", "2027-12-31"))
 
 	def test_periodos_passados_nao_se_sobrepoem(self):
-		self.assertFalse(periods_overlap("2027-01-01", None, "2026-01-01", "2026-12-31"))
+		self.assertFalse(periodos_se_sobrepoem("2027-01-01", None, "2026-01-01", "2026-12-31"))

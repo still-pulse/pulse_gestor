@@ -1,60 +1,60 @@
-# Copyright (c) 2026, StillPulse Tecnologia LTDA and contributors
+# Copyright (c) 2026, Still Pulse and contributors
 # For license information, please see license.txt
 
-"""Pure functions of Pulse Gestor (no database dependency)."""
+"""Funções puras do Pulse Gestor (sem dependência de banco)."""
 
 from __future__ import annotations
 
 from datetime import date, datetime
 from typing import Any
 
-STATUS_VALID = "Válido"
-STATUS_EXPIRED = "Vencido"
-STATUS_NO_EXPIRY = "Sem validade"
+STATUS_VALIDO = "Válido"
+STATUS_VENCIDO = "Vencido"
+STATUS_SEM_VALIDADE = "Sem validade"
 
-PDF_EXTENSIONS = (".pdf",)
+EXTENSOES_PDF = (".pdf",)
 
 
-def _to_date(value: Any) -> date | None:
-	if value is None or value == "":
+def _para_data(valor: Any) -> date | None:
+	if valor is None or valor == "":
 		return None
-	if isinstance(value, datetime):
-		return value.date()
-	if isinstance(value, date):
-		return value
-	text = str(value).strip()[:10]
-	if not text:
+	if isinstance(valor, datetime):
+		return valor.date()
+	if isinstance(valor, date):
+		return valor
+	texto = str(valor).strip()[:10]
+	if not texto:
 		return None
-	return date.fromisoformat(text)
+	return date.fromisoformat(texto)
 
 
-def calculate_status(has_expiry: Any, end_date: Any, today: Any = None) -> str:
-	"""Compute the status badge of the document."""
-	if not int(has_expiry or 0):
-		return STATUS_NO_EXPIRY
+def calcular_status(possui_validade: Any, data_fim: Any, hoje: Any = None) -> str:
+	"""Calcula o badge de status do documento."""
+	if not int(possui_validade or 0):
+		return STATUS_SEM_VALIDADE
 
-	end = _to_date(end_date)
-	if not end:
-		return STATUS_VALID
+	fim = _para_data(data_fim)
+	if not fim:
+		return STATUS_VALIDO
 
-	reference = _to_date(today) or date.today()
-	if end < reference:
-		return STATUS_EXPIRED
-	return STATUS_VALID
+	referencia = _para_data(hoje) or date.today()
+	if fim < referencia:
+		return STATUS_VENCIDO
+	return STATUS_VALIDO
 
 
-def calculate_days_to_expiry(has_expiry: Any, end_date: Any, today: Any = None) -> int | None:
-	if not int(has_expiry or 0):
+def calcular_dias_para_vencimento(possui_validade: Any, data_fim: Any, hoje: Any = None) -> int | None:
+	if not int(possui_validade or 0):
 		return None
-	end = _to_date(end_date)
-	if not end:
+	fim = _para_data(data_fim)
+	if not fim:
 		return None
-	reference = _to_date(today) or date.today()
-	return (end - reference).days
+	referencia = _para_data(hoje) or date.today()
+	return (fim - referencia).days
 
 
-def is_pdf(path: str | None) -> bool:
-	if not path:
+def eh_pdf(caminho: str | None) -> bool:
+	if not caminho:
 		return False
-	filename = str(path).split("?")[0].rsplit("/", 1)[-1].lower()
-	return filename.endswith(PDF_EXTENSIONS)
+	nome = str(caminho).split("?")[0].rsplit("/", 1)[-1].lower()
+	return nome.endswith(EXTENSOES_PDF)

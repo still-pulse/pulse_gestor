@@ -1,4 +1,4 @@
-// Asset custodian: only active employees of the asset's company.
+// Custodiante do bem: só colaboradores ativos da empresa do ativo.
 frappe.ui.form.on("Asset", {
 	setup(frm) {
 		frm.set_query("custodian", () => ({

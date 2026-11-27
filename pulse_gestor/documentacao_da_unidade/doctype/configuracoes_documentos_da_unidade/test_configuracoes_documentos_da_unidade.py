@@ -1,4 +1,4 @@
-# Copyright (c) 2026, StillPulse Tecnologia LTDA and contributors
+# Copyright (c) 2026, Still Pulse and contributors
 # For license information, please see license.txt
 
 from types import SimpleNamespace
@@ -7,11 +7,11 @@ from unittest.mock import patch
 import frappe
 from frappe.tests.utils import FrappeTestCase
 
-from pulse_gestor.tasks import send_expiry_notices
+from pulse_gestor.tasks import enviar_avisos_vencimento_documentos
 
 
 class TestConfiguracoesDocumentosdaUnidade(FrappeTestCase):
-	def test_recipients_require_template_and_valid_emails(self):
+	def test_destinatarios_exigem_modelo_e_emails_validos(self):
 		settings = frappe.get_single("Configuracoes Documentos da Unidade")
 		settings.modelo_email_vencimento = None
 		settings.set("destinatarios_vencimento", [])
@@ -28,7 +28,7 @@ class TestConfiguracoesDocumentosdaUnidade(FrappeTestCase):
 		settings.validate()
 		self.assertEqual(settings.destinatarios_vencimento[0].emails, "a@example.com\nb@example.com")
 
-	def test_notices_use_configured_company_and_template(self):
+	def test_avisos_usam_empresa_e_modelo_configurados(self):
 		settings = SimpleNamespace(
 			modelo_email_vencimento="Modelo",
 			dias_alerta_vencimento=30,
@@ -39,22 +39,22 @@ class TestConfiguracoesDocumentosdaUnidade(FrappeTestCase):
 		template = SimpleNamespace(
 			get_formatted_email=lambda context: {"subject": "Assunto", "message": "Corpo"}
 		)
-		document = SimpleNamespace(name="DOC-1", as_dict=lambda: {"name": "DOC-1"})
+		documento = SimpleNamespace(name="DOC-1", as_dict=lambda: {"name": "DOC-1"})
 		with (
 			patch("pulse_gestor.tasks.frappe.get_single", return_value=settings),
 			patch(
 				"pulse_gestor.tasks.frappe.get_all",
 				return_value=[SimpleNamespace(name="DOC-1", company="Empresa A")],
 			) as get_all,
-			patch("pulse_gestor.tasks.frappe.get_doc", side_effect=[template, document]),
+			patch("pulse_gestor.tasks.frappe.get_doc", side_effect=[template, documento]),
 			patch("pulse_gestor.tasks.frappe.db.exists", return_value=False),
 			patch(
-				"pulse_gestor.tasks.build_expiry_email_body",
+				"pulse_gestor.tasks.corpo_email_vencimento",
 				side_effect=lambda formatted, doc: formatted["message"],
 			),
 			patch("pulse_gestor.tasks.frappe.sendmail") as sendmail,
 		):
-			send_expiry_notices()
+			enviar_avisos_vencimento_documentos()
 
 		self.assertEqual(get_all.call_args.kwargs["filters"]["company"], ["in", ["Empresa A"]])
 		sendmail.assert_called_once_with(

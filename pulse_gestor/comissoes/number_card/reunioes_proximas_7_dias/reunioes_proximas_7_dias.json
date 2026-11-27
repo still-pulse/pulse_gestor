@@ -9,7 +9,7 @@
 	"is_public": 1,
 	"is_standard": 1,
 	"label": "Reunioes nos Proximos 7 Dias",
-	"method": "pulse_gestor.comissoes.dashboard.card_upcoming_meetings",
+	"method": "pulse_gestor.comissoes.dashboard.cartao_reunioes_proximas",
 	"modified": "2026-09-28 21:00:00.000000",
 	"modified_by": "Administrator",
 	"module": "Comissoes",

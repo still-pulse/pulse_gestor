@@ -1,4 +1,4 @@
-// Copyright (c) 2026, StillPulse Tecnologia LTDA and contributors
+// Copyright (c) 2026, Still Pulse and contributors
 // For license information, please see license.txt
 
 frappe.ui.form.on("Documentacao da Unidade", {
@@ -9,7 +9,7 @@ frappe.ui.form.on("Documentacao da Unidade", {
 	},
 
 	refresh(frm) {
-		apply_indicator(frm);
+		aplicar_indicador(frm);
 	},
 
 	possui_validade(frm) {
@@ -20,8 +20,8 @@ frappe.ui.form.on("Documentacao da Unidade", {
 	},
 });
 
-function apply_indicator(frm) {
-	const status_map = {
+function aplicar_indicador(frm) {
+	const mapa = {
 		Válido: "green",
 		Vencido: "red",
 		"Sem validade": "blue",
@@ -29,5 +29,5 @@ function apply_indicator(frm) {
 	if (!frm.doc.status) {
 		return;
 	}
-	frm.page.set_indicator(__(frm.doc.status), status_map[frm.doc.status] || "gray");
+	frm.page.set_indicator(__(frm.doc.status), mapa[frm.doc.status] || "gray");
 }
