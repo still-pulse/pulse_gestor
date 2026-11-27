@@ -1,4 +1,4 @@
-frappe.query_reports["Relatorio de Atendimentos por Periodo"] = {
+frappe.query_reports["Gestor Risk Classification Tally"] = {
 	filters: [
 		{
 			fieldname: "unidade",
@@ -21,12 +21,6 @@ frappe.query_reports["Relatorio de Atendimentos por Periodo"] = {
 			fieldtype: "Date",
 			reqd: 1,
 			default: frappe.datetime.month_end(),
-		},
-		{
-			fieldname: "especialidade",
-			label: __("Especialidade"),
-			fieldtype: "Link",
-			options: "Especialidade",
 		},
 	],
 };

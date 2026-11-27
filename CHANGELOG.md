@@ -30,6 +30,9 @@ Reconstructed from `git tag` and `git log` (read-only) and checked against the a
 
 ## Unreleased
 
+- Reports, Print Formats and Number Cards renamed to English with the `Gestor` prefix (patch `s01_rename_reports_print_formats_and_cards`;
+  see `docs/adr-005-persisted-names-phase-2-wave-2.md`). Labels in pt-BR stay in `translations/`.
+
 ### Changed
 - Naming and language standardization (Phase 1): identifiers, comments, docstrings and documentation in English. Python
   modules `telefone.py` and `assinatura.py` became `phone.py` and `signature_profiles.py`; functions, constants and

@@ -1,10 +1,10 @@
 import frappe
 from frappe.tests.utils import FrappeTestCase
 
-from pulse_gestor.patrimonio.report.ativos_por_localizacao.ativos_por_localizacao import (
+from pulse_gestor.patrimonio.report.gestor_asset_list.gestor_asset_list import execute as asset_list
+from pulse_gestor.patrimonio.report.gestor_assets_by_location.gestor_assets_by_location import (
 	execute as assets_by_location,
 )
-from pulse_gestor.patrimonio.report.relacao_de_ativos.relacao_de_ativos import execute as asset_list
 
 
 class TestAssetReports(FrappeTestCase):

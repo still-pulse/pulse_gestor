@@ -16,15 +16,15 @@ from frappe.custom.doctype.property_setter.property_setter import make_property_
 
 # DocType (Core) -> default Print Format
 DEFAULT_PRINT_FORMATS = {
-	"Asset": "Ficha do Ativo Imobilizado",
-	"Asset Movement": "Ficha de Movimentacao de Ativos",
+	"Asset": "Gestor Fixed Asset Sheet",
+	"Asset Movement": "Gestor Asset Movement Sheet",
 }
 
 # Legacy formats (standard=No, database only) that were replaced -> new format. They are only disabled,
 # so that no content is lost.
 LEGACY_PRINT_FORMATS = {
-	"Ficha de Ativo Imobilizado": "Ficha do Ativo Imobilizado",
-	"Ficha de Movimentacao de Ativos (antiga)": "Ficha de Movimentacao de Ativos",
+	"Ficha de Ativo Imobilizado": "Gestor Fixed Asset Sheet",
+	"Ficha de Movimentacao de Ativos (antiga)": "Gestor Asset Movement Sheet",
 }
 
 # The database collation ignores accents: the old accented format and the new ASCII one would be the same record,

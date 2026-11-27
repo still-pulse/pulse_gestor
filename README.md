@@ -36,7 +36,7 @@ Current version: **1.0.2** (`pulse_gestor/__init__.py` and `hooks.py`). History 
 - **Medical visits**: **Especialidade**, **Unidade Especialidade Vigencia** (specialties served by the unit in a
   period) and **Atendimento Medico Diario** (quantity per specialty, submittable, one non-cancelled entry per unit and
   date).
-- **Reports**: *Apuracao de Classificacao de Risco* and *Relatorio de Atendimentos por Periodo* (totals per specialty,
+- **Reports**: *Gestor Risk Classification Tally* and *Gestor Visits by Period* (totals per specialty,
   percentage, days with visits, daily average per entered day and chart). Only submitted entries count in the tallies.
 
 ### Committees
@@ -50,9 +50,9 @@ Current version: **1.0.2** (`pulse_gestor/__init__.py` and `hooks.py`). History 
 - **Signable minutes**: with the `assinatura_eletronica` app, the present participants sign the minutes through the
   signature engine (`CommitteeMeetingProfile` profile, Signature Template seeded in `after_migrate`). When a finished
   Signature Process exists, the minutes print the evidence record.
-- **Print formats** in the institutional standard: *Convocacao para Reuniao de Comissao* and *Ata de Reuniao de
+- **Print formats** in the institutional standard: *Gestor Committee Meeting Notice* and *Ata de Reuniao de
   Comissao* (the DocType default).
-- **Report** *Atividades de Comissao* (meetings per period, attendance and optional agenda).
+- **Report** *Gestor Committee Activities* (meetings per period, attendance and optional agenda).
 - **Management panel** in the Workspace: meetings in the next 7 days, terms expiring in 60 days, committees without a
   meeting for more than 90 days, terms in force, meetings in the month and average attendance, plus the blocks
   *Próximas reuniões* and *Comissões que exigem atenção*.
@@ -61,11 +61,11 @@ Current version: **1.0.2** (`pulse_gestor/__init__.py` and `hooks.py`). History 
 
 The **Patrimonio** module creates no DocTypes: it extends ERPNext's `Asset` and `Asset Movement`.
 
-- **Print formats** (institutional standard, WeasyPrint engine): *Ficha do Ativo Imobilizado* and *Ficha de
-  Movimentacao de Ativos*, set as the DocTypes' default in `after_migrate`; *Termo de Responsabilidade do Ativo* and
-  *Termo de Responsabilidade de Movimentacao*, used as the signature receipt. The record's QR Code is generated
+- **Print formats** (institutional standard, WeasyPrint engine): *Gestor Fixed Asset Sheet* and *Ficha de
+  Movimentacao de Ativos*, set as the DocTypes' default in `after_migrate`; *Gestor Asset Responsibility Form* and
+  *Gestor Movement Responsibility Form*, used as the signature receipt. The record's QR Code is generated
   locally (Jinja method `qr_data_uri`).
-- **Reports** (Script Reports on `Asset`): *Relacao de Ativos* and *Ativos por Localizacao* (assets grouped in a tree,
+- **Reports** (Script Reports on `Asset`): *Gestor Asset List* and *Gestor Assets by Location* (assets grouped in a tree,
   with count, amounts and chart). They filter by company, location (including sublocations), category, status, usage
   and condition. The location's company comes from the `custom_empresa` field of `Location`, a Custom Field created on
   the site, which is **not** in the app's fixtures.

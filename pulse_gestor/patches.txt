@@ -1,4 +1,5 @@
 [pre_model_sync]
+pulse_gestor.patches.s01_rename_reports_print_formats_and_cards
 # Patches added in this section will be executed before doctypes are migrated
 pulse_gestor.patches.v0_2_6_rename_indicadores_doctypes
 pulse_gestor.patches.rename_configuracoes_documentos_da_unidade

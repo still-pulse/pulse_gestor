@@ -9,9 +9,9 @@
     "function": "Count",
     "is_public": 1,
     "is_standard": 0,
-    "label": "PG Total Documentos",
+    "label": "Gestor Total Documents",
     "module": "Documentacao da Unidade",
-    "name": "PG Total Documentos",
+    "name": "Gestor Total Documents",
     "show_percentage_stats": 0,
     "type": "Document Type"
   },
@@ -25,9 +25,9 @@
     "function": "Count",
     "is_public": 1,
     "is_standard": 0,
-    "label": "PG Documentos Validos",
+    "label": "Gestor Valid Documents",
     "module": "Documentacao da Unidade",
-    "name": "PG Documentos Validos",
+    "name": "Gestor Valid Documents",
     "show_percentage_stats": 0,
     "type": "Document Type"
   },
@@ -41,9 +41,9 @@
     "function": "Count",
     "is_public": 1,
     "is_standard": 0,
-    "label": "PG Documentos Vencidos",
+    "label": "Gestor Expired Documents",
     "module": "Documentacao da Unidade",
-    "name": "PG Documentos Vencidos",
+    "name": "Gestor Expired Documents",
     "show_percentage_stats": 0,
     "type": "Document Type"
   }

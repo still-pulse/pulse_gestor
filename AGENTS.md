@@ -44,7 +44,7 @@ and [`clm/docs/fixtures-and-migrations.md`](https://github.com/still-pulse/clm/b
 - The Frappe grid reserves a final cell for each row's action, aligned with the settings icon in the header. When hiding
   the expand action, keep that cell empty; removing it misaligns the columns. For the colored strip, use an inner
   shadow instead of a border so the row width does not change.
-- The Patrimonio reports (`Relacao de Ativos`, `Ativos por Localizacao`) use the `custom_empresa` field of `Location`, a
+- The Patrimonio reports (`Gestor Asset List`, `Gestor Assets by Location`) use the `custom_empresa` field of `Location`, a
   Custom Field created on the site (not in the app's fixtures). The common query lives in `patrimonio/report/utils.py`;
   the location filter includes sublocations (lft/rgt).
 - Custodian Responsibility Term: profiles `AssetTermProfile` (Asset, signed by the `custodian`) and

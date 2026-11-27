@@ -1,7 +1,7 @@
 {
 	"actions": [],
 	"creation": "2026-09-28 00:00:00.000000",
-	"default_print_format": "Ata de Reuniao de Comissao",
+	"default_print_format": "Gestor Committee Meeting Minutes",
 	"doctype": "DocType",
 	"engine": "InnoDB",
 	"field_order": [

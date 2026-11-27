@@ -252,7 +252,7 @@ RESPONSIBILITY_DECLARATION = (
 
 TEMPLATES = {
 	MEETING: {
-		"print_format": "Ata de Reuniao de Comissao",
+		"print_format": "Gestor Committee Meeting Minutes",
 		"exigir_submissao": 0,
 		"titulo": "Ata de reunião de comissão",
 		"subtitulo": "Registro da participação e das deliberações",
@@ -269,7 +269,7 @@ TEMPLATES = {
 		"msg_comprovante": _receipt_message("da ata"),
 	},
 	ASSET: {
-		"print_format": "Termo de Responsabilidade do Ativo",
+		"print_format": "Gestor Asset Responsibility Form",
 		"exigir_submissao": 1,
 		"titulo": "Termo de responsabilidade",
 		"subtitulo": "Guarda e conservação de bem patrimonial",
@@ -283,7 +283,7 @@ TEMPLATES = {
 		"msg_comprovante": _receipt_message("do termo de responsabilidade"),
 	},
 	ASSET_MOVEMENT: {
-		"print_format": "Termo de Responsabilidade de Movimentacao",
+		"print_format": "Gestor Movement Responsibility Form",
 		"exigir_submissao": 1,
 		"titulo": "Termo de responsabilidade",
 		"subtitulo": "Recebimento e guarda de bens patrimoniais",
