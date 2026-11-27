@@ -95,7 +95,7 @@ Workspace is **not created by this app**: if it does not exist on the site, noth
 ## Requirements
 
 - Frappe v15 and ERPNext v15.
-- `clm` app: `required_apps = ["frappe/frappe@version-15", "frappe/erpnext@version-15", "still-pulse/clm@main"]`. The
+- `clm` app: `required_apps = ["frappe/frappe@version-15", "frappe/erpnext@version-15", "still-pulse/clm@develop"]`. The
   print formats extend `clm/templates/print/clm_base.html` (macros, brand manifesto in `clm/docs/brand-manifesto.md`)
   and the PDF comes from the `clm` engine, which only serves the modules listed in `PDF_ENGINE_MODULES`
   (`apps/clm/clm/clm/services/pdf_engine.py`). `Comissoes` and `Patrimonio` are already on that list. Install `clm`

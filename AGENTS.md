@@ -54,7 +54,7 @@ and [`clm/docs/fixtures-and-migrations.md`](https://github.com/still-pulse/clm/b
 
 ## Dependencies, version and documentation
 
-- `required_apps = ["frappe/frappe@version-15", "frappe/erpnext@version-15", "still-pulse/clm@main"]`. The Committees and
+- `required_apps = ["frappe/frappe@version-15", "frappe/erpnext@version-15", "still-pulse/clm@develop"]`. The Committees and
   Assets formats extend `clm_base.html`; the `Comissoes` and `Patrimonio` modules must remain in `PDF_ENGINE_MODULES`
   of `clm` (`clm/clm/services/pdf_engine.py`) and follow `docs/brand-manifesto.md` of `clm`.
 - **Undeclared (weak) dependencies**: `assinatura_eletronica` (optional; `signature_profiles.py` imports inside `try`) and
