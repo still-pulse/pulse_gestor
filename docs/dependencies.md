@@ -9,7 +9,7 @@ Map of the strong and weak dependencies of `pulse_gestor`. Strong dependencies a
 | --- | --- | --- |
 | `frappe` | `frappe/frappe@version-15` | Framework. |
 | `erpnext` | `frappe/erpnext@version-15` | `Company` (the "unit"), `Asset`, `Asset Movement`, `Location`, `Employee`-based custodian checks. |
-| `clm` | `still-pulse/clm@main` | Print Formats extend `clm/templates/print/clm_base.html`; the PDF engine only serves the modules in `PDF_ENGINE_MODULES` (`Comissoes` and `Patrimonio` must stay listed); the expiry e-mail uses `clm.clm.services.email_layout` (`tasks.build_expiry_email_body`). Install `clm` before `pulse_gestor`. |
+| `clm` | `still-pulse/clm@develop` | Print Formats extend `clm/templates/print/clm_base.html`; the PDF engine only serves the modules in `PDF_ENGINE_MODULES` (`Comissoes` and `Patrimonio` must stay listed); the expiry e-mail uses `clm.clm.services.email_layout` (`tasks.build_expiry_email_body`). Install `clm` before `pulse_gestor`. |
 
 ## Weak (not declared, guarded)
 
