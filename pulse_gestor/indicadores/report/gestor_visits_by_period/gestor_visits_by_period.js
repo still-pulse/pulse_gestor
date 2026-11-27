@@ -1,4 +1,4 @@
-frappe.query_reports["Apuracao de Classificacao de Risco"] = {
+frappe.query_reports["Gestor Visits by Period"] = {
 	filters: [
 		{
 			fieldname: "unidade",
@@ -21,6 +21,12 @@ frappe.query_reports["Apuracao de Classificacao de Risco"] = {
 			fieldtype: "Date",
 			reqd: 1,
 			default: frappe.datetime.month_end(),
+		},
+		{
+			fieldname: "especialidade",
+			label: __("Especialidade"),
+			fieldtype: "Link",
+			options: "Especialidade",
 		},
 	],
 };

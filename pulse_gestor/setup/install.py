@@ -57,13 +57,13 @@ BLOCK_PREFIX = "pg_"
 # App Workspaces that were merged into Gestor
 MERGED_WORKSPACES = ("Pulse Gestor", "Indicadores", "Comissoes", "Documentacao da Unidade")
 DOCUMENT_NUMBER_CARDS = (
-	("PG Total Documentos", "Total"),
-	("PG Documentos Validos", "Válidos"),
-	("PG Documentos Vencidos", "Vencidos"),
+	("Gestor Total Documents", "Total"),
+	("Gestor Valid Documents", "Válidos"),
+	("Gestor Expired Documents", "Vencidos"),
 )
 
 INDICATORS_ENTRY_DOCTYPE = "Classificacao de Risco Diaria"
-INDICATORS_REPORT = "Apuracao de Classificacao de Risco"
+INDICATORS_REPORT = "Gestor Risk Classification Tally"
 INDICATORS_REPORT_LEGACY = "Apuração de Classificação de Risco"
 COMMITTEES_BLOCKS_DIR = Path(__file__).resolve().parent.parent / "comissoes" / "custom_blocks"
 # (Custom HTML Block name, base filename, displayed label)
@@ -72,12 +72,12 @@ COMMITTEES_CUSTOM_BLOCKS = (
 	("Comissoes em Atencao", "comissoes_em_atencao", "Comissões que exigem atenção"),
 )
 COMMITTEES_NUMBER_CARDS = (
-	("Reunioes nos Proximos 7 Dias", "Reuniões nos próximos 7 dias"),
-	("Mandatos a Vencer", "Mandatos a vencer"),
-	("Comissoes sem Reuniao Recente", "Comissões sem reunião recente"),
-	("Mandatos Vigentes", "Mandatos vigentes"),
-	("Reunioes no Mes", "Reuniões no mês"),
-	("Presenca Media", "Presença média"),
+	("Gestor Meetings Next 7 Days", "Reuniões nos próximos 7 dias"),
+	("Gestor Mandates Expiring", "Mandatos a vencer"),
+	("Gestor Committees Without Recent Meeting", "Comissões sem reunião recente"),
+	("Gestor Active Mandates", "Mandatos vigentes"),
+	("Gestor Meetings This Month", "Reuniões no mês"),
+	("Gestor Average Attendance", "Presença média"),
 )
 # The 6 top cards of Gestor (label in the Workspace, in order): the Workspace content references the label.
 TOP_NUMBER_CARDS = (
@@ -90,10 +90,10 @@ TOP_NUMBER_CARDS = (
 )
 # App cards that go on top: (Number Card, label).
 APP_TOP_NUMBER_CARDS = (
-	("PG Documentos Vencidos", "Documentos vencidos"),
-	("Reunioes nos Proximos 7 Dias", "Reuniões nos próximos 7 dias"),
-	("Mandatos a Vencer", "Mandatos a vencer"),
-	("Comissoes sem Reuniao Recente", "Comissões sem reunião recente"),
+	("Gestor Expired Documents", "Documentos vencidos"),
+	("Gestor Meetings Next 7 Days", "Reuniões nos próximos 7 dias"),
+	("Gestor Mandates Expiring", "Mandatos a vencer"),
+	("Gestor Committees Without Recent Meeting", "Comissões sem reunião recente"),
 )
 REMOVED_COMMITTEES_CHARTS = ("Reunioes por Mes", "Mandatos por Status", "Reunioes por Unidade")
 

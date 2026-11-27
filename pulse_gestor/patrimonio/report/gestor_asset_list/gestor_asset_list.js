@@ -1,4 +1,4 @@
-frappe.query_reports["Ativos por Localizacao"] = {
+frappe.query_reports["Gestor Asset List"] = {
 	filters: [
 		{
 			fieldname: "empresa",
@@ -59,12 +59,4 @@ frappe.query_reports["Ativos por Localizacao"] = {
 			options: ["", "Excelente", "Bom", "Regular", "Ruim", "Péssimo"],
 		},
 	],
-	tree: true,
-	name_field: "id",
-	parent_field: "parent",
-	initial_depth: 0,
-	formatter(value, row, column, data, default_formatter) {
-		value = default_formatter(value, row, column, data);
-		return data && data.indent === 0 ? `<b>${value}</b>` : value;
-	},
 };

@@ -11,9 +11,9 @@ from frappe.www.printview import get_rendered_template
 from pulse_gestor.print_formats import DEFAULT_PRINT_FORMATS, LEGACY_PRINT_FORMATS
 
 BASE_TEMPLATE = "clm/templates/print/clm_base.html"
-FORMATS = ("Ata de Reuniao de Comissao", "Convocacao para Reuniao de Comissao")
-ASSET_FORMATS = ("Ficha do Ativo Imobilizado", "Ficha de Movimentacao de Ativos")
-TERM_FORMATS = ("Termo de Responsabilidade do Ativo", "Termo de Responsabilidade de Movimentacao")
+FORMATS = ("Gestor Committee Meeting Minutes", "Gestor Committee Meeting Notice")
+ASSET_FORMATS = ("Gestor Fixed Asset Sheet", "Gestor Asset Movement Sheet")
+TERM_FORMATS = ("Gestor Asset Responsibility Form", "Gestor Movement Responsibility Form")
 
 
 def format_html(name):

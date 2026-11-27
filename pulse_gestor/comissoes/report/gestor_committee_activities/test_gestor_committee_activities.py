@@ -1,7 +1,7 @@
 import frappe
 from frappe.tests.utils import FrappeTestCase
 
-from pulse_gestor.comissoes.report.atividades_de_comissao.atividades_de_comissao import execute
+from pulse_gestor.comissoes.report.gestor_committee_activities.gestor_committee_activities import execute
 
 
 class TestAtividadesDeComissao(FrappeTestCase):

@@ -1,4 +1,4 @@
-frappe.query_reports["Atividades de Comissao"] = {
+frappe.query_reports["Gestor Committee Activities"] = {
 	filters: [
 		{
 			fieldname: "data_inicio",

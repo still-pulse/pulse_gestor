@@ -4,7 +4,7 @@ import frappe
 from frappe.model.rename_doc import rename_doc
 from frappe.tests.utils import FrappeTestCase
 
-from pulse_gestor.indicadores.report.apuracao_de_classificacao_de_risco.apuracao_de_classificacao_de_risco import (
+from pulse_gestor.indicadores.report.gestor_risk_classification_tally.gestor_risk_classification_tally import (
 	execute,
 )
 from pulse_gestor.setup.install import (

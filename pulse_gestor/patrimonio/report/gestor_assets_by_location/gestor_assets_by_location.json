@@ -8,11 +8,11 @@
 	"modified": "2026-10-17 00:00:00.000000",
 	"modified_by": "Administrator",
 	"module": "Patrimonio",
-	"name": "Ativos por Localizacao",
+	"name": "Gestor Assets by Location",
 	"owner": "Administrator",
 	"prepared_report": 0,
 	"ref_doctype": "Asset",
-	"report_name": "Ativos por Localizacao",
+	"report_name": "Gestor Assets by Location",
 	"report_type": "Script Report",
 	"roles": [
 		{"role": "System Manager"},
